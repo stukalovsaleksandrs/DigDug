@@ -13,21 +13,18 @@ else()
   set(TARGET_PARAM WIN32)
 endif()
 
-# list source files here
-add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Minigin/Font.cpp
-  Minigin/GameObject.cpp
-  Minigin/InputManager.cpp
-  Minigin/Main.cpp
-  Minigin/Minigin.cpp
-  Minigin/Renderer.cpp
-  Minigin/ResourceManager.cpp
-  Minigin/Scene.cpp
-  Minigin/SceneManager.cpp
-  Minigin/TextObject.cpp
-  Minigin/Texture2D.cpp
-  Minigin/Transform.cpp
-)
+set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Minigin/Source")
+set(HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Minigin/Include")
+# NOTE: I am aware that it is discouraged to use GLOB to list source files,
+# but reconfiguring CMake after adding a new file is faster than
+# manually adding a path to every new source file.
+file(GLOB_RECURSE SOURCES "${SOURCE_PATH}/*.cpp")
+# Headers for VS to display in Solution Explorer
+file(GLOB_RECURSE HEADERS "${HEADER_PATH}/*.h")
+
+add_executable(${TARGET_NAME} ${TARGET_PARAM} ${SOURCES} ${HEADERS})
+
+target_include_directories(${TARGET_NAME} PRIVATE ${HEADER_PATH})
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -125,7 +122,7 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
   ${VLD_LIBRARIES}
 )
 
-if(MSVC)
+if(MSVC OR CLANG OR GCC)
   # compile at warning level 4 + treat warnings as errors
   target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX)
 else()

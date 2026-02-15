@@ -16,7 +16,7 @@ namespace fs = std::filesystem;
 
 static void load()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene();
+	auto& scene{ dae::SceneManager::GetInstance().CreateScene() };
 
 	auto go = std::make_unique<dae::GameObject>();
 	go->SetTexture("background.png");
