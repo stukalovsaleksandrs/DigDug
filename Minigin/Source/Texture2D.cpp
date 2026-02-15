@@ -1,52 +1,50 @@
-#include <SDL3/SDL.h>
 #include "Texture2D.h"
 #include "Renderer.h"
-#include <stdexcept>
+#include "Utils.h"
+#include <SDL3/SDL.h>
+#include <format>
 
-dae::Texture2D::~Texture2D()
+DAE::Texture2D::~Texture2D()
 {
-	SDL_DestroyTexture(m_texture);
+	SDL_DestroyTexture(m_pTexture);
 }
 
-glm::vec2 dae::Texture2D::GetSize() const
+glm::vec2 DAE::Texture2D::GetSize() const
 {
-    float w{}, h{};
-    SDL_GetTextureSize(m_texture, &w, &h);
-    return { w, h };
+    glm::vec2 size{};
+    SDL_GetTextureSize(m_pTexture, &size.x, &size.y);
+    return size;
 }
 
-SDL_Texture* dae::Texture2D::GetSDLTexture() const
+SDL_Texture* DAE::Texture2D::GetSDLTexture() const
 {
-	return m_texture;
+	return m_pTexture;
 }
 
-dae::Texture2D::Texture2D(const std::string &fullPath)
+DAE::Texture2D::Texture2D(std::string_view const fullPath)
 {
-    SDL_Surface* surface = SDL_LoadPNG(fullPath.c_str());
-    if (!surface)
+    SDL_Surface* pSurface{ SDL_LoadPNG(fullPath.data()) };
+    if (!pSurface)
     {
-        throw std::runtime_error(
-            std::string("Failed to load PNG: ") + SDL_GetError()
-        );
+        Utils::ThrowSDLError("Failed to load PNG");
     }
 
-    m_texture = SDL_CreateTextureFromSurface(
+    m_pTexture = SDL_CreateTextureFromSurface(
         Renderer::GetInstance().GetSDLRenderer(),
-        surface
+        pSurface
     );
 
-    SDL_DestroySurface(surface);
+    SDL_DestroySurface(pSurface);
 
-    if (!m_texture)
+    if (!m_pTexture)
     {
-        throw std::runtime_error(
-            std::string("Failed to create texture from surface: ") + SDL_GetError()
-        );
+        Utils::ThrowSDLError("Failed to create texture from surface");
     }
 }
 
-dae::Texture2D::Texture2D(SDL_Texture* texture)	: m_texture{ texture } 
+DAE::Texture2D::Texture2D(SDL_Texture* pTexture)
+    : m_pTexture{ pTexture }
 {
-	assert(m_texture != nullptr);
+	assert(m_pTexture);
 }
 

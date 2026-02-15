@@ -1,21 +1,22 @@
-#include <stdexcept>
-#include <SDL3_ttf/SDL_ttf.h>
 #include "Font.h"
+#include "Utils.h"
+#include <SDL3_ttf/SDL_ttf.h>
 
-TTF_Font* dae::Font::GetFont() const {
-	return m_font;
+TTF_Font* DAE::Font::GetFont() const {
+    return m_font;
 }
 
-dae::Font::Font(const std::string& fullPath, float size) : m_font(nullptr)
+DAE::Font::Font(std::string_view const fullPath, float const size)
+    : m_font()
 {
-	m_font = TTF_OpenFont(fullPath.c_str(), size);
-	if (m_font == nullptr) 
-	{
-		throw std::runtime_error(std::string("Failed to load font: ") + SDL_GetError());
-	}
+    m_font = TTF_OpenFont(fullPath.data(), size);
+    if (!m_font)
+    {
+        Utils::ThrowSDLError("Failed to load font");
+    }
 }
 
-dae::Font::~Font()
+DAE::Font::~Font()
 {
-	TTF_CloseFont(m_font);
+    TTF_CloseFont(m_font);
 }

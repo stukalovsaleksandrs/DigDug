@@ -1,66 +1,63 @@
-﻿#include <stdexcept>
-#include <cstring>
-#include <iostream>
-#include "Renderer.h"
+﻿#include "Renderer.h"
 #include "SceneManager.h"
 #include "Texture2D.h"
+#include "Utils.h"
 
-void dae::Renderer::Init(SDL_Window* window)
+void DAE::Renderer::Init(SDL_Window* window)
 {
-	m_window = window;
+    m_window = window;
 
-	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
 #if defined(__EMSCRIPTEN__)
-	m_renderer = SDL_CreateRenderer(window, nullptr);
+    m_renderer = SDL_CreateRenderer(window, nullptr);
 #else
-	m_renderer = SDL_CreateRenderer(window, nullptr);
+    m_renderer = SDL_CreateRenderer(window, nullptr);
 #endif
 
-	if (m_renderer == nullptr)
-	{
-		std::cout << "Failed to create the renderer: " << SDL_GetError() << "\n";
-		throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
-	}
+    if (!m_renderer)
+    {
+        Utils::ThrowSDLError("SDL_CreateRenderer Error");
+    }
 }
 
-void dae::Renderer::Render() const
+void DAE::Renderer::Render() const
 {
-	const auto& color = GetBackgroundColor();
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderClear(m_renderer);
+    auto const& color{ GetBackgroundColor() };
+    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderClear(m_renderer);
 
-	SceneManager::GetInstance().Render();
+    SceneManager::GetInstance().Render();
 
-	SDL_RenderPresent(m_renderer);
+    SDL_RenderPresent(m_renderer);
 }
 
-void dae::Renderer::Destroy()
+void DAE::Renderer::Destroy()
 {
-	if (m_renderer != nullptr)
-	{
-		SDL_DestroyRenderer(m_renderer);
-		m_renderer = nullptr;
-	}
+    if (m_renderer)
+    {
+        SDL_DestroyRenderer(m_renderer);
+        m_renderer = nullptr;
+    }
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const
+void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location) const
 {
-	SDL_FRect dst{};
-	dst.x = x;
-	dst.y = y;
-	SDL_GetTextureSize(texture.GetSDLTexture(), &dst.w, &dst.h);
-	SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
+    SDL_FRect destination{};
+    destination.x = location.x;
+    destination.y = location.y;
+    SDL_GetTextureSize(texture.GetSDLTexture(), &destination.w, &destination.h);
+    SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height) const
+void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location, glm::vec2 const dimensions) const
 {
-	SDL_FRect dst{};
-	dst.x = x;
-	dst.y = y;
-	dst.w = width;
-	dst.h = height;
-	SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
+    SDL_FRect destination{};
+    destination.x = location.x;
+    destination.y = location.y;
+    destination.w = dimensions.x;
+    destination.h = dimensions.y;
+    SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
 }
 
-SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }
+SDL_Renderer* DAE::Renderer::GetSDLRenderer() const { return m_renderer; }

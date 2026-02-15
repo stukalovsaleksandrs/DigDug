@@ -1,24 +1,24 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
-void dae::SceneManager::Update()
+void DAE::SceneManager::Update()
 {
-	for(auto& scene : m_scenes)
-	{
-		scene->Update();
-	}
+    for(auto& scene : m_scenes)
+    {
+        scene->Update();
+    }
 }
 
-void dae::SceneManager::Render()
+void DAE::SceneManager::Render() const
 {
-	for (const auto& scene : m_scenes)
-	{
-		scene->Render();
-	}
+    for (auto const& scene : m_scenes)
+    {
+        scene->Render();
+    }
 }
 
-dae::Scene& dae::SceneManager::CreateScene()
+DAE::Scene& DAE::SceneManager::CreateScene()
 {
-	m_scenes.emplace_back(new Scene());
-	return *m_scenes.back();
+    m_scenes.emplace_back(new Scene());
+    return *m_scenes.back();
 }

@@ -1,15 +1,20 @@
-#pragma once
-#include <glm/glm.hpp>
+#ifndef TRANSFORM_H
+#define TRANSFORM_H
 
-namespace dae
+#include <glm/vec3.hpp>
+
+namespace DAE
 {
-	class Transform final
-	{
-	public:
-		const glm::vec3& GetPosition() const { return m_position; }
-		void SetPosition(float x, float y, float z = 0);
-		void SetPosition(const glm::vec3& position);
-	private:
-		glm::vec3 m_position;
-	};
+    class Transform final
+    {
+    public:
+        glm::vec3 const& GetLocation() const { return m_location; }
+        void SetLocation(glm::vec3 const& location);
+
+    private:
+        glm::vec3 m_location{};
+
+    };
 }
+
+#endif

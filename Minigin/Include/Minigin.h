@@ -1,22 +1,28 @@
-#pragma once
-#include <string>
+#ifndef MINIGIN_H
+#define MINIGIN_H
+
 #include <functional>
 #include <filesystem>
 
-namespace dae
+namespace DAE
 {
-	class Minigin final
-	{
-		bool m_quit{};
-	public:
-		explicit Minigin(const std::filesystem::path& dataPath);
-		~Minigin();
-		void Run(const std::function<void()>& load);
-		void RunOneFrame();
+    class Minigin final
+    {
+    public:
+        explicit Minigin(std::filesystem::path const& dataPath);
+        ~Minigin();
+        Minigin(Minigin const& other) = delete;
+        Minigin(Minigin&& other) = delete;
+        Minigin& operator=(Minigin const& other) = delete;
+        Minigin& operator=(Minigin&& other) = delete;
 
-		Minigin(const Minigin& other) = delete;
-		Minigin(Minigin&& other) = delete;
-		Minigin& operator=(const Minigin& other) = delete;
-		Minigin& operator=(Minigin&& other) = delete;
-	};
+        void Run(std::function<void()> const& load);
+        void RunOneFrame();
+
+    private:
+        bool m_quit{};
+
+    };
 }
+
+#endif

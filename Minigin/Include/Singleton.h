@@ -1,23 +1,28 @@
-#pragma once
-namespace dae
+#ifndef SINGLETON_H
+#define SINGLETON_H
+
+namespace DAE
 {
-	template <typename T>
-	class Singleton
-	{
-	public:
-		[[nodiscard]] static T& GetInstance()
-		{
-			static T instance{};
-			return instance;
-		}
+    template <typename T>
+    class Singleton
+    {
+    public:
+        [[nodiscard]] static T& GetInstance()
+        {
+            static T instance{};
+            return instance;
+        }
 
-		virtual ~Singleton() = default;
-		Singleton(const Singleton& other) = delete;
-		Singleton(Singleton&& other) = delete;
-		Singleton& operator=(const Singleton& other) = delete;
-		Singleton& operator=(Singleton&& other) = delete;
+        virtual ~Singleton() = default;
+        Singleton(Singleton const& other) = delete;
+        Singleton(Singleton&& other) = delete;
+        Singleton& operator=(Singleton const& other) = delete;
+        Singleton& operator=(Singleton&& other) = delete;
 
-	protected:
-		Singleton() = default;
-	};
+    protected:
+        Singleton() = default;
+
+    };
 }
+
+#endif

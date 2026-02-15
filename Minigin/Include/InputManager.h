@@ -1,12 +1,15 @@
-#pragma once
+#ifndef INPUT_MANAGER_H
+#define INPUT_MANAGER_H
 #include "Singleton.h"
 
-namespace dae
+namespace DAE
 {
-	class InputManager final : public Singleton<InputManager>
-	{
-	public:
-		bool ProcessInput();
-	};
+    class InputManager final : public Singleton<InputManager>
+    {
+    public:
+        bool ProcessInput();
+    };
 
 }
+
+#endif
