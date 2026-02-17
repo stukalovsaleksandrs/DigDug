@@ -17,20 +17,14 @@ static void Load()
 
     // Background
     auto pGameObject{ std::make_unique<DAE::GameObject>() };
-    pGameObject->SetTexture("Background.png");
-    auto transformComponent{
-        pGameObject->AddComponent<DAE::Components::TransformComponent>()
-    };
-    assert(transformComponent.has_value());
-    transformComponent.value()->SetLocation({});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>()->SetTexture("Background.png");
+    pGameObject->AddComponent<DAE::Components::TransformComponent>()->SetLocation({});
     scene.Add(std::move(pGameObject));
 
     // Logo
     pGameObject = std::make_unique<DAE::GameObject>();
-    pGameObject->SetTexture("Logo.png");
-    transformComponent = pGameObject->AddComponent<DAE::Components::TransformComponent>();
-    assert(transformComponent.has_value());
-    transformComponent.value()->SetLocation({358, 180});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>()->SetTexture("Logo.png");
+    pGameObject->AddComponent<DAE::Components::TransformComponent>()->SetLocation({358, 180});
     scene.Add(std::move(pGameObject));
 
     // auto font { DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };

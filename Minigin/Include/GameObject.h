@@ -1,7 +1,8 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
+#include <algorithm>
+
 #include "Component.h"
-#include <string_view>
 #include <memory>
 #include <optional>
 
@@ -12,33 +13,40 @@ namespace DAE
     class GameObject
     {
     public:
-        GameObject() = default;
-        virtual ~GameObject();
-        GameObject(GameObject const& other) = delete;
-        GameObject(GameObject&& other) = delete;
-        GameObject& operator=(GameObject const& other) = delete;
-        GameObject& operator=(GameObject&& other) = delete;
+        GameObject() noexcept = default;
+        virtual ~GameObject() noexcept ;
+        GameObject(GameObject const& other) noexcept  = delete;
+        GameObject(GameObject&& other) noexcept  = delete;
+        GameObject& operator=(GameObject const& other) noexcept = delete;
+        GameObject& operator=(GameObject&& other) noexcept = delete;
 
         virtual void Update();
-        virtual void Render();// Non-const since has to access components
-        void SetTexture(std::string_view filename);
 
         /**
-         * @def Attempts to add to the parent game object
-         * a new component of the type given
-         * @return Whether a component does not exist already
+         * @def Attempts to add to the parent game object a new component of the type given
+         * @return A vector of pointers, where each of them points either to a new component or
+         * to an existing one if the owner already had a component with the same type
          */
         template<Components::DerivedComponent ComponentType>
-        std::optional<ComponentType*> AddComponent() {
-            if (HasComponent<ComponentType>()) return std::nullopt;
-            auto& newComponent{
-                m_pComponents.emplace_back(std::make_unique<ComponentType>())
-            };
-            return dynamic_cast<ComponentType*>(newComponent.get());
+        ComponentType* AddComponent() noexcept {
+            for (auto& pComponent : m_pComponents) {
+                if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
+                    return pDerivedComponent;
+                }
+            }
+            m_pComponents.emplace_back(std::make_unique<ComponentType>(*this));
+            return GetComponent<ComponentType>().value();
         }
-        template<Components::DerivedComponent ComponentType>
-        std::optional<ComponentType*> AddComponent(ComponentType const& component) {
-            return AddComponent<ComponentType>() = component;
+        /**
+        * @def Attempts to add to the parent game object new components of the types given
+        * @return A vector of pointers, where each of them points either to a new component or
+        * to an existing one if the owner already had a component with the same type
+        */
+        template<Components::DerivedComponent... ComponentTypes>
+        std::vector<Components::Component*>&& AddComponents() noexcept {
+            std::vector<Components::Component*> result(sizeof...(ComponentTypes));
+            (result.emplace_back(AddComponent<ComponentTypes>()), ...);
+            return std::move(result);
         }
 
         /**
@@ -48,7 +56,7 @@ namespace DAE
          * @return Whether pComponent has the type of ComponentType
          */
         template<Components::DerivedComponent ComponentType>
-        static bool IsSameType(std::unique_ptr<Components::Component> const& pComponent) {
+        static bool IsSameType(std::unique_ptr<Components::Component> const& pComponent) noexcept {
             return dynamic_cast<ComponentType*>(pComponent.get());
         }
 
@@ -57,7 +65,7 @@ namespace DAE
          * @return Whether the owner has a component of the type given
          */
         template<Components::DerivedComponent ComponentType>
-        [[nodiscard]] bool HasComponent() const {
+        [[nodiscard]] bool HasComponent() const noexcept {
             return std::ranges::any_of(m_pComponents, IsSameType<ComponentType>);
         }
 
@@ -66,7 +74,7 @@ namespace DAE
          * @note Nothing happens if the owner does not have a component of the type given
          */
         template<Components::DerivedComponent ComponentType>
-        void RemoveComponent() {
+        void RemoveComponent() noexcept {
             std::erase_if(m_pComponents, IsSameType<ComponentType>);
         }
 
@@ -74,7 +82,7 @@ namespace DAE
          * @def Attempts to find the component of the given type at the owner's disposal
          */
         template<Components::DerivedComponent ComponentType>
-        std::optional<ComponentType*> GetComponent() {
+        std::optional<ComponentType*> GetComponent() noexcept {
             for (auto const& pComponent : m_pComponents) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
                     return pDerivedComponent;
@@ -84,11 +92,9 @@ namespace DAE
         }
 
     private:
-        std::shared_ptr<Texture2D> m_texture{};
         std::vector<std::unique_ptr<Components::Component>> m_pComponents{};
 
     };
-
 
 }
 
