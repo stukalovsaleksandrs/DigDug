@@ -17,21 +17,24 @@ static void Load()
 
     // Background
     auto pGameObject{ std::make_unique<DAE::GameObject>() };
-    pGameObject->AddComponent<DAE::Components::RenderComponent>()->SetTexture("Background.png");
-    pGameObject->AddComponent<DAE::Components::TransformComponent>()->SetLocation({});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Background.png");
     scene.Add(std::move(pGameObject));
 
     // Logo
     pGameObject = std::make_unique<DAE::GameObject>();
-    pGameObject->AddComponent<DAE::Components::RenderComponent>()->SetTexture("Logo.png");
-    pGameObject->AddComponent<DAE::Components::TransformComponent>()->SetLocation({358, 180});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Logo.png");
+    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({358, 180});
     scene.Add(std::move(pGameObject));
 
-    // auto font { DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
-    // auto pTextObject{ std::make_unique<DAE::TextObject>("Programming 4 Assignment", font) };
-    // pTextObject->SetColor({ 255, 255, 0, 255 });
-    // pTextObject->SetLocation({292, 20});
-    // scene.Add(std::move(pTextObject));
+    // Title
+    pGameObject = std::make_unique<DAE::GameObject>();
+    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({ 292, 20 });
+    pGameObject->AddComponent<DAE::Components::TextComponent>(
+        *pGameObject.get(),
+        "Programming 4 Assignment",
+        DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)
+        );
+    scene.Add(std::move(pGameObject));
 }
 
 int main(int, char*[]) {

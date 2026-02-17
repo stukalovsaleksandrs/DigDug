@@ -32,6 +32,6 @@ void DAE::Scene::Render() const
 {
     for (auto const& object : m_objects)
     {
-        object->AddComponent<Components::RenderComponent>()->Render();
+        object->GetComponent<Components::RenderComponent>().value()->Render();
     }
 }

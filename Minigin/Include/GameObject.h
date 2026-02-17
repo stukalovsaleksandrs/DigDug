@@ -9,32 +9,24 @@
 namespace DAE
 {
     class Texture2D;
-    // TODO: Make final
-    class GameObject
+    class GameObject final
     {
     public:
-        GameObject() noexcept = default;
-        virtual ~GameObject() noexcept ;
-        GameObject(GameObject const& other) noexcept  = delete;
-        GameObject(GameObject&& other) noexcept  = delete;
-        GameObject& operator=(GameObject const& other) noexcept = delete;
-        GameObject& operator=(GameObject&& other) noexcept = delete;
-
-        virtual void Update();
+        void Update();
 
         /**
          * @def Attempts to add to the parent game object a new component of the type given
          * @return A vector of pointers, where each of them points either to a new component or
          * to an existing one if the owner already had a component with the same type
          */
-        template<Components::DerivedComponent ComponentType>
-        ComponentType* AddComponent() noexcept {
+        template<Components::DerivedComponent ComponentType, typename... Args>
+        ComponentType* AddComponent(Args&&... args) noexcept {
             for (auto& pComponent : m_pComponents) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
                     return pDerivedComponent;
                 }
             }
-            m_pComponents.emplace_back(std::make_unique<ComponentType>(*this));
+            m_pComponents.emplace_back(std::make_unique<ComponentType>(std::forward<Args>(args)...));
             return GetComponent<ComponentType>().value();
         }
         /**
@@ -42,12 +34,12 @@ namespace DAE
         * @return A vector of pointers, where each of them points either to a new component or
         * to an existing one if the owner already had a component with the same type
         */
-        template<Components::DerivedComponent... ComponentTypes>
-        std::vector<Components::Component*>&& AddComponents() noexcept {
-            std::vector<Components::Component*> result(sizeof...(ComponentTypes));
-            (result.emplace_back(AddComponent<ComponentTypes>()), ...);
-            return std::move(result);
-        }
+        // template<Components::DerivedComponent... ComponentTypes>
+        // std::vector<Components::Component*> AddComponents() noexcept {
+        //     std::vector<Components::Component*> result(sizeof...(ComponentTypes));
+        //     (result.emplace_back(AddComponent<ComponentTypes>()), ...);
+        //     return result;
+        // }
 
         /**
          * @def A helper predicate used to determine whether the input component has the type given
