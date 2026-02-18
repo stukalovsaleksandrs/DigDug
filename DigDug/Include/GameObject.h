@@ -12,7 +12,7 @@ namespace DAE
     class GameObject final
     {
     public:
-        void Update();
+        void Update() const;
 
         /**
          * @def Attempts to add to the parent game object a new component of the type given

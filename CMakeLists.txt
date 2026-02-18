@@ -1,20 +1,20 @@
 cmake_minimum_required(VERSION 3.26)
-project(Minigin)
+project(DigDug)
 
 if(EMSCRIPTEN)
   message("Using Emscripten!")
 endif()
 
 if(EMSCRIPTEN)
-  set(TARGET_NAME minigin_web)
+  set(TARGET_NAME DigDug_web)
   set(TARGET_PARAM )
 else()
-  set(TARGET_NAME minigin)
+  set(TARGET_NAME DigDug)
   set(TARGET_PARAM WIN32)
 endif()
 
-set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Minigin/Source")
-set(HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Minigin/Include")
+set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/DigDug/Source")
+set(HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/DigDug/Include")
 # NOTE: I am aware that it is discouraged to use GLOB to list source files,
 # but reconfiguring CMake after adding a new file is faster than
 # manually adding a path to every new source file.
@@ -111,7 +111,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
 
 target_include_directories("${TARGET_NAME}" PUBLIC
-  ${CMAKE_SOURCE_DIR}/Minigin/
+  "${CMAKE_SOURCE_DIR}/DigDug/"
   ${VLD_INCLUDE_DIR}
 )
 

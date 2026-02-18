@@ -4,7 +4,7 @@
 #include <vld.h>
 #endif
 
-#include "Minigin.h"
+#include "Application.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -39,6 +39,7 @@ static void Load()
 
     // FPS
     pGameObject = std::make_unique<DAE::GameObject>();
+    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({ 10, 10 });
     pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
     scene.Add(std::move(pGameObject));
 }
@@ -51,7 +52,7 @@ int main(int, char*[]) {
     if(!fs::exists(data_location))
         data_location = "../Data/";
 #endif
-    DAE::Minigin engine(data_location);
-    engine.Run(Load);
+    DAE::Application game(data_location);
+    game.Run(Load);
     return 0;
 }

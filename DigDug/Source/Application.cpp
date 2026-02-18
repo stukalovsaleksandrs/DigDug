@@ -1,4 +1,4 @@
-﻿#include "Minigin.h"
+﻿#include "Application.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
@@ -10,12 +10,10 @@
 #include <sstream>
 #include <iostream>
 
-
 #if WIN32
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
 #endif
-
 
 SDL_Window* g_window{};
 
@@ -35,7 +33,7 @@ void LogSDLVersion(std::string_view const message, int const major, int const mi
 
 void LoopCallback(void* arg)
 {
-    static_cast<DAE::Minigin*>(arg)->RunOneFrame();
+    static_cast<DAE::Application*>(arg)->RunOneFrame();
 }
 #endif
 
@@ -55,7 +53,7 @@ void PrintSDLVersion()
     LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
-DAE::Minigin::Minigin(std::filesystem::path const& dataPath)
+DAE::Application::Application(std::filesystem::path const& dataPath)
 {
     PrintSDLVersion();
 
@@ -80,7 +78,7 @@ DAE::Minigin::Minigin(std::filesystem::path const& dataPath)
     ResourceManager::GetInstance().Init(dataPath);
 }
 
-DAE::Minigin::~Minigin()
+DAE::Application::~Application()
 {
     Renderer::GetInstance().Destroy();
     SDL_DestroyWindow(g_window);
@@ -88,7 +86,7 @@ DAE::Minigin::~Minigin()
     SDL_Quit();
 }
 
-void DAE::Minigin::Run(std::function<void()> const& load)
+void DAE::Application::Run(std::function<void()> const& load)
 {
     load();
 #ifndef __EMSCRIPTEN__
@@ -99,7 +97,7 @@ void DAE::Minigin::Run(std::function<void()> const& load)
 #endif
 }
 
-void DAE::Minigin::RunOneFrame()
+void DAE::Application::RunOneFrame()
 {
     Timer::GetInstance().Update();
     m_quit = !InputManager::GetInstance().ProcessInput();
