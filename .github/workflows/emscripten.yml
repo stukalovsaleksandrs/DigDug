@@ -40,6 +40,7 @@ jobs:
 
       - name: Configure (CMake)
         run: |
+          rm -rf build-web # Removing cache
           mkdir -p build-web
           cd build-web
           emcmake cmake \
