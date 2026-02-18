@@ -5,6 +5,7 @@
 #include "Font.h"
 #include "Texture2D.h"
 #include "Utils.h"
+#include "Timer.h"
 #include <SDL3_ttf/SDL_ttf.h>
 
 /*******************************************
@@ -33,7 +34,7 @@ void DAE::Components::RenderComponent::SetTexture(SDL_Texture* pSDLTexture) {
 /*******************************************
  * Text component
  *******************************************/
-DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, const SDL_Color& color) noexcept
+DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
 {
@@ -63,11 +64,25 @@ void DAE::Components::TextComponent::UpdateTexture() const {
     {
         Utils::ThrowSDLError("Render text failed");
     }
-    auto pSDLTexture{ SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), pSurface) };
+    auto const pSDLTexture{ SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), pSurface) };
     if (!pSDLTexture)
     {
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
     m_owner.GetComponent<RenderComponent>().value()->SetTexture(pSDLTexture);
+}
+
+/*******************************************
+ * FPS component
+ *******************************************/
+DAE::Components::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
+    : Component(owner)
+{
+    owner.AddComponent<TextComponent>(owner, "FPS", pFont, color);
+}
+
+void DAE::Components::FPSComponent::Update() noexcept {
+    Component::Update();
+    m_owner.GetComponent<TextComponent>().value()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
 }

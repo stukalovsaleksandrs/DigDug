@@ -1,8 +1,9 @@
 ﻿#include "Minigin.h"
 #include "InputManager.h"
 #include "SceneManager.h"
-#include "Renderer.h"
 #include "ResourceManager.h"
+#include "Renderer.h"
+#include "Timer.h"
 #include "Utils.h"
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -100,6 +101,7 @@ void DAE::Minigin::Run(std::function<void()> const& load)
 
 void DAE::Minigin::RunOneFrame()
 {
+    Timer::GetInstance().Update();
     m_quit = !InputManager::GetInstance().ProcessInput();
     SceneManager::GetInstance().Update();
     Renderer::GetInstance().Render();

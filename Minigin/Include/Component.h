@@ -17,6 +17,9 @@ namespace DAE {
 }
 
 namespace DAE::Components {
+    /*******************************************
+     * Component base
+     *******************************************/
     class Component {
     public:
         virtual ~Component() noexcept = default;
@@ -24,6 +27,8 @@ namespace DAE::Components {
         Component& operator=(Component const&) noexcept = delete;
         Component(Component&&) noexcept = delete;
         Component& operator=(Component&&) noexcept = delete;
+
+        virtual void Update() noexcept {};
     protected:
         GameObject& m_owner;
         explicit Component(GameObject& owner) noexcept : m_owner(owner){};
@@ -56,9 +61,10 @@ namespace DAE::Components {
         Transform m_transform{};
     };
 
-    /**
-     * @note Requires TransformComponent
-     */
+    /*******************************************
+     * Render component
+     *******************************************/
+    /** @note Requires TransformComponent */
     class RenderComponent final : public Component {
     public:
         void Render() const;
@@ -73,9 +79,10 @@ namespace DAE::Components {
         std::shared_ptr<Texture2D> m_pTexture{};
     };
 
-    /**
-     * @note Requires TransformComponent and RenderComponent
-     */
+    /*******************************************
+     * Text component
+     *******************************************/
+    /** @note Requires TransformComponent and RenderComponent */
     class TextComponent final : public Component {
     public:
         void SetFont(std::shared_ptr<Font> const& pFont);
@@ -83,9 +90,8 @@ namespace DAE::Components {
         void SetColor(SDL_Color const& color);
 
     protected:
-        //explicit TextComponent(GameObject& owner) noexcept;
-        explicit TextComponent(GameObject &owner, std::string_view text, const std::shared_ptr<Font> &pFont,
-                               const SDL_Color &color = {255, 255, 255, 255}) noexcept;
+        explicit TextComponent(GameObject &owner, std::string_view text, std::shared_ptr<Font> const& pFont,
+                               SDL_Color const&color = {255, 255, 255, 255}) noexcept;
         friend class DAE::GameObject;
 
     private:
@@ -94,6 +100,20 @@ namespace DAE::Components {
         SDL_Color m_color{ 255, 255, 255, 255 };
 
         void UpdateTexture() const;
+    };
+
+    /*******************************************
+     * FPS component
+     *******************************************/
+    /** @note Requires TextComponent */
+    class FPSComponent final : public Component {
+    public:
+        void Update() noexcept override ;
+
+    protected:
+        explicit FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont,
+                               SDL_Color const& color = {255, 255, 255, 255}) noexcept;
+        friend class DAE::GameObject;
     };
 }
 

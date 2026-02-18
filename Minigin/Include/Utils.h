@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 namespace DAE::Utils {
-    inline void ThrowSDLError(std::string_view preceedingMessage) {
+    inline void ThrowSDLError(std::string_view const preceedingMessage) {
         throw std::runtime_error(std::format("{}: {}", preceedingMessage, SDL_GetError()));
     }
 }

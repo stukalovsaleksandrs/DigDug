@@ -29,11 +29,17 @@ static void Load()
     // Title
     pGameObject = std::make_unique<DAE::GameObject>();
     pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({ 292, 20 });
+    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
     pGameObject->AddComponent<DAE::Components::TextComponent>(
         *pGameObject.get(),
         "Programming 4 Assignment",
-        DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)
+        pFont
         );
+    scene.Add(std::move(pGameObject));
+
+    // FPS
+    pGameObject = std::make_unique<DAE::GameObject>();
+    pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
     scene.Add(std::move(pGameObject));
 }
 
