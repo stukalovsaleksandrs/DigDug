@@ -89,6 +89,7 @@ namespace DAE
                 return pComponent.value();
             }
             assert(false && "Component not found");
+            return nullptr;
         }
 
 

@@ -8,6 +8,7 @@
 #include <concepts>
 #include <memory>
 #include <string_view>
+#include <string>
 
 
 namespace DAE {
