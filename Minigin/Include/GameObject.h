@@ -26,20 +26,13 @@ namespace DAE
                     return pDerivedComponent;
                 }
             }
-            m_pComponents.emplace_back(std::make_unique<ComponentType>(std::forward<Args>(args)...));
+            // NOTE: Not using std::make_unique since it cannot access protected constructors
+            m_pComponents.emplace_back(std::unique_ptr<ComponentType>(
+                new ComponentType(std::forward<Args>(args)...)
+                ));
+
             return GetComponent<ComponentType>().value();
         }
-        /**
-        * @def Attempts to add to the parent game object new components of the types given
-        * @return A vector of pointers, where each of them points either to a new component or
-        * to an existing one if the owner already had a component with the same type
-        */
-        // template<Components::DerivedComponent... ComponentTypes>
-        // std::vector<Components::Component*> AddComponents() noexcept {
-        //     std::vector<Components::Component*> result(sizeof...(ComponentTypes));
-        //     (result.emplace_back(AddComponent<ComponentTypes>()), ...);
-        //     return result;
-        // }
 
         /**
          * @def A helper predicate used to determine whether the input component has the type given
@@ -85,6 +78,7 @@ namespace DAE
 
     private:
         std::vector<std::unique_ptr<Components::Component>> m_pComponents{};
+
 
     };
 
