@@ -1,4 +1,4 @@
-#include "Component.h"
+#include "Components.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "GameObject.h"
@@ -12,15 +12,15 @@
  * Render component
  *******************************************/
 DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
-    : Component(owner) {
-    owner.AddComponent<TransformComponent>(owner);
+    : Components(owner) {
+    m_pTransformComponent = owner.AddComponent<TransformComponent>(owner);
 }
 
 void DAE::Components::RenderComponent::Render() const {
     assert(m_pTexture && "Texture is not set");
     Renderer::GetInstance().RenderTexture(
         *m_pTexture,
-        m_owner.GetComponent<TransformComponent>().value()->GetTransform().GetLocation());
+        m_pTransformComponent->GetTransform().GetLocation());
 }
 
 void DAE::Components::RenderComponent::SetTexture(std::string_view const filename) {
@@ -35,11 +35,10 @@ void DAE::Components::RenderComponent::SetTexture(SDL_Texture* pSDLTexture) {
  * Text component
  *******************************************/
 DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
-    : Component(owner)
+    : Components(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
 {
-    owner.AddComponent<TransformComponent>(owner);
-    owner.AddComponent<RenderComponent>(owner);
+    m_pRenderComponent = owner.AddComponent<RenderComponent>(owner);
     UpdateTexture();
 }
 
@@ -70,19 +69,19 @@ void DAE::Components::TextComponent::UpdateTexture() const {
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
-    m_owner.GetComponent<RenderComponent>().value()->SetTexture(pSDLTexture);
+    m_pRenderComponent->SetTexture(pSDLTexture);
 }
 
 /*******************************************
  * FPS component
  *******************************************/
 DAE::Components::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
-    : Component(owner)
+    : Components(owner)
 {
     owner.AddComponent<TextComponent>(owner, "FPS", pFont, color);
 }
 
 void DAE::Components::FPSComponent::Update() noexcept {
-    Component::Update();
-    m_owner.GetComponent<TextComponent>().value()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
+    Components::Update();
+    m_owner.GetComponent<TextComponent>()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
 }

@@ -20,9 +20,9 @@ void DAE::Scene::RemoveAll()
     m_objects.clear();
 }
 
-void DAE::Scene::Update()
+void DAE::Scene::Update() const
 {
-    for(auto& object : m_objects)
+    for(auto const& object : m_objects)
     {
         object->Update();
     }
@@ -32,6 +32,10 @@ void DAE::Scene::Render() const
 {
     for (auto const& object : m_objects)
     {
-        object->GetComponent<Components::RenderComponent>().value()->Render();
+        // TODO: Get rid of the TryGettingComponent in this hot path
+        if (auto const& renderComponent{ object->TryGettingComponent<Components::RenderComponent>() };
+            renderComponent.has_value()) {
+            renderComponent.value()->Render();
+        }
     }
 }

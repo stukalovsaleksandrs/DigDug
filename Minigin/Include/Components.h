@@ -20,25 +20,26 @@ namespace DAE::Components {
     /*******************************************
      * Component base
      *******************************************/
-    class Component {
+    /** @note Required components get added automatically if abscent in the owner */
+    class Components {
     public:
-        virtual ~Component() noexcept = default;
-        Component(Component const&) noexcept = delete;
-        Component& operator=(Component const&) noexcept = delete;
-        Component(Component&&) noexcept = delete;
-        Component& operator=(Component&&) noexcept = delete;
+        virtual ~Components() noexcept = default;
+        Components(Components const&) noexcept = delete;
+        Components& operator=(Components const&) noexcept = delete;
+        Components(Components&&) noexcept = delete;
+        Components& operator=(Components&&) noexcept = delete;
 
         virtual void Update() noexcept {};
     protected:
         GameObject& m_owner;
-        explicit Component(GameObject& owner) noexcept : m_owner(owner){};
+        explicit Components(GameObject& owner) noexcept : m_owner(owner){};
         friend class DAE::GameObject;// NOTE: Scope specification is mandatory, otherwise
         // the compiler will work with non-existing DAE::Components::GameObject
     };
     template<typename DerivedComponentType>
-    concept DerivedComponent = std::derived_from<DerivedComponentType, Component>;
+    concept DerivedComponent = std::derived_from<DerivedComponentType, Components>;
 
-    class TransformComponent final : public Component {
+    class TransformComponent final : public Components {
     public:
         [[nodiscard]] Transform const& GetTransform() const noexcept {
             return m_transform;
@@ -48,7 +49,7 @@ namespace DAE::Components {
         }
 
     protected:
-        explicit TransformComponent(GameObject& owner) noexcept : Component(owner) {};
+        explicit TransformComponent(GameObject& owner) noexcept : Components(owner) {};
         explicit TransformComponent(GameObject& owner, Transform const& transform) noexcept
             : TransformComponent(owner) {
             // Not in the initializer list because member initialization
@@ -65,7 +66,7 @@ namespace DAE::Components {
      * Render component
      *******************************************/
     /** @note Requires TransformComponent */
-    class RenderComponent final : public Component {
+    class RenderComponent final : public Components {
     public:
         void Render() const;
         void SetTexture(std::string_view filename);
@@ -77,13 +78,14 @@ namespace DAE::Components {
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
+        TransformComponent* m_pTransformComponent;
     };
 
     /*******************************************
      * Text component
      *******************************************/
     /** @note Requires TransformComponent and RenderComponent */
-    class TextComponent final : public Component {
+    class TextComponent final : public Components {
     public:
         void SetFont(std::shared_ptr<Font> const& pFont);
         void SetText(std::string_view text);
@@ -98,6 +100,7 @@ namespace DAE::Components {
         std::string m_text;
         std::shared_ptr<Font> m_pFont;
         SDL_Color m_color{ 255, 255, 255, 255 };
+        RenderComponent* m_pRenderComponent;
 
         void UpdateTexture() const;
     };
@@ -106,7 +109,7 @@ namespace DAE::Components {
      * FPS component
      *******************************************/
     /** @note Requires TextComponent */
-    class FPSComponent final : public Component {
+    class FPSComponent final : public Components {
     public:
         void Update() noexcept override ;
 
