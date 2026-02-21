@@ -26,8 +26,9 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM} ${SOURCES} ${HEADERS})
 
 target_include_directories(${TARGET_NAME} PRIVATE ${HEADER_PATH})
 
-# enable c++20 features
+# enabling c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 include(FetchContent)
 # add glm

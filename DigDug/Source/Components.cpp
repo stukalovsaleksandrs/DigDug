@@ -14,6 +14,12 @@
 DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
     : Components(owner) {
     m_pTransformComponent = owner.AddComponent<TransformComponent>(owner);
+    Renderer::GetInstance().RegisterComponent(this);
+}
+
+DAE::Components::RenderComponent::~RenderComponent()
+{
+    Renderer::GetInstance().UnregisterComponent(this);
 }
 
 void DAE::Components::RenderComponent::Render() const {
@@ -83,5 +89,6 @@ DAE::Components::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<F
 
 void DAE::Components::FPSComponent::Update() noexcept {
     Components::Update();
+    // TODO: Make a check if the FPS is not the same as last time. Maybe we can omit creating a texture.
     m_owner.GetComponent<TextComponent>()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
 }

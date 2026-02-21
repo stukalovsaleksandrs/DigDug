@@ -9,14 +9,6 @@ void DAE::SceneManager::Update()
     }
 }
 
-void DAE::SceneManager::Render() const
-{
-    for (auto const& scene : m_scenes)
-    {
-        scene->Render();
-    }
-}
-
 DAE::Scene& DAE::SceneManager::CreateScene()
 {
     m_scenes.emplace_back(new Scene());

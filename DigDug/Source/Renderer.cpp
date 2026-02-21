@@ -2,20 +2,21 @@
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "Utils.h"
+#include "Components.h"
 
-void DAE::Renderer::Init(SDL_Window* window)
+void DAE::Renderer::Init(SDL_Window* pWindow)
 {
-    m_window = window;
+    m_pWindow = pWindow;
 
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
 #if defined(__EMSCRIPTEN__)
-    m_renderer = SDL_CreateRenderer(window, nullptr);
+    m_pRenderer = SDL_CreateRenderer(pWindow, nullptr);
 #else
-    m_renderer = SDL_CreateRenderer(window, nullptr);
+    m_pRenderer = SDL_CreateRenderer(pWindow, nullptr);
 #endif
 
-    if (!m_renderer)
+    if (!m_pRenderer)
     {
         Utils::ThrowSDLError("SDL_CreateRenderer Error");
     }
@@ -23,21 +24,26 @@ void DAE::Renderer::Init(SDL_Window* window)
 
 void DAE::Renderer::Render() const
 {
-    auto const& color{ GetBackgroundColor() };
-    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-    SDL_RenderClear(m_renderer);
+    // Clearing the background
+    const auto&[r, g, b, a]{ GetBackgroundColor() };
+    SDL_SetRenderDrawColor(m_pRenderer, r, g, b, a);
+    SDL_RenderClear(m_pRenderer);
 
-    SceneManager::GetInstance().Render();
+    // Rendering the render components
+    for (auto const renderComponent : m_pRenderComponents) {
+        renderComponent->Render();
+    }
 
-    SDL_RenderPresent(m_renderer);
+    // Presenting the surface
+    SDL_RenderPresent(m_pRenderer);
 }
 
 void DAE::Renderer::Destroy()
 {
-    if (m_renderer)
+    if (m_pRenderer)
     {
-        SDL_DestroyRenderer(m_renderer);
-        m_renderer = nullptr;
+        SDL_DestroyRenderer(m_pRenderer);
+        m_pRenderer = nullptr;
     }
 }
 
@@ -60,4 +66,4 @@ void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const loca
     SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
 }
 
-SDL_Renderer* DAE::Renderer::GetSDLRenderer() const { return m_renderer; }
+SDL_Renderer* DAE::Renderer::GetSDLRenderer() const { return m_pRenderer; }

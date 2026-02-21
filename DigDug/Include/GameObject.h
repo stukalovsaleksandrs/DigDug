@@ -1,14 +1,14 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-#include <algorithm>
-
 #include "Components.h"
 #include <memory>
 #include <optional>
+#include <algorithm>
 
 namespace DAE
 {
     class Texture2D;
+    class Scene;
     class GameObject final
     {
     public:
@@ -28,9 +28,9 @@ namespace DAE
                 }
             }
             // Returning a new component since there is no existing one
-            // NOTE: Not using std::make_unique since it cannot access protected constructors
             return dynamic_cast<ComponentType*>(
                 m_pComponents.emplace_back(std::unique_ptr<ComponentType>(
+                    // NOTE: Not using std::make_unique since it cannot access protected constructors
                     new ComponentType(std::forward<Args>(args)...)
                 )).get()
                 );
@@ -95,7 +95,6 @@ namespace DAE
 
     private:
         std::vector<std::unique_ptr<Components::Components>> m_pComponents{};
-
 
     };
 

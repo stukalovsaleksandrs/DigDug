@@ -27,15 +27,3 @@ void DAE::Scene::Update() const
         object->Update();
     }
 }
-
-void DAE::Scene::Render() const
-{
-    for (auto const& object : m_objects)
-    {
-        // TODO: Get rid of the TryGettingComponent in this hot path
-        if (auto const& renderComponent{ object->TryGettingComponent<Components::RenderComponent>() };
-            renderComponent.has_value()) {
-            renderComponent.value()->Render();
-        }
-    }
-}

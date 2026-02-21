@@ -21,7 +21,7 @@ namespace DAE::Components {
     /*******************************************
      * Component base
      *******************************************/
-    /** @note Required components get added automatically if abscent in the owner */
+    /** @note Required components get added automatically if absent in the owner */
     class Components {
     public:
         virtual ~Components() noexcept = default;
@@ -69,6 +69,12 @@ namespace DAE::Components {
     /** @note Requires TransformComponent */
     class RenderComponent final : public Components {
     public:
+        ~RenderComponent() override;
+        RenderComponent(RenderComponent const&) = delete;
+        RenderComponent(RenderComponent&&) = delete;
+        RenderComponent operator= (RenderComponent const&) = delete;
+        RenderComponent operator= (RenderComponent&&) = delete;
+
         void Render() const;
         void SetTexture(std::string_view filename);
         void SetTexture(SDL_Texture* pSDLTexture);
