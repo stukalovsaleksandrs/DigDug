@@ -35,7 +35,7 @@ void DAE::Scene::Render() const
         // TODO: Get rid of the TryGettingComponent in this hot path
         if (auto const& renderComponent{ object->TryGettingComponent<Components::RenderComponent>() };
             renderComponent.has_value()) {
-            renderComponent.value()->Render();
+            renderComponent.value().Get()->Render();
         }
     }
 }

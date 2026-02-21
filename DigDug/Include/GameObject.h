@@ -2,12 +2,11 @@
 #define GAME_OBJECT_H
 #include <algorithm>
 
-#include "Components.h"
+#include "Component.h"
 #include <memory>
 #include <optional>
 
-namespace DAE
-{
+namespace DAE {
     class Texture2D;
     class GameObject final
     {
@@ -20,20 +19,19 @@ namespace DAE
          * to an existing one if the owner already had a component with the same type
          */
         template<Components::DerivedComponent ComponentType, typename... Args>
-        ComponentType* AddComponent(Args&&... args) noexcept {
+        Components::ComponentWeakPtr<ComponentType> AddComponent(Args&&... args) noexcept {
             // Trying returning the existing component
             for (auto& pComponent : m_pComponents) {
-                if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
-                    return pDerivedComponent;
+                if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.Get()) }; pDerivedComponent) {
+                    return Components::ComponentWeakPtr<ComponentType>(pComponent);
                 }
             }
             // Returning a new component since there is no existing one
             // NOTE: Not using std::make_unique since it cannot access protected constructors
-            return dynamic_cast<ComponentType*>(
-                m_pComponents.emplace_back(std::unique_ptr<ComponentType>(
+            return
+                m_pComponents.emplace_back(Components::ComponentUniquePtr<ComponentType>(
                     new ComponentType(std::forward<Args>(args)...)
-                )).get()
-                );
+                )).GetWeakPtr();
         }
 
         /**
@@ -43,7 +41,7 @@ namespace DAE
          * @return Whether pComponent has the type of ComponentType
          */
         template<Components::DerivedComponent ComponentType>
-        static bool IsSameType(std::unique_ptr<Components::Components> const& pComponent) noexcept {
+        static bool IsSameType(std::unique_ptr<Components::Component> const& pComponent) noexcept {
             return dynamic_cast<ComponentType*>(pComponent.get());
         }
 
@@ -70,10 +68,10 @@ namespace DAE
          * @return Pointer to the component if such exists; if not, then std::nullopt
          */
         template<Components::DerivedComponent ComponentType>
-        std::optional<ComponentType*> TryGettingComponent() noexcept {
+        [[nodiscard]] std::optional<Components::ComponentWeakPtr<ComponentType>> TryGettingComponent() const noexcept {
             for (auto const& pComponent : m_pComponents) {
-                if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
-                    return pDerivedComponent;
+                if (ComponentType const* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent) }; pDerivedComponent) {
+                    return Components::ComponentWeakPtr<ComponentType>( pComponent );
                 }
             }
             return std::nullopt;
@@ -81,24 +79,20 @@ namespace DAE
 
         /**
          * @def Finds the component of the given type at the owner's disposal
-         * @note Asserts if the owner does not have a component of the type given
+         * @note Throws if the owner does not have a component of the type given
          */
         template<Components::DerivedComponent ComponentType>
-        ComponentType* GetComponent() noexcept {
+        Components::ComponentWeakPtr<ComponentType> GetComponent() noexcept {
             if (auto const& pComponent{ TryGettingComponent<ComponentType>() }; pComponent.has_value()) {
                 return pComponent.value();
             }
-            assert(false && "Component not found");
-            return nullptr;
+            throw std::runtime_error("Trying GameObject does not the component given");
         }
 
-
-    private:
-        std::vector<std::unique_ptr<Components::Components>> m_pComponents{};
-
-
+        private:
+            std::vector<Components::ComponentUniquePtr<Components::Component>> m_pComponents{};
     };
-
 }
+
 
 #endif

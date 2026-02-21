@@ -1,4 +1,4 @@
-#include "Components.h"
+#include "Component.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "GameObject.h"
@@ -11,8 +11,7 @@
 /*******************************************
  * Render component
  *******************************************/
-DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
-    : Components(owner) {
+DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept : Component(owner) {
     m_pTransformComponent = owner.AddComponent<TransformComponent>(owner);
 }
 
@@ -35,7 +34,7 @@ void DAE::Components::RenderComponent::SetTexture(SDL_Texture* pSDLTexture) {
  * Text component
  *******************************************/
 DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
-    : Components(owner)
+    : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
 {
     m_pRenderComponent = owner.AddComponent<RenderComponent>(owner);
@@ -76,12 +75,13 @@ void DAE::Components::TextComponent::UpdateTexture() const {
  * FPS component
  *******************************************/
 DAE::Components::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
-    : Components(owner)
+    : Component(owner)
 {
     owner.AddComponent<TextComponent>(owner, "FPS", pFont, color);
 }
 
 void DAE::Components::FPSComponent::Update() noexcept {
-    Components::Update();
+    Component::Update();
     m_owner.GetComponent<TextComponent>()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
 }
+
