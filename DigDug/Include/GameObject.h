@@ -76,7 +76,7 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType>
         void RemoveComponent() noexcept {
-            m_anyComponentsToDelete = true;
+            m_componentDeletionFlagsDirty = true;
             if (auto componentIterator{ std::ranges::find_if(m_components, IsSameType<ComponentType>)};
                 componentIterator != m_components.end())
             {
@@ -111,11 +111,34 @@ namespace DAE
             return nullptr;
         }
 
+        // Attempts removing the current game object from
+        // its parent and adding to the new parent.
+        void SetParent(GameObject* pParent) noexcept;
+
+        /**
+         * @return Whether the pChild is a child of the current game object
+         */
+        bool IsChild(GameObject* pChild) const noexcept;
+
+        void RemoveChild(GameObject* pChild) noexcept;
+
+        void AddChild(GameObject* pChild) noexcept;
+
+        [[nodiscard]] GameObject* GetChild(unsigned int idx) const;
+
     private:
         std::vector<DeletableComponent> m_components{};
-        bool m_anyComponentsToDelete{};
+        bool m_componentDeletionFlagsDirty{};
 
+        GameObject* m_pParent{};
+        std::vector<GameObject*> m_pChildren{};
+
+        // Removes all the components with the deletion flag set
         void DeleteMarkedComponents() noexcept;
+
+        // Setting the world transform based on
+        // local transform and parent's world transform
+        void UpdateTransform() noexcept;
     };
 
 }
