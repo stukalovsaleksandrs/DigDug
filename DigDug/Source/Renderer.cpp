@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "Utils.h"
-#include "Components.h"
+#include "Component.h"
 
 void DAE::Renderer::Init(SDL_Window* pWindow)
 {

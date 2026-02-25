@@ -21,25 +21,25 @@ namespace DAE::Components {
      * Component base
      *******************************************/
     /** @note Required components get added automatically if absent in the owner */
-    class Components {
+    class Component {
     public:
-        explicit Components(GameObject& owner) noexcept : m_owner(owner){};
-        virtual ~Components() noexcept = default;
-        Components(Components const&) noexcept = delete;
-        Components& operator=(Components const&) noexcept = delete;
-        Components(Components&&) noexcept = delete;
-        Components& operator=(Components&&) noexcept = delete;
+        explicit Component(GameObject& owner) noexcept : m_owner(owner){};
+        virtual ~Component() noexcept = default;
+        Component(Component const&) noexcept = delete;
+        Component& operator=(Component const&) noexcept = delete;
+        Component(Component&&) noexcept = delete;
+        Component& operator=(Component&&) noexcept = delete;
 
         virtual void Update() noexcept {};
     protected:
         GameObject& m_owner;
     };
     template<typename DerivedComponentType>
-    concept DerivedComponent = std::derived_from<DerivedComponentType, Components>;
+    concept DerivedComponent = std::derived_from<DerivedComponentType, Component>;
 
-    class TransformComponent final : public Components {
+    class TransformComponent final : public Component {
     public:
-        explicit TransformComponent(GameObject& owner) noexcept : Components(owner) {};
+        explicit TransformComponent(GameObject& owner) noexcept : Component(owner) {};
         explicit TransformComponent(GameObject& owner, Transform const& transform) noexcept
             : TransformComponent(owner) {
             // Not in the initializer list because member initialization
@@ -61,7 +61,7 @@ namespace DAE::Components {
      * Render component
      *******************************************/
     /** @note Requires TransformComponent */
-    class RenderComponent final : public Components {
+    class RenderComponent final : public Component {
     public:
         explicit RenderComponent(GameObject& owner) noexcept;
         ~RenderComponent() override;
@@ -83,7 +83,7 @@ namespace DAE::Components {
      * Text component
      *******************************************/
     /** @note Requires TransformComponent and RenderComponent */
-    class TextComponent final : public Components {
+    class TextComponent final : public Component {
     public:
         explicit TextComponent(GameObject &owner, std::string_view text, std::shared_ptr<Font> const& pFont,
                                SDL_Color const&color = {255, 255, 255, 255}) noexcept;
@@ -104,7 +104,7 @@ namespace DAE::Components {
      * FPS component
      *******************************************/
     /** @note Requires TextComponent */
-    class FPSComponent final : public Components {
+    class FPSComponent final : public Component {
     public:
         explicit FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont,
                                SDL_Color const& color = {255, 255, 255, 255}) noexcept;

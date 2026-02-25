@@ -1,6 +1,6 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-#include "Components.h"
+#include "Component.h"
 #include <memory>
 #include <optional>
 #include <algorithm>
@@ -43,7 +43,7 @@ namespace DAE
          * @return Whether pComponent has the type of ComponentType
          */
         template<Components::DerivedComponent ComponentType>
-        static bool IsSameType(std::unique_ptr<Components::Components> const& pComponent) noexcept {
+        static bool IsSameType(std::unique_ptr<Components::Component> const& pComponent) noexcept {
             return dynamic_cast<ComponentType*>(pComponent.get());
         }
 
@@ -94,7 +94,7 @@ namespace DAE
 
 
     private:
-        std::vector<std::unique_ptr<Components::Components>> m_pComponents{};
+        std::vector<std::unique_ptr<Components::Component>> m_pComponents{};
 
     };
 
