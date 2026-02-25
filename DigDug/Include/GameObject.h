@@ -15,8 +15,8 @@ namespace DAE
         void Update() const;
 
         /**
-         * @def Attempts to add to the parent game object a new component of the type given
-         * @return A vector of pointers, where each of them points either to a new component or
+         * Attempts to add to the parent game object a new component of the type given
+         * @return A raw(non-owning) pointer to the newly-added component or
          * to an existing one if the owner already had a component with the same type
          */
         template<Components::DerivedComponent ComponentType, typename... Args>
@@ -37,7 +37,7 @@ namespace DAE
         }
 
         /**
-         * @def A helper predicate used to determine whether the input component has the type given
+         * A helper predicate used to determine whether the input component has the type given
          * @tparam ComponentType Component type to check the input component against
          * @param pComponent The component type of which is checked
          * @return Whether pComponent has the type of ComponentType
@@ -48,7 +48,7 @@ namespace DAE
         }
 
         /**
-         * @def Finds out if the owner has a component of the type given
+         * Finds out if the owner has a component of the type given
          * @return Whether the owner has a component of the type given
          */
         template<Components::DerivedComponent ComponentType>
@@ -57,7 +57,7 @@ namespace DAE
         }
 
         /**
-         * @def Attempts to remove the input component from the owner
+         * Attempts to remove the input component from the owner
          * @note Nothing happens if the owner does not have a component of the type given
          */
         template<Components::DerivedComponent ComponentType>
@@ -66,7 +66,7 @@ namespace DAE
         }
 
         /**
-         * @def Attempts to find the component of the given type at the owner's disposal
+         * Attempts to find the component of the given type at the owner's disposal
          * @return Pointer to the component if such exists; if not, then std::nullopt
          */
         template<Components::DerivedComponent ComponentType>
@@ -80,7 +80,7 @@ namespace DAE
         }
 
         /**
-         * @def Finds the component of the given type at the owner's disposal
+         * Finds the component of the given type at the owner's disposal
          * @note Asserts if the owner does not have a component of the type given
          */
         template<Components::DerivedComponent ComponentType>

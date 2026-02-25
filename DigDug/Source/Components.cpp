@@ -49,16 +49,28 @@ DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_vie
 }
 
 void DAE::Components::TextComponent::SetFont(std::shared_ptr<Font> const &pFont) {
+    // NOTE: I am not aware of any way to compare whether fonts are the same, but
+    // I can compare whether the 2 pointers point to the same object
+    if (m_pFont.get() == pFont.get()) return;
     m_pFont = pFont;
     UpdateTexture();
 }
 
 void DAE::Components::TextComponent::SetText(std::string_view const text) {
+    // Re-rendering texture only if the text changed
+    if (m_text == text) return;
     m_text = text;
     UpdateTexture();
 }
 
-void DAE::Components::TextComponent::SetColor(SDL_Color const &color) {
+bool AreColorsEqual(const SDL_Color& lhs, const SDL_Color& rhs) {
+    return (lhs.r == rhs.r) && (lhs.g == rhs.g) && (lhs.b == rhs.b) && (lhs.a == rhs.a);
+}
+
+void DAE::Components::TextComponent::SetColor(SDL_Color const &color)
+{
+    // Re-rendering texture only if the color changed
+    if (AreColorsEqual(m_color, color)) return;
     m_color = color;
     UpdateTexture();
 }

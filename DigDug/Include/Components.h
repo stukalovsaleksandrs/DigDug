@@ -34,6 +34,10 @@ namespace DAE::Components {
     protected:
         GameObject& m_owner;
         explicit Components(GameObject& owner) noexcept : m_owner(owner){};
+
+        // NOTE: Referencing the entire class since in order to reference only
+        // one function, I will need to include GameObject's header file, which
+        // will result in circular dependency
         friend class DAE::GameObject;// NOTE: Scope specification is mandatory, otherwise
         // the compiler will work with non-existing DAE::Components::GameObject
     };
@@ -108,6 +112,7 @@ namespace DAE::Components {
         std::shared_ptr<Font> m_pFont;
         SDL_Color m_color{ 255, 255, 255, 255 };
         RenderComponent* m_pRenderComponent;
+        bool m_dirty{};
 
         void UpdateTexture() const;
     };
