@@ -10,7 +10,6 @@
 #include <string_view>
 #include <string>
 
-
 namespace DAE {
     class GameObject;
     class Texture2D;
@@ -24,6 +23,7 @@ namespace DAE::Components {
     /** @note Required components get added automatically if absent in the owner */
     class Components {
     public:
+        explicit Components(GameObject& owner) noexcept : m_owner(owner){};
         virtual ~Components() noexcept = default;
         Components(Components const&) noexcept = delete;
         Components& operator=(Components const&) noexcept = delete;
@@ -33,27 +33,12 @@ namespace DAE::Components {
         virtual void Update() noexcept {};
     protected:
         GameObject& m_owner;
-        explicit Components(GameObject& owner) noexcept : m_owner(owner){};
-
-        // NOTE: Referencing the entire class since in order to reference only
-        // one function, I will need to include GameObject's header file, which
-        // will result in circular dependency
-        friend class DAE::GameObject;// NOTE: Scope specification is mandatory, otherwise
-        // the compiler will work with non-existing DAE::Components::GameObject
     };
     template<typename DerivedComponentType>
     concept DerivedComponent = std::derived_from<DerivedComponentType, Components>;
 
     class TransformComponent final : public Components {
     public:
-        [[nodiscard]] Transform const& GetTransform() const noexcept {
-            return m_transform;
-        }
-        void SetLocation(glm::vec2 location) {
-            m_transform.SetLocation({location.x, location.y, 0.f});
-        }
-
-    protected:
         explicit TransformComponent(GameObject& owner) noexcept : Components(owner) {};
         explicit TransformComponent(GameObject& owner, Transform const& transform) noexcept
             : TransformComponent(owner) {
@@ -61,7 +46,12 @@ namespace DAE::Components {
             // in there is prohibited for delegating constructors
             m_transform = transform;
         }
-        friend class DAE::GameObject;
+        [[nodiscard]] Transform const& GetTransform() const noexcept {
+            return m_transform;
+        }
+        void SetLocation(glm::vec2 location) {
+            m_transform.SetLocation({location.x, location.y, 0.f});
+        }
 
     private:
         Transform m_transform{};
@@ -73,6 +63,7 @@ namespace DAE::Components {
     /** @note Requires TransformComponent */
     class RenderComponent final : public Components {
     public:
+        explicit RenderComponent(GameObject& owner) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;
@@ -82,10 +73,6 @@ namespace DAE::Components {
         void Render() const;
         void SetTexture(std::string_view filename);
         void SetTexture(SDL_Texture* pSDLTexture);
-
-    protected:
-        explicit RenderComponent(GameObject& owner) noexcept;
-        friend class DAE::GameObject;
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
@@ -98,21 +85,17 @@ namespace DAE::Components {
     /** @note Requires TransformComponent and RenderComponent */
     class TextComponent final : public Components {
     public:
+        explicit TextComponent(GameObject &owner, std::string_view text, std::shared_ptr<Font> const& pFont,
+                               SDL_Color const&color = {255, 255, 255, 255}) noexcept;
         void SetFont(std::shared_ptr<Font> const& pFont);
         void SetText(std::string_view text);
         void SetColor(SDL_Color const& color);
-
-    protected:
-        explicit TextComponent(GameObject &owner, std::string_view text, std::shared_ptr<Font> const& pFont,
-                               SDL_Color const&color = {255, 255, 255, 255}) noexcept;
-        friend class DAE::GameObject;
 
     private:
         std::string m_text;
         std::shared_ptr<Font> m_pFont;
         SDL_Color m_color{ 255, 255, 255, 255 };
         RenderComponent* m_pRenderComponent;
-        bool m_dirty{};
 
         void UpdateTexture() const;
     };
@@ -123,12 +106,9 @@ namespace DAE::Components {
     /** @note Requires TextComponent */
     class FPSComponent final : public Components {
     public:
-        void Update() noexcept override ;
-
-    protected:
         explicit FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont,
                                SDL_Color const& color = {255, 255, 255, 255}) noexcept;
-        friend class DAE::GameObject;
+        void Update() noexcept override;
     };
 }
 
