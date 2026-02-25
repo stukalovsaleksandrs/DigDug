@@ -31,6 +31,7 @@ namespace DAE::Components {
         Component& operator=(Component&&) noexcept = delete;
 
         virtual void Update() noexcept {};
+
     protected:
         GameObject& m_owner;
     };

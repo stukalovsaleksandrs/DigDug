@@ -9,10 +9,20 @@ namespace DAE
 {
     class Texture2D;
     class Scene;
+
     class GameObject final
     {
+        struct DeletableComponent
+        {
+            // NOTE: Not just adding a deletion flag to the component class,
+            // to make sure GameObject is the only one allowed to delete
+            // its components
+            std::unique_ptr<Components::Component> pComponent;
+            bool markedForDeletion{};
+        };
+
     public:
-        void Update() const;
+        void Update();
 
         /**
          * Attempts to add to the parent game object a new component of the type given
@@ -22,29 +32,33 @@ namespace DAE
         template<Components::DerivedComponent ComponentType, typename... Args>
         ComponentType* AddComponent(Args&&... args) noexcept {
             // Trying returning the existing component
-            for (auto& pComponent : m_pComponents) {
+            for (auto& [pComponent, markedForDeletion] : m_components) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
                     return pDerivedComponent;
                 }
             }
             // Returning a new component since there is no existing one
-            return dynamic_cast<ComponentType*>(
-                m_pComponents.emplace_back(std::unique_ptr<ComponentType>(
-                    // NOTE: Not using std::make_unique since it cannot access protected constructors
-                    new ComponentType(std::forward<Args>(args)...)
-                )).get()
-                );
+            m_components.emplace_back(
+                DeletableComponent(
+                    std::unique_ptr<ComponentType>(
+                        // NOTE: Not using std::make_unique since it cannot access protected constructors
+                        new ComponentType(std::forward<Args>(args)...)
+                    ),
+                    false
+                )
+            );
+            return dynamic_cast<ComponentType*>(m_components.back().pComponent.get());
         }
 
         /**
          * A helper predicate used to determine whether the input component has the type given
          * @tparam ComponentType Component type to check the input component against
-         * @param pComponent The component type of which is checked
+         * @param component The component type of which is checked
          * @return Whether pComponent has the type of ComponentType
          */
         template<Components::DerivedComponent ComponentType>
-        static bool IsSameType(std::unique_ptr<Components::Component> const& pComponent) noexcept {
-            return dynamic_cast<ComponentType*>(pComponent.get());
+        static bool IsSameType(DeletableComponent const& component) noexcept {
+            return dynamic_cast<ComponentType*>(component.pComponent.get());
         }
 
         /**
@@ -53,7 +67,7 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType>
         [[nodiscard]] bool HasComponent() const noexcept {
-            return std::ranges::any_of(m_pComponents, IsSameType<ComponentType>);
+            return std::ranges::any_of(m_components, IsSameType<ComponentType>);
         }
 
         /**
@@ -62,7 +76,12 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType>
         void RemoveComponent() noexcept {
-            std::erase_if(m_pComponents, IsSameType<ComponentType>);
+            m_anyComponentsToDelete = true;
+            if (auto componentIterator{ std::ranges::find_if(m_components, IsSameType<ComponentType>)};
+                componentIterator != m_components.end())
+            {
+                componentIterator->markedForDeletion = true;
+            }
         }
 
         /**
@@ -71,7 +90,7 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType>
         std::optional<ComponentType*> TryGettingComponent() noexcept {
-            for (auto const& pComponent : m_pComponents) {
+            for (const auto& [pComponent, markedForDeletion] : m_components) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
                     return pDerivedComponent;
                 }
@@ -92,10 +111,11 @@ namespace DAE
             return nullptr;
         }
 
-
     private:
-        std::vector<std::unique_ptr<Components::Component>> m_pComponents{};
+        std::vector<DeletableComponent> m_components{};
+        bool m_anyComponentsToDelete{};
 
+        void DeleteMarkedComponents() noexcept;
     };
 
 }

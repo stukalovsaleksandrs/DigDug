@@ -16,6 +16,7 @@ static void Load()
     // Background
     auto pGameObject{ std::make_unique<DAE::GameObject>() };
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Background.png");
+
     scene.Add(std::move(pGameObject));
 
     // Logo
@@ -23,6 +24,7 @@ static void Load()
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Logo.png");
     pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({358, 180});
     scene.Add(std::move(pGameObject));
+
 
     // Title
     pGameObject = std::make_unique<DAE::GameObject>();

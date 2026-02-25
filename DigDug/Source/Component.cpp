@@ -40,6 +40,7 @@ void DAE::Components::RenderComponent::SetTexture(SDL_Texture* pSDLTexture) {
 /*******************************************
  * Text component
  *******************************************/
+
 DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
