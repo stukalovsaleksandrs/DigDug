@@ -24,6 +24,8 @@ namespace DAE
         };
 
     public:
+        explicit GameObject(glm::vec2 localPosition) noexcept;
+
         void Update();
 
         /**
@@ -126,12 +128,13 @@ namespace DAE
 
         void AddChild(GameObject* pChild) noexcept;
 
-        [[nodiscard]] GameObject* GetChild(unsigned int idx) const;
+        [[nodiscard]] GameObject* GetChild(unsigned int const idx) const{ return m_pChildren.at(idx); };
+        [[nodiscard]] GameObject* GetParent() const{ return m_pParent; };
 
-        void SetLocalPosition(glm::vec3 const& position) noexcept;
+        void SetLocalPosition(glm::vec2 position) noexcept;
 
         // NOTE: Non-const, because it can update the position
-        [[nodiscard]] glm::vec3 const& GetWorldPosition() noexcept;
+        [[nodiscard]] glm::vec2 GetWorldPosition() noexcept;
 
         // Marks as dirty the position of the current game object and all its children
         void SetPositionDirty() noexcept;
@@ -143,8 +146,7 @@ namespace DAE
         GameObject* m_pParent{};
         std::vector<GameObject*> m_pChildren{};
 
-        glm::vec3 m_localPosition{};
-        glm::vec3 m_worldPosition{};
+        glm::vec2 m_localPosition{}, m_worldPosition{};
         bool m_positionIsDirty{};
 
         // Removes all the components with the deletion flag set

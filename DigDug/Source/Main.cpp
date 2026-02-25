@@ -1,3 +1,4 @@
+#include <iostream>
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
@@ -7,6 +8,7 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 #include <filesystem>
+#include <glm/glm.hpp>
 namespace fs = std::filesystem;
 
 static void Load()
@@ -14,21 +16,19 @@ static void Load()
     auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
 
     // Background
-    auto pGameObject{ std::make_unique<DAE::GameObject>() };
+    auto pGameObject{ std::make_unique<DAE::GameObject>(glm::vec2{}) };
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Background.png");
 
     scene.Add(std::move(pGameObject));
 
     // Logo
-    pGameObject = std::make_unique<DAE::GameObject>();
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{358, 180});
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Logo.png");
-    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({358, 180});
     scene.Add(std::move(pGameObject));
 
 
     // Title
-    pGameObject = std::make_unique<DAE::GameObject>();
-    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({ 292, 20 });
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 292, 20 });
     auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
     pGameObject->AddComponent<DAE::Components::TextComponent>(
         *pGameObject.get(),
@@ -38,16 +38,27 @@ static void Load()
     scene.Add(std::move(pGameObject));
 
     // FPS
-    pGameObject = std::make_unique<DAE::GameObject>();
-    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({ 10, 10 });
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 10, 10 });
     pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
     scene.Add(std::move(pGameObject));
 
-    // Random images
-    pGameObject = std::make_unique<DAE::GameObject>();
-    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get());
+    // Random circles
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 200, 300 });
+    DAE::GameObject& pParent{ *pGameObject.get() };
+    scene.Add(std::move(pGameObject));
+
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{0.f, 50.f});
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
-    pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), glm::vec2{200, 300}, 50.f, glm::pi<float>() );
+    pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), 0.5f * glm::pi<float>());
+    pGameObject->SetParent(&pParent, false);
+    DAE::GameObject& pParent2{ *pGameObject.get() };
+    scene.Add(std::move(pGameObject));
+
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{0.f, 100.f});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
+    pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), -glm::pi<float>());
+    pGameObject->SetParent(&pParent2, false);
+
     scene.Add(std::move(pGameObject));
 }
 

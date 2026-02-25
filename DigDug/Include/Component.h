@@ -22,7 +22,6 @@ namespace DAE::Components {
     /*******************************************
      * Component base
      *******************************************/
-    /** @note Required components get added automatically if absent in the owner */
     class Component {
     public:
         explicit Component(GameObject& owner) noexcept : m_owner(owner){};
@@ -40,30 +39,9 @@ namespace DAE::Components {
     template<typename DerivedComponentType>
     concept DerivedComponent = std::derived_from<DerivedComponentType, Component>;
 
-    class TransformComponent final : public Component {
-    public:
-        explicit TransformComponent(GameObject& owner) noexcept : Component(owner) {};
-        explicit TransformComponent(GameObject& owner, Transform const& transform) noexcept
-            : TransformComponent(owner) {
-            // Not in the initializer list because member initialization
-            // in there is prohibited for delegating constructors
-            m_transform = transform;
-        }
-        [[nodiscard]] Transform const& GetTransform() const noexcept {
-            return m_transform;
-        }
-        void SetLocation(glm::vec2 const location) noexcept {
-            m_transform.SetLocation(location);
-        }
-
-    private:
-        Transform m_transform{};
-    };
-
     /*******************************************
      * Render component
      *******************************************/
-    /** @note Requires TransformComponent */
     class RenderComponent final : public Component {
     public:
         explicit RenderComponent(GameObject& owner) noexcept;
@@ -79,13 +57,11 @@ namespace DAE::Components {
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
-        TransformComponent* m_pTransformComponent;
     };
 
     /*******************************************
      * Text component
      *******************************************/
-    /** @note Requires TransformComponent and RenderComponent */
     class TextComponent final : public Component {
     public:
         explicit TextComponent(GameObject &owner, std::string_view text, std::shared_ptr<Font> const& pFont,
@@ -106,7 +82,6 @@ namespace DAE::Components {
     /*******************************************
      * FPS component
      *******************************************/
-    /** @note Requires TextComponent */
     class FPSComponent final : public Component {
     public:
         explicit FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont,
@@ -117,27 +92,22 @@ namespace DAE::Components {
     /*******************************************
      * Orbit component
      *******************************************/
-    /** @note Requires TextComponent */
     class OrbitComponent final : public Component
     {
     public:
         /**
          * Rotates the object around @center at the @distance with the speed of radians.
          * Sets the transform value to transform component
+         * The distance between the component's parent and parent of the parent is preserved
          * @param owner GameObject the component belongs to
-         * @param origin in pixels, the point around which the character rotates
-         * @param distance in pixels from point defined by transform component to the object
          * @param radiansSec speed, with which the object rotates around the pivot point
-         * @note Requires TransformComponent
+         * @note Requires the owner to have a parent
          */
-        explicit OrbitComponent(GameObject &owner, glm::vec2 origin, float distance, float radiansSec) noexcept;
+        explicit OrbitComponent(GameObject &owner, float radiansSec) noexcept;
         void Update() noexcept override;
 
     private:
-        TransformComponent* m_pTransformComponent;
-        glm::vec2 m_origin;
-        float m_radiansSec{ 0.25f * glm::pi<float>() },
-            m_distance{ 50.f };
+        float m_radiansSec{ 0.25f * glm::pi<float>() };
     };
 }
 

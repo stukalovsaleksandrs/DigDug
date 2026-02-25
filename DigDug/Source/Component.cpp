@@ -14,7 +14,6 @@
  *******************************************/
 DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
     : Component(owner) {
-    m_pTransformComponent = owner.AddComponent<TransformComponent>(owner);
     Renderer::GetInstance().RegisterComponent(this);
 }
 
@@ -27,7 +26,7 @@ void DAE::Components::RenderComponent::Render() const {
     assert(m_pTexture && "Texture is not set");
     Renderer::GetInstance().RenderTexture(
         *m_pTexture,
-        m_pTransformComponent->GetTransform().GetLocation());
+        m_owner.GetWorldPosition());
 }
 
 void DAE::Components::RenderComponent::SetTexture(std::string_view const filename) {
@@ -107,29 +106,28 @@ void DAE::Components::FPSComponent::Update() noexcept {
     m_owner.GetComponent<TextComponent>()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
 }
 
-
 /*******************************************
  * Orbit component
  *******************************************/
-DAE::Components::OrbitComponent::OrbitComponent(GameObject& owner, glm::vec2 const origin, float const distance,
-                                                float const radiansSec) noexcept
+DAE::Components::OrbitComponent::OrbitComponent(GameObject& owner, float const radiansSec) noexcept
     : Component(owner)
-    , m_origin{ origin }
     , m_radiansSec{ radiansSec }
-    , m_distance{ distance }
-{
-    m_pTransformComponent = owner.AddComponent<TransformComponent>(owner);
-}
+{}
 
 void DAE::Components::OrbitComponent::Update() noexcept
 {
     Component::Update();
-    // 1. Getting the distance vector
-    glm::vec2 const distanceNormalVector{ glm::normalize(m_pTransformComponent->GetTransform().GetLocation() - m_origin) };
+
+    // 1. Getting the normalized distance vector and distance
+    auto const distanceVector{ m_owner.GetWorldPosition() - m_owner.GetParent()->GetWorldPosition() };
+    // NOTE: glm::vec2::length always returns 2 for some reason
+    float const distance{ glm::sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y) };
+    glm::vec2 const distanceVectorNormalized{ glm::normalize(distanceVector) };
+    assert(distanceVectorNormalized.length() > 0.f);
     // 2. Getting the angle of the distance vector
-    float radians{ glm::atan(distanceNormalVector.y, distanceNormalVector.x) };
+    float radians{ glm::atan(distanceVectorNormalized.y, distanceVectorNormalized.x) };
     // 3. Adding angular velocity to the angle
     radians += m_radiansSec * Timer::GetInstance().GetDeltaSec();
     // 4. Calculating the new distance vector and adding the distance vector to the center
-    m_pTransformComponent->SetLocation(m_origin + glm::vec2(glm::cos(radians), std::sin(radians)) * m_distance);
+    m_owner.SetLocalPosition(glm::vec2(glm::cos(radians), std::sin(radians)) * distance);
 }

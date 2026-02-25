@@ -2,6 +2,12 @@
 
 #include <iostream>
 
+DAE::GameObject::GameObject(glm::vec2 const localPosition) noexcept
+    : m_localPosition{ localPosition }
+{
+    UpdateWorldPosition();
+}
+
 void DAE::GameObject::Update() {
     DeleteMarkedComponents();
 
@@ -15,6 +21,12 @@ void DAE::GameObject::SetParent(GameObject* pParent, bool const keepWorldPositio
 {
     // Checking if the new parent is valid
     if (IsChild(pParent) || pParent == this || m_pParent == pParent ) return;
+    // Removing ourselves from the parent
+    if (m_pParent) m_pParent->RemoveChild(this);
+    // Setting the new parent
+    m_pParent = pParent;
+    // Adding ourselves to the parent's children list
+    if (m_pParent) m_pParent->AddChild(this);
     // Updating transform
     if (!pParent)
         SetLocalPosition(GetWorldPosition());
@@ -22,14 +34,8 @@ void DAE::GameObject::SetParent(GameObject* pParent, bool const keepWorldPositio
     {
         if (keepWorldPosition)
             SetLocalPosition(GetWorldPosition() - pParent->GetWorldPosition());
-        SetPositionDirty();
+        UpdateWorldPosition();
     }
-    // Removing ourselves from the parent
-    if (m_pParent) m_pParent->RemoveChild(this);
-    // Setting the new parent
-    m_pParent = pParent;
-    // Adding ourselves to the parent's children list
-    if (m_pParent) m_pParent->AddChild(this);
 }
 
 bool DAE::GameObject::IsChild(GameObject* pChild) const noexcept
@@ -68,11 +74,6 @@ void DAE::GameObject::AddChild(GameObject* pChild) noexcept
     SetPositionDirty();
 }
 
-DAE::GameObject* DAE::GameObject::GetChild(unsigned int const idx) const
-{
-    return m_pChildren.at(idx);
-}
-
 void DAE::GameObject::DeleteMarkedComponents() noexcept
 {
     if (!m_componentDeletionFlagsDirty) return;
@@ -85,32 +86,31 @@ void DAE::GameObject::DeleteMarkedComponents() noexcept
     );
 }
 
-void DAE::GameObject::SetLocalPosition(glm::vec3 const& position) noexcept
+void DAE::GameObject::SetLocalPosition(glm::vec2 position) noexcept
 {
     m_localPosition = position;
     SetPositionDirty();
 }
 
-glm::vec3 const& DAE::GameObject::GetWorldPosition() noexcept
+glm::vec2 DAE::GameObject::GetWorldPosition() noexcept
 {
     if (m_positionIsDirty)
+    {
         UpdateWorldPosition();
+        m_positionIsDirty = false;
+    }
     return m_worldPosition;
 }
 
 void DAE::GameObject::UpdateWorldPosition() noexcept
 {
-    if (m_positionIsDirty)
+    if (!m_pParent)
     {
-        if (!m_pParent)
-        {
-            m_worldPosition = m_localPosition;
-        }
-        else
-        {
-            m_worldPosition = m_pParent->GetWorldPosition() + m_localPosition;
-        }
-        m_positionIsDirty = false;
+        m_worldPosition = m_localPosition;
+    }
+    else
+    {
+        m_worldPosition = m_pParent->GetWorldPosition() + m_localPosition;
     }
 }
 
