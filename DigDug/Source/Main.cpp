@@ -42,6 +42,13 @@ static void Load()
     pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get())->SetLocation({ 10, 10 });
     pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
     scene.Add(std::move(pGameObject));
+
+    // Random images
+    pGameObject = std::make_unique<DAE::GameObject>();
+    pGameObject->AddComponent<DAE::Components::TransformComponent>(*pGameObject.get());
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
+    pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), glm::vec2{200, 300}, 50.f, glm::pi<float>() );
+    scene.Add(std::move(pGameObject));
 }
 
 int main(int, char*[]) {

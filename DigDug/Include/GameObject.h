@@ -4,6 +4,8 @@
 #include <memory>
 #include <optional>
 #include <algorithm>
+#include <vector>
+#include <glm/vec3.hpp>
 
 namespace DAE
 {
@@ -113,7 +115,7 @@ namespace DAE
 
         // Attempts removing the current game object from
         // its parent and adding to the new parent.
-        void SetParent(GameObject* pParent) noexcept;
+        void SetParent(GameObject* pParent, bool keepWorldPosition) noexcept;
 
         /**
          * @return Whether the pChild is a child of the current game object
@@ -126,6 +128,14 @@ namespace DAE
 
         [[nodiscard]] GameObject* GetChild(unsigned int idx) const;
 
+        void SetLocalPosition(glm::vec3 const& position) noexcept;
+
+        // NOTE: Non-const, because it can update the position
+        [[nodiscard]] glm::vec3 const& GetWorldPosition() noexcept;
+
+        // Marks as dirty the position of the current game object and all its children
+        void SetPositionDirty() noexcept;
+
     private:
         std::vector<DeletableComponent> m_components{};
         bool m_componentDeletionFlagsDirty{};
@@ -133,12 +143,14 @@ namespace DAE
         GameObject* m_pParent{};
         std::vector<GameObject*> m_pChildren{};
 
+        glm::vec3 m_localPosition{};
+        glm::vec3 m_worldPosition{};
+        bool m_positionIsDirty{};
+
         // Removes all the components with the deletion flag set
         void DeleteMarkedComponents() noexcept;
 
-        // Setting the world transform based on
-        // local transform and parent's world transform
-        void UpdateTransform() noexcept;
+        void UpdateWorldPosition() noexcept;
     };
 
 }

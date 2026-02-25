@@ -10,6 +10,8 @@
 #include <string_view>
 #include <string>
 
+#include "glm/ext/scalar_constants.hpp"
+
 namespace DAE {
     class GameObject;
     class Texture2D;
@@ -50,8 +52,8 @@ namespace DAE::Components {
         [[nodiscard]] Transform const& GetTransform() const noexcept {
             return m_transform;
         }
-        void SetLocation(glm::vec2 location) {
-            m_transform.SetLocation({location.x, location.y, 0.f});
+        void SetLocation(glm::vec2 const location) noexcept {
+            m_transform.SetLocation(location);
         }
 
     private:
@@ -110,6 +112,32 @@ namespace DAE::Components {
         explicit FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont,
                                SDL_Color const& color = {255, 255, 255, 255}) noexcept;
         void Update() noexcept override;
+    };
+
+    /*******************************************
+     * Orbit component
+     *******************************************/
+    /** @note Requires TextComponent */
+    class OrbitComponent final : public Component
+    {
+    public:
+        /**
+         * Rotates the object around @center at the @distance with the speed of radians.
+         * Sets the transform value to transform component
+         * @param owner GameObject the component belongs to
+         * @param origin in pixels, the point around which the character rotates
+         * @param distance in pixels from point defined by transform component to the object
+         * @param radiansSec speed, with which the object rotates around the pivot point
+         * @note Requires TransformComponent
+         */
+        explicit OrbitComponent(GameObject &owner, glm::vec2 origin, float distance, float radiansSec) noexcept;
+        void Update() noexcept override;
+
+    private:
+        TransformComponent* m_pTransformComponent;
+        glm::vec2 m_origin;
+        float m_radiansSec{ 0.25f * glm::pi<float>() },
+            m_distance{ 50.f };
     };
 }
 
