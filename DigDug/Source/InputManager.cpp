@@ -1,5 +1,6 @@
-#include <SDL3/SDL.h>
 #include "InputManager.h"
+#include <SDL3/SDL.h>
+#include <backends/imgui_impl_sdl3.h>
 
 bool DAE::InputManager::ProcessInput()
 {
@@ -15,6 +16,9 @@ bool DAE::InputManager::ProcessInput()
 
         }
         // etc...
+
+        // Processing ImGui events
+        ImGui_ImplSDL3_ProcessEvent(&e);
     }
 
     return true;
