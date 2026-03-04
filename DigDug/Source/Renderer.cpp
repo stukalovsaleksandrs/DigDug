@@ -134,30 +134,7 @@ void DAE::Renderer::DrawEx1()
         // Recalculating the data, when button is pressed
         if (ImGui::Button("Thrash the cache"))
         {
-            // Getting the step count
-            int stepCount{};
-            for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
-
-            // Getting the data
-            for (int sampleIdx{}; sampleIdx < m_sampleCountEx1; ++sampleIdx)// Sorry, Tom
-            {
-                for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
-                {
-                    auto const start{ std::chrono::high_resolution_clock::now() };
-
-                    for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
-                    {
-                        m_intBuffer[idx] *= 2;
-                    }
-
-                    auto const end{ std::chrono::high_resolution_clock::now() };
-                    auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
-                    m_averageDurationsEx1[stepIdx] = duration.count();
-                }
-            }
-
-            // Dividing all the samples by the sample count to get the average data
-            std::ranges::transform(m_averageDurationsEx1, m_averageDurationsEx1.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx1; });
+            ProcessPlotting();
         }
 
         // If vector is not empty, plotting it
@@ -202,7 +179,7 @@ void DAE::Renderer::DrawEx2()
 
                     auto const end{ std::chrono::high_resolution_clock::now() };
                     auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
-                    m_averageDurationsGameObject3D[stepIdx] = duration.count();
+                    m_averageDurationsGameObject3D[stepIdx] = static_cast<int>(duration.count());
                 }
             }
 
@@ -231,7 +208,7 @@ void DAE::Renderer::DrawEx2()
 
                     auto const end{ std::chrono::high_resolution_clock::now() };
                     auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
-                    m_averageDurationsGameObject3DAlt[stepIdx] = duration.count();
+                    m_averageDurationsGameObject3DAlt[stepIdx] = static_cast<int>(duration.count());
                 }
             }
 
@@ -252,4 +229,32 @@ void DAE::Renderer::DrawEx2()
         }
         ImGui::End();
     }
+}
+
+void DAE::Renderer::ProcessPlotting()
+{
+    // Getting the step count
+    int stepCount{};
+    for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
+
+    // Getting the data
+    for (int sampleIdx{}; sampleIdx < m_sampleCountEx1; ++sampleIdx)// Sorry, Tom
+    {
+        for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
+        {
+            auto const start{ std::chrono::high_resolution_clock::now() };
+
+            for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
+            {
+                m_intBuffer[idx] *= 2;
+            }
+
+            auto const end{ std::chrono::high_resolution_clock::now() };
+            auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
+            m_averageDurationsEx1[stepIdx] = static_cast<int>(duration.count());
+        }
+    }
+
+    // Dividing all the samples by the sample count to get the average data
+    std::ranges::transform(m_averageDurationsEx1, m_averageDurationsEx1.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx1; });
 }

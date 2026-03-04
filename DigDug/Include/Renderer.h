@@ -98,6 +98,7 @@ namespace DAE
         void DrawImgui();
         void DrawEx1();
         void DrawEx2();
+        void ProcessPlotting();
     };
 }
 
