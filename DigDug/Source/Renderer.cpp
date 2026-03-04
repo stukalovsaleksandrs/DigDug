@@ -134,7 +134,7 @@ void DAE::Renderer::DrawEx1()
         // Recalculating the data, when button is pressed
         if (ImGui::Button("Thrash the cache"))
         {
-            ProcessPlotting();
+            RecalculatePlotData(m_sampleCountEx1, m_intBuffer, m_averageDurationsEx1);
         }
 
         // If vector is not empty, plotting it
@@ -161,100 +161,29 @@ void DAE::Renderer::DrawEx2()
         // Recalculating the data, when button is pressed
         if (ImGui::Button("Thrash the cache with GameObject3D"))
         {
-            // Getting the step count
-            int stepCount{};
-            for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
-
-            // Getting the data
-            for (int sampleIdx{}; sampleIdx < m_sampleCountEx2; ++sampleIdx)// Sorry, Tom
-            {
-                for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
-                {
-                    auto const start{ std::chrono::high_resolution_clock::now() };
-
-                    for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
-                    {
-                        m_gameObjects3D[idx].id *= 2;
-                    }
-
-                    auto const end{ std::chrono::high_resolution_clock::now() };
-                    auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
-                    m_averageDurationsGameObject3D[stepIdx] = static_cast<int>(duration.count());
-                }
-            }
-
-            // Dividing all the samples by the sample count to get the average data
-            std::ranges::transform(m_averageDurationsGameObject3D, m_averageDurationsGameObject3D.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx2; });
+            RecalculatePlotData(m_sampleCountEx2, m_gameObjects3D, m_averageDurationsGameObject3D);
         }
 
         // Recalculating the data, when button is pressed
         if (ImGui::Button("Thrash the cache with GameObject3DAlt"))
         {
-            // Getting the step count
-            int stepCount{};
-            for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
-
-            // Getting the data
-            for (int sampleIdx{}; sampleIdx < m_sampleCountEx2; ++sampleIdx)// Sorry, Tom
-            {
-                for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
-                {
-                    auto const start{ std::chrono::high_resolution_clock::now() };
-
-                    for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
-                    {
-                        m_gameObjects3DAlt[idx].id *= 2;
-                    }
-
-                    auto const end{ std::chrono::high_resolution_clock::now() };
-                    auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
-                    m_averageDurationsGameObject3DAlt[stepIdx] = static_cast<int>(duration.count());
-                }
-            }
-
-            // Dividing all the samples by the sample count to get the average data
-            std::ranges::transform(m_averageDurationsGameObject3DAlt, m_averageDurationsGameObject3DAlt.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx2; });
+            RecalculatePlotData(m_sampleCountEx2, m_gameObjects3DAlt, m_averageDurationsGameObject3DAlt);
         }
 
         // If vector is not empty, plotting it
-        if (!m_averageDurationsGameObject3DAlt.empty())
-        {
             ImPlot::SetNextAxesToFit();
             if (ImPlot::BeginPlot("Exercise 2"))
             {
-                ImPlot::PlotLine<uint32_t>("GameObject3D", m_averageDurationsGameObject3D.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
-                ImPlot::PlotLine<uint32_t>("GameObject3DAlt", m_averageDurationsGameObject3DAlt.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
+                if (!m_averageDurationsGameObject3D.empty())
+                {
+                    ImPlot::PlotLine<uint32_t>("GameObject3D", m_averageDurationsGameObject3D.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
+                }
+                if (!m_averageDurationsGameObject3DAlt.empty())
+                {
+                    ImPlot::PlotLine<uint32_t>("GameObject3DAlt", m_averageDurationsGameObject3DAlt.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
+                }
                 ImPlot::EndPlot();
             }
-        }
         ImGui::End();
     }
-}
-
-void DAE::Renderer::ProcessPlotting()
-{
-    // Getting the step count
-    int stepCount{};
-    for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
-
-    // Getting the data
-    for (int sampleIdx{}; sampleIdx < m_sampleCountEx1; ++sampleIdx)// Sorry, Tom
-    {
-        for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
-        {
-            auto const start{ std::chrono::high_resolution_clock::now() };
-
-            for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
-            {
-                m_intBuffer[idx] *= 2;
-            }
-
-            auto const end{ std::chrono::high_resolution_clock::now() };
-            auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
-            m_averageDurationsEx1[stepIdx] = static_cast<int>(duration.count());
-        }
-    }
-
-    // Dividing all the samples by the sample count to get the average data
-    std::ranges::transform(m_averageDurationsEx1, m_averageDurationsEx1.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx1; });
 }

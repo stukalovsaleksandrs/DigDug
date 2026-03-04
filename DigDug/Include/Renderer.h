@@ -1,5 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
+#include <algorithm>
+#include <chrono>
 #include <memory>
 
 #include "Singleton.h"
@@ -98,8 +100,46 @@ namespace DAE
         void DrawImgui();
         void DrawEx1();
         void DrawEx2();
-        void ProcessPlotting();
+
+        template<typename T>
+        void RecalculatePlotData(int sampleCount, std::vector<T>& buffer, std::vector<unsigned>& averageDurations);
     };
+
+    template <typename T>
+    void Renderer::RecalculatePlotData(int const sampleCount, std::vector<T>& buffer, std::vector<unsigned>& averageDurations)
+    {
+        // Getting the step count
+        int stepCount{};
+        for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
+
+        // Getting the data
+        for (int sampleIdx{}; sampleIdx < sampleCount; ++sampleIdx)// Sorry, Tom
+        {
+            for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
+            {
+                auto const start{ std::chrono::high_resolution_clock::now() };
+
+                for (std::size_t bufferIdx{}; bufferIdx < buffer.size(); bufferIdx += stepSize)
+                {
+                    if constexpr(requires{T::id;})
+                    {
+                        buffer[bufferIdx].id *= static_cast<int>(bufferIdx);
+                    }
+                    else
+                    {
+                        buffer[bufferIdx] *= 2;
+                    }
+                }
+
+                auto const end{ std::chrono::high_resolution_clock::now() };
+                auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
+                averageDurations[stepIdx] = static_cast<int>(duration.count());
+            }
+        }
+
+        // Dividing all the samples by the sample count to get the average data
+        std::ranges::transform(averageDurations, averageDurations.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx1; });
+    }
 }
 
 #endif
