@@ -1,10 +1,8 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "Transform.h"
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
-#include <glm/vec2.hpp>
 #include <concepts>
 #include <memory>
 #include <string_view>

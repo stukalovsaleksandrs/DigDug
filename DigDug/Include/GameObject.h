@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 namespace DAE
 {
@@ -94,7 +95,7 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType>
         std::optional<ComponentType*> TryGettingComponent() noexcept {
-            for (const auto& [pComponent, markedForDeletion] : m_components) {
+            for (auto const& [pComponent, markedForDeletion] : m_components) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
                     return pDerivedComponent;
                 }
