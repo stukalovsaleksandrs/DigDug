@@ -1,5 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
+#include <memory>
+
 #include "Singleton.h"
 #include <SDL3/SDL.h>
 #include <glm/vec2.hpp>
@@ -56,12 +58,46 @@ namespace DAE
         SDL_Window* m_pWindow{};
         SDL_Color m_clearColor{};
         std::vector<Components::RenderComponent*> m_pRenderComponents;// Non-owning
-        int m_sampleCount{ 10 };
+        int m_sampleCountEx1{ 10 };
+
+        // Ex1
         std::vector<unsigned> m_averageDurationsEx1;
         std::vector<unsigned> m_intBuffer;
 
-        void DrawImgui();
+        // Ex2
+        struct Transform
+        {
+            float matrix[16] = {
+                1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                0,0,0,1 };
+        };
 
+        class GameObject3D
+        {
+        public:
+            Transform transform;
+            int id;
+        };
+
+        class GameObject3DAlt
+        {
+        public:
+            std::unique_ptr<Transform> transform;
+            int id;
+        };
+
+        std::vector<unsigned> m_averageDurationsGameObject3D;
+        std::vector<GameObject3D> m_gameObjects3D;
+
+        std::vector<unsigned> m_averageDurationsGameObject3DAlt;
+        std::vector<GameObject3DAlt> m_gameObjects3DAlt;
+        int m_sampleCountEx2{ 10 };
+
+        void DrawImgui();
+        void DrawEx1();
+        void DrawEx2();
     };
 }
 

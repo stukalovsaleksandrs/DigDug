@@ -10,8 +10,7 @@
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlrenderer3.h>
 #include <iostream>
-
-#include "../../Build/Release/_deps/implot-src/implot.h"
+#include "implot.h"
 
 void DAE::Renderer::Init(SDL_Window* pWindow)
 {
@@ -39,9 +38,19 @@ void DAE::Renderer::Init(SDL_Window* pWindow)
     ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pRenderer);
     ImGui_ImplSDLRenderer3_Init(m_pRenderer);
 
-    // Sizing the average duration
-    m_averageDurationsEx1.resize(11);
-    m_intBuffer.resize(10'000'000);
+    // Resizing exercise containers
+    size_t constexpr bufferSize{ 10'000'000 };
+    size_t constexpr stepCount{ 11 };
+
+    // Resizing the containers for exercise 1
+    m_averageDurationsEx1.resize(stepCount);
+    m_intBuffer.resize(bufferSize);
+
+    // Resizing the containers for exercise 2
+    m_averageDurationsGameObject3D.resize(stepCount);
+    m_averageDurationsGameObject3DAlt.resize(stepCount);
+    m_gameObjects3D.resize(bufferSize);
+    m_gameObjects3DAlt.resize(bufferSize);
 }
 
 void DAE::Renderer::Render()
@@ -105,9 +114,22 @@ void DAE::Renderer::DrawImgui()
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
+    DrawEx1();
+    DrawEx2();
+
+    ImGui::Render();
+
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pRenderer);
+
+    // Presenting the surface
+    SDL_RenderPresent(m_pRenderer);
+}
+
+void DAE::Renderer::DrawEx1()
+{
     if (ImGui::Begin("Exercise 1"))
     {
-        ImGui::InputInt("samples", &m_sampleCount);
+        ImGui::InputInt("samples", &m_sampleCountEx1);
 
         // Recalculating the data, when button is pressed
         if (ImGui::Button("Thrash the cache"))
@@ -117,7 +139,7 @@ void DAE::Renderer::DrawImgui()
             for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
 
             // Getting the data
-            for (int sampleIdx{}; sampleIdx < m_sampleCount; ++sampleIdx)// Sorry, Tom
+            for (int sampleIdx{}; sampleIdx < m_sampleCountEx1; ++sampleIdx)// Sorry, Tom
             {
                 for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
                 {
@@ -135,7 +157,7 @@ void DAE::Renderer::DrawImgui()
             }
 
             // Dividing all the samples by the sample count to get the average data
-            std::ranges::transform(m_averageDurationsEx1, m_averageDurationsEx1.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCount; });
+            std::ranges::transform(m_averageDurationsEx1, m_averageDurationsEx1.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx1; });
         }
 
         // If vector is not empty, plotting it
@@ -148,13 +170,86 @@ void DAE::Renderer::DrawImgui()
                 ImPlot::EndPlot();
             }
         }
+        ImGui::End();
     }
-    ImGui::End();
+}
 
-    ImGui::Render();
+void DAE::Renderer::DrawEx2()
+{
+    // TODO: DRY
+    if (ImGui::Begin("Exercise 2"))
+    {
+        ImGui::InputInt("samples", &m_sampleCountEx2);
 
-    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pRenderer);
+        // Recalculating the data, when button is pressed
+        if (ImGui::Button("Thrash the cache with GameObject3D"))
+        {
+            // Getting the step count
+            int stepCount{};
+            for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
 
-    // Presenting the surface
-    SDL_RenderPresent(m_pRenderer);
+            // Getting the data
+            for (int sampleIdx{}; sampleIdx < m_sampleCountEx2; ++sampleIdx)// Sorry, Tom
+            {
+                for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
+                {
+                    auto const start{ std::chrono::high_resolution_clock::now() };
+
+                    for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
+                    {
+                        m_gameObjects3D[idx].id *= 2;
+                    }
+
+                    auto const end{ std::chrono::high_resolution_clock::now() };
+                    auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
+                    m_averageDurationsGameObject3D[stepIdx] = duration.count();
+                }
+            }
+
+            // Dividing all the samples by the sample count to get the average data
+            std::ranges::transform(m_averageDurationsGameObject3D, m_averageDurationsGameObject3D.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx2; });
+        }
+
+        // Recalculating the data, when button is pressed
+        if (ImGui::Button("Thrash the cache with GameObject3DAlt"))
+        {
+            // Getting the step count
+            int stepCount{};
+            for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
+
+            // Getting the data
+            for (int sampleIdx{}; sampleIdx < m_sampleCountEx2; ++sampleIdx)// Sorry, Tom
+            {
+                for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
+                {
+                    auto const start{ std::chrono::high_resolution_clock::now() };
+
+                    for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
+                    {
+                        m_gameObjects3DAlt[idx].id *= 2;
+                    }
+
+                    auto const end{ std::chrono::high_resolution_clock::now() };
+                    auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
+                    m_averageDurationsGameObject3DAlt[stepIdx] = duration.count();
+                }
+            }
+
+            // Dividing all the samples by the sample count to get the average data
+            std::ranges::transform(m_averageDurationsGameObject3DAlt, m_averageDurationsGameObject3DAlt.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCountEx2; });
+        }
+
+        // If vector is not empty, plotting it
+        if (!m_averageDurationsGameObject3DAlt.empty())
+        {
+            ImPlot::SetNextAxesToFit();
+            if (ImPlot::BeginPlot("Exercise 2"))
+            {
+                ImPlot::PlotLine<uint32_t>("GameObject3D", m_averageDurationsGameObject3D.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
+                ImPlot::PlotLine<uint32_t>("GameObject3DAlt", m_averageDurationsGameObject3DAlt.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
+                ImPlot::EndPlot();
+            }
+        }
+        ImGui::End();
+    }
 }
