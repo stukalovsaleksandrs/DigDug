@@ -73,11 +73,17 @@ FetchContent_Declare(
     implot
     GIT_REPOSITORY git@github.com:epezent/implot.git
     GIT_TAG v0.17
-    DOWNLOAD_NO_PROGRESS ON
-    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(implot)
+
+add_library(implot STATIC
+        ${implot_SOURCE_DIR}/implot.cpp
+        ${implot_SOURCE_DIR}/implot_items.cpp
+        ${implot_SOURCE_DIR}/implot_demo.cpp
 )
 
-FetchContent_MakeAvailable(implot)
+target_link_libraries(implot PUBLIC imgui)
 
 # Add SDL3
 find_package(SDL3 3.4 CONFIG QUIET)
@@ -149,6 +155,7 @@ find_package(Steamworks QUIET)
 
 target_include_directories("${TARGET_NAME}" PUBLIC
   "${CMAKE_SOURCE_DIR}/DigDug/"
+  ${implot_SOURCE_DIR}
   ${imgui_SOURCE_DIR}
   ${VLD_INCLUDE_DIR}
 )
@@ -158,6 +165,7 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
   SDL3_ttf::SDL3_ttf
   glm::glm
   imgui
+  implot
   ${VLD_LIBRARIES}
 )
 
