@@ -71,7 +71,7 @@ target_compile_features(imgui PUBLIC cxx_std_20)
 # Implot
 FetchContent_Declare(
     implot
-    GIT_REPOSITORY git@github.com:epezent/implot.git
+    GIT_REPOSITORY https://github.com/epezent/implot.git
     GIT_TAG v0.17
     GIT_SHALLOW TRUE
 )
