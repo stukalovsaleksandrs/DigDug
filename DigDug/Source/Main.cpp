@@ -41,25 +41,6 @@ static void Load()
     pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 10, 10 });
     pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
     scene.Add(std::move(pGameObject));
-
-    // Random circles
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 200, 300 });
-    DAE::GameObject& pParent{ *pGameObject.get() };
-    scene.Add(std::move(pGameObject));
-
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{0.f, 50.f});
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
-    pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), 0.5f * glm::pi<float>());
-    pGameObject->SetParent(&pParent, false);
-    DAE::GameObject& pParent2{ *pGameObject.get() };
-    scene.Add(std::move(pGameObject));
-
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{0.f, 75.f});
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
-    pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), -glm::pi<float>());
-    pGameObject->SetParent(&pParent2, false);
-
-    scene.Add(std::move(pGameObject));
 }
 
 int main(int, char*[]) {
