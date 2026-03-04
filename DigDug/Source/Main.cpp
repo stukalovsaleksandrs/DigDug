@@ -54,7 +54,7 @@ static void Load()
     DAE::GameObject& pParent2{ *pGameObject.get() };
     scene.Add(std::move(pGameObject));
 
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{0.f, 100.f});
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{0.f, 75.f});
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
     pGameObject->AddComponent<DAE::Components::OrbitComponent>(*pGameObject.get(), -glm::pi<float>());
     pGameObject->SetParent(&pParent2, false);

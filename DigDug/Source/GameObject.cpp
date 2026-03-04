@@ -20,21 +20,38 @@ void DAE::GameObject::Update() {
 void DAE::GameObject::SetParent(GameObject* pParent, bool const keepWorldPosition) noexcept
 {
     // Checking if the new parent is valid
-    if (IsChild(pParent) || pParent == this || m_pParent == pParent ) return;
-    // Removing ourselves from the parent
-    if (m_pParent) m_pParent->RemoveChild(this);
-    // Setting the new parent
-    m_pParent = pParent;
-    // Adding ourselves to the parent's children list
-    if (m_pParent) m_pParent->AddChild(this);
+    if (IsChild(pParent) || pParent == this || m_pParent == pParent )
+    {
+        return;
+    }
     // Updating transform
-    if (!pParent)
+    // NOTE: Must be done before removal or addition of parents
+    // because this element needs to know of its parent if it wants
+    // to calculate the correct world position
+    if (!pParent)// Scene is the owner
+    {
         SetLocalPosition(GetWorldPosition());
+    }
     else
     {
         if (keepWorldPosition)
+        {
             SetLocalPosition(GetWorldPosition() - pParent->GetWorldPosition());
-        UpdateWorldPosition();
+        }
+        SetPositionDirty();
+    }
+    UpdateWorldPosition();
+    // Removing ourselves from the parent
+    if (m_pParent)
+    {
+        m_pParent->RemoveChild(this);
+    }
+    // Setting the new parent
+    m_pParent = pParent;
+    // Adding ourselves to the parent's children list
+    if (m_pParent)
+    {
+        m_pParent->AddChild(this);
     }
 }
 
@@ -56,8 +73,6 @@ void DAE::GameObject::RemoveChild(GameObject* pChild) noexcept
     }
     // 3. Removing ourselves as a parent of the child
     pChild->m_pParent = nullptr;
-    // 4. Updating transform
-    SetPositionDirty();
 }
 
 void DAE::GameObject::AddChild(GameObject* pChild) noexcept
@@ -70,8 +85,6 @@ void DAE::GameObject::AddChild(GameObject* pChild) noexcept
     pChild->m_pParent = this;
     // 4. Adding the child to the children list
     m_pChildren.push_back(pChild);
-    // 5. Updating our transform
-    SetPositionDirty();
 }
 
 void DAE::GameObject::DeleteMarkedComponents() noexcept

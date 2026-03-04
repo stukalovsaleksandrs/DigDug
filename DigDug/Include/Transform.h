@@ -9,7 +9,7 @@ namespace DAE
     {
     public:
         [[nodiscard]] glm::vec2 GetLocation() const { return m_location; }
-        void SetLocation(glm::vec2 location) { m_location = location; };
+        void SetLocation(glm::vec2 const location) { m_location = location; };
 
     private:
         glm::vec2 m_location{};
