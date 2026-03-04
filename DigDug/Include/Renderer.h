@@ -17,7 +17,7 @@ namespace DAE
     public:
         void Init(SDL_Window* pWindow);
         // Calls Render() on all the registered components
-        void Render() const;
+        void Render();
         void Destroy();
 
         void RenderTexture(Texture2D const& texture, glm::vec2 location) const;
@@ -56,7 +56,11 @@ namespace DAE
         SDL_Window* m_pWindow{};
         SDL_Color m_clearColor{};
         std::vector<Components::RenderComponent*> m_pRenderComponents;// Non-owning
+        int m_sampleCount{ 10 };
+        std::vector<unsigned> m_averageDurationsEx1;
+        std::vector<unsigned> m_intBuffer;
 
+        void DrawImgui();
     };
 }
 

@@ -1,4 +1,7 @@
 ﻿#include "Renderer.h"
+
+#include <chrono>
+
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "Utils.h"
@@ -35,9 +38,13 @@ void DAE::Renderer::Init(SDL_Window* pWindow)
 
     ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pRenderer);
     ImGui_ImplSDLRenderer3_Init(m_pRenderer);
+
+    // Sizing the average duration
+    m_averageDurationsEx1.resize(11);
+    m_intBuffer.resize(10'000'000);
 }
 
-void DAE::Renderer::Render() const
+void DAE::Renderer::Render()
 {
     // Clearing the background
     const auto&[r, g, b, a]{ GetBackgroundColor() };
@@ -49,20 +56,7 @@ void DAE::Renderer::Render() const
         renderComponent->Render();
     }
 
-    // Rendering ImGui
-    ImGui_ImplSDLRenderer3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
-
-    ImGui::ShowDemoWindow();// For demonstration purposes, do not keep this in your engine
-    ImPlot::ShowDemoWindow();
-
-    ImGui::Render();
-
-    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pRenderer);
-
-    // Presenting the surface
-    SDL_RenderPresent(m_pRenderer);
+    DrawImgui();
 }
 
 void DAE::Renderer::Destroy()
@@ -103,3 +97,64 @@ void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const loca
 }
 
 SDL_Renderer* DAE::Renderer::GetSDLRenderer() const { return m_pRenderer; }
+
+void DAE::Renderer::DrawImgui()
+{
+    // Rendering ImGui
+    ImGui_ImplSDLRenderer3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    if (ImGui::Begin("Exercise 1"))
+    {
+        ImGui::InputInt("samples", &m_sampleCount);
+
+        // Recalculating the data, when button is pressed
+        if (ImGui::Button("Thrash the cache"))
+        {
+            // Getting the step count
+            int stepCount{};
+            for (int stepSize{ 1 }; stepSize <= 1024; stepSize*=2, ++stepCount){}
+
+            // Getting the data
+            for (int sampleIdx{}; sampleIdx < m_sampleCount; ++sampleIdx)// Sorry, Tom
+            {
+                for (int stepSize{ 1 }, stepIdx{}; stepSize <= 1024; stepSize*=2, ++stepIdx)
+                {
+                    auto const start{ std::chrono::high_resolution_clock::now() };
+
+                    for (std::size_t idx{}; idx < m_intBuffer.size(); idx += stepSize)
+                    {
+                        m_intBuffer[idx] *= 2;
+                    }
+
+                    auto const end{ std::chrono::high_resolution_clock::now() };
+                    auto duration{ std::chrono::duration_cast<std::chrono::nanoseconds>(end - start) };
+                    m_averageDurationsEx1[stepIdx] = duration.count();
+                }
+            }
+
+            // Dividing all the samples by the sample count to get the average data
+            std::ranges::transform(m_averageDurationsEx1, m_averageDurationsEx1.begin(), [this](int const sampleIdx){ return sampleIdx / m_sampleCount; });
+        }
+
+        // If vector is not empty, plotting it
+        if (!m_averageDurationsEx1.empty())
+        {
+            ImPlot::SetNextAxesToFit();
+            if (ImPlot::BeginPlot("Exercise 1"))
+            {
+                ImPlot::PlotLine<uint32_t>("Exercise 1", m_averageDurationsEx1.data(), static_cast<int>(m_averageDurationsEx1.size()));
+                ImPlot::EndPlot();
+            }
+        }
+    }
+    ImGui::End();
+
+    ImGui::Render();
+
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pRenderer);
+
+    // Presenting the surface
+    SDL_RenderPresent(m_pRenderer);
+}
