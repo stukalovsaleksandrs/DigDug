@@ -125,10 +125,6 @@ namespace DAE
          */
         bool IsChild(GameObject* pChild) const noexcept;
 
-        void RemoveChild(GameObject* pChild) noexcept;
-
-        void AddChild(GameObject* pChild) noexcept;
-
         [[nodiscard]] GameObject* GetChild(unsigned int const idx) const{ return m_pChildren.at(idx); };
         [[nodiscard]] GameObject* GetParent() const{ return m_pParent; };
 
@@ -154,6 +150,10 @@ namespace DAE
         void DeleteMarkedComponents() noexcept;
 
         void UpdateWorldPosition() noexcept;
+
+        void RemoveChild(GameObject* pChild) noexcept;
+
+        void AddChild(GameObject* pChild) noexcept;
     };
 
 }
