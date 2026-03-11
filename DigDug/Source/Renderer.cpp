@@ -147,13 +147,12 @@ void DAE::Renderer::DrawEx1()
                 ImPlot::EndPlot();
             }
         }
-        ImGui::End();
     }
+    ImGui::End();
 }
 
 void DAE::Renderer::DrawEx2()
 {
-    // TODO: DRY
     if (ImGui::Begin("Exercise 2"))
     {
         ImGui::InputInt("samples", &m_sampleCountEx2);
@@ -171,19 +170,20 @@ void DAE::Renderer::DrawEx2()
         }
 
         // If vector is not empty, plotting it
-            ImPlot::SetNextAxesToFit();
-            if (ImPlot::BeginPlot("Exercise 2"))
+        ImPlot::SetNextAxesToFit();
+        if (ImPlot::BeginPlot("Exercise 2"))
+        {
+            if (!m_averageDurationsGameObject3D.empty())
             {
-                if (!m_averageDurationsGameObject3D.empty())
-                {
-                    ImPlot::PlotLine<uint32_t>("GameObject3D", m_averageDurationsGameObject3D.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
-                }
-                if (!m_averageDurationsGameObject3DAlt.empty())
-                {
-                    ImPlot::PlotLine<uint32_t>("GameObject3DAlt", m_averageDurationsGameObject3DAlt.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
-                }
-                ImPlot::EndPlot();
+                ImPlot::PlotLine<uint32_t>("GameObject3D", m_averageDurationsGameObject3D.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
             }
-        ImGui::End();
+            if (!m_averageDurationsGameObject3DAlt.empty())
+            {
+                ImPlot::PlotLine<uint32_t>("GameObject3DAlt", m_averageDurationsGameObject3DAlt.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
+            }
+            ImPlot::EndPlot();
+        }
     }
+
+    ImGui::End();
 }
