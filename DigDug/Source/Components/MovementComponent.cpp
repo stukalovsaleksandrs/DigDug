@@ -1,15 +1,15 @@
-#include "Components/InputComponent.h"
+#include "Components/MovementComponent.h"
 #include "Timer.h"
 #include "GameObject.h"
 #include <SDL3/SDL_keyboard.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/norm.hpp"
 
-DAE::Components::InputComponent::InputComponent(GameObject& owner) noexcept
+DAE::Components::MovementComponent::MovementComponent(GameObject& owner) noexcept
     : Component(owner)
 {}
 
-void DAE::Components::InputComponent::Update() noexcept
+void DAE::Components::MovementComponent::Update() noexcept
 {
     bool const* const pKeyboardState = SDL_GetKeyboardState(nullptr);
     glm::vec2 direction{};

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Components/CacheThrashingComponent.h"
-#include "Components/InputComponent.h"
+#include "Components/MovementComponent.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
@@ -48,7 +48,7 @@ static void Load()
     // Character
     pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 500, 250 });
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
-    pGameObject->AddComponent<DAE::Components::InputComponent>(*pGameObject.get());
+    pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject.get());
     scene.Add(std::move(pGameObject));
 }
 

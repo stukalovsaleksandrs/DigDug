@@ -1,5 +1,5 @@
 ﻿#include "Application.h"
-#include "InputManager.h"
+#include "../Include/Input/InputManager.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
@@ -100,7 +100,7 @@ void DAE::Application::Run(std::function<void()> const& load)
 void DAE::Application::RunOneFrame()
 {
     Timer::GetInstance().Update();
-    m_quit = !InputManager::GetInstance().ProcessInput();
+    m_quit = !Input::InputManager::ProcessInput();
     SceneManager::GetInstance().Update();
     Renderer::GetInstance().Render();
 }
