@@ -1,77 +1,48 @@
 ﻿#include "Renderer.h"
-
-#include <chrono>
-
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "Utils.h"
-#include "Component.h"
+#include "Components/Component.h"
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlrenderer3.h>
+#include <implot.h>
 #include <iostream>
-#include "implot.h"
+#include <chrono>
 
 void DAE::Renderer::Init(SDL_Window* pWindow)
 {
     m_pWindow = pWindow;
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-    m_pRenderer = SDL_CreateRenderer(pWindow, nullptr);
-    if (!m_pRenderer)
+    m_pSDLRenderer = SDL_CreateRenderer(pWindow, nullptr);
+    if (!m_pSDLRenderer)
     {
         std::cout << "Failed to create the renderer: " << SDL_GetError() << "\n";
         throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
     }
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImPlot::CreateContext();// Must be after the ImGui::CreateContext()
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-#if __EMSCRIPTEN__
-    // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
-    // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
-    io.IniFilename = NULL;
-#endif
-
-    ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pRenderer);
-    ImGui_ImplSDLRenderer3_Init(m_pRenderer);
-
-    // Resizing exercise containers
-    size_t constexpr bufferSize{ 10'000'000 };
-    size_t constexpr stepCount{ 11 };
-
-    // Resizing the containers for exercise 1
-    m_averageDurationsEx1.resize(stepCount);
-    m_intBuffer.resize(bufferSize);
-
-    // Resizing the containers for exercise 2
-    m_averageDurationsGameObject3D.resize(stepCount);
-    m_averageDurationsGameObject3DAlt.resize(stepCount);
-    m_gameObjects3D.resize(bufferSize);
-    m_gameObjects3DAlt.resize(bufferSize);
+    InitializeImGui();
 }
 
-void DAE::Renderer::Render()
+void DAE::Renderer::Render() const
 {
     // Clearing the background
     const auto&[r, g, b, a]{ GetBackgroundColor() };
-    SDL_SetRenderDrawColor(m_pRenderer, r, g, b, a);
-    SDL_RenderClear(m_pRenderer);
+    SDL_SetRenderDrawColor(m_pSDLRenderer, r, g, b, a);
+    SDL_RenderClear(m_pSDLRenderer);
 
     // Rendering the render components
     for (auto const pRenderComponent : m_pRenderComponents) {
-        pRenderComponent->Render();
+    pRenderComponent->Render();
     }
 
     // Rendering debug components
-    for (auto pDebugComponent : m_pDebugComponents)
+    for (auto const pDebugComponent : m_pDebugComponents)
     {
-        pDebugComponent->DebugRender();
+        pDebugComponent->DebugRender(m_pSDLRenderer);
     }
 
-    DrawImgui();
+    SDL_RenderPresent(m_pSDLRenderer);
 }
 
 void DAE::Renderer::Destroy()
@@ -85,10 +56,10 @@ void DAE::Renderer::Destroy()
     ImGui::DestroyContext();
 
     // Destroying the renderer
-    if (m_pRenderer)
+    if (m_pSDLRenderer)
     {
-        SDL_DestroyRenderer(m_pRenderer);
-        m_pRenderer = nullptr;
+        SDL_DestroyRenderer(m_pSDLRenderer);
+        m_pSDLRenderer = nullptr;
     }
 }
 
@@ -111,7 +82,10 @@ void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const loca
     SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
 }
 
-SDL_Renderer* DAE::Renderer::GetSDLRenderer() const { return m_pRenderer; }
+SDL_Renderer* DAE::Renderer::GetSDLRenderer() const
+{
+    return m_pSDLRenderer;
+}
 
 void DAE::Renderer::RegisterComponent(Components::RenderComponent* pRenderComponent)
 {
@@ -139,83 +113,21 @@ void DAE::Renderer::UnregisterComponent(Components::RenderComponent* renderCompo
     assert(erasedElementCount > 0 && "Render component not found");
 }
 
-void DAE::Renderer::DrawImgui()
+void DAE::Renderer::InitializeImGui()
 {
-    // Rendering ImGui
-    ImGui_ImplSDLRenderer3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImPlot::CreateContext();// Must be after the ImGui::CreateContext()
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+#if __EMSCRIPTEN__
+    // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
+    // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
+    io.IniFilename = NULL;
+#endif
 
-    DrawEx1();
-    DrawEx2();
-
-    ImGui::Render();
-
-    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pRenderer);
-
-    // Presenting the surface
-    SDL_RenderPresent(m_pRenderer);
+    ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pSDLRenderer);
+    ImGui_ImplSDLRenderer3_Init(m_pSDLRenderer);
 }
 
-void DAE::Renderer::DrawEx1()
-{
-    if (ImGui::Begin("Exercise 1"))
-    {
-        ImGui::InputInt("samples", &m_sampleCountEx1);
-
-        // Recalculating the data, when button is pressed
-        if (ImGui::Button("Thrash the cache"))
-        {
-            RecalculatePlotData(m_sampleCountEx1, m_intBuffer, m_averageDurationsEx1);
-        }
-
-        // If vector is not empty, plotting it
-        if (!m_averageDurationsEx1.empty())
-        {
-            ImPlot::SetNextAxesToFit();
-            if (ImPlot::BeginPlot("Exercise 1"))
-            {
-                ImPlot::PlotLine<uint32_t>("Exercise 1", m_averageDurationsEx1.data(), static_cast<int>(m_averageDurationsEx1.size()));
-                ImPlot::EndPlot();
-            }
-        }
-    }
-    ImGui::End();
-}
-
-void DAE::Renderer::DrawEx2()
-{
-    if (ImGui::Begin("Exercise 2"))
-    {
-        ImGui::InputInt("samples", &m_sampleCountEx2);
-
-        // Recalculating the data, when button is pressed
-        if (ImGui::Button("Thrash the cache with GameObject3D"))
-        {
-            RecalculatePlotData(m_sampleCountEx2, m_gameObjects3D, m_averageDurationsGameObject3D);
-        }
-
-        // Recalculating the data, when button is pressed
-        if (ImGui::Button("Thrash the cache with GameObject3DAlt"))
-        {
-            RecalculatePlotData(m_sampleCountEx2, m_gameObjects3DAlt, m_averageDurationsGameObject3DAlt);
-        }
-
-        // If vector is not empty, plotting it
-        ImPlot::SetNextAxesToFit();
-        if (ImPlot::BeginPlot("Exercise 2"))
-        {
-            if (!m_averageDurationsGameObject3D.empty())
-            {
-                ImPlot::PlotLine<uint32_t>("GameObject3D", m_averageDurationsGameObject3D.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
-            }
-            if (!m_averageDurationsGameObject3DAlt.empty())
-            {
-                ImPlot::PlotLine<uint32_t>("GameObject3DAlt", m_averageDurationsGameObject3DAlt.data(), static_cast<int>(m_averageDurationsGameObject3D.size()));
-            }
-            ImPlot::EndPlot();
-        }
-    }
-
-    ImGui::End();
-}

@@ -1,6 +1,6 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-#include "Component.h"
+#include "Components/Component.h"
 #include <memory>
 #include <optional>
 #include <algorithm>
@@ -25,7 +25,7 @@ namespace DAE
         };
 
     public:
-        explicit GameObject(glm::vec2 localPosition) noexcept;
+        explicit GameObject(glm::vec2 localPosition = {}) noexcept;
 
         void Update();
 

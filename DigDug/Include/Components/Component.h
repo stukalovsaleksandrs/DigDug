@@ -66,7 +66,7 @@ namespace DAE::Components {
     public:
         explicit DebugComponent(GameObject& owner) noexcept;
 
-        virtual void DebugRender() = 0;
+        virtual void DebugRender(SDL_Renderer* pSDLRenderer) = 0;
     };
 
     /*******************************************
@@ -118,15 +118,6 @@ namespace DAE::Components {
 
     private:
         float m_radiansSec{ 0.25f * glm::pi<float>() };
-    };
-
-    /*******************************************
-     * CacheThrash component
-     *******************************************/
-    class CacheThrashComponent final : public DebugComponent
-    {
-    public:
-        void DebugRender() override;
     };
 }
 

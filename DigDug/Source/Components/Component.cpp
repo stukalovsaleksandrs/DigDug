@@ -1,4 +1,4 @@
-#include "Component.h"
+#include "../../Include/Components/Component.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "GameObject.h"
@@ -12,6 +12,7 @@
 /*******************************************
  * Render component
  *******************************************/
+
 DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
     : Component(owner) {
     Renderer::GetInstance().RegisterComponent(this);
@@ -139,9 +140,4 @@ void DAE::Components::OrbitComponent::Update() noexcept
     radians += m_radiansSec * Timer::GetInstance().GetDeltaSec();
     // 4. Calculating the new distance vector and adding the distance vector to the center
     m_owner.SetLocalPosition(glm::vec2(glm::cos(radians), std::sin(radians)) * distance);
-}
-
-void DAE::Components::CacheThrashComponent::DebugRender()
-{
-
 }
