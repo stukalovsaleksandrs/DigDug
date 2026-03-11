@@ -61,8 +61,14 @@ void DAE::Renderer::Render()
     SDL_RenderClear(m_pRenderer);
 
     // Rendering the render components
-    for (auto const renderComponent : m_pRenderComponents) {
-        renderComponent->Render();
+    for (auto const pRenderComponent : m_pRenderComponents) {
+        pRenderComponent->Render();
+    }
+
+    // Rendering debug components
+    for (auto pDebugComponent : m_pDebugComponents)
+    {
+        pDebugComponent->DebugRender();
     }
 
     DrawImgui();
@@ -106,6 +112,32 @@ void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const loca
 }
 
 SDL_Renderer* DAE::Renderer::GetSDLRenderer() const { return m_pRenderer; }
+
+void DAE::Renderer::RegisterComponent(Components::RenderComponent* pRenderComponent)
+{
+    m_pRenderComponents.push_back(pRenderComponent);
+}
+
+void DAE::Renderer::RegisterComponent(Components::DebugComponent* pDebugComponent)
+{
+    m_pDebugComponents.push_back(pDebugComponent);
+}
+
+void DAE::Renderer::UnregisterComponent(Components::RenderComponent* renderComponentToRemove)
+{
+    // NOTE: [[maybe_unused]] is added to avoid unused variable errors in release build
+    [[maybe_unused]] auto const erasedElementCount{
+        std::erase_if(m_pRenderComponents, [renderComponentToRemove](Components::RenderComponent const* currentRenderComponent)
+        {
+            return currentRenderComponent == renderComponentToRemove;
+        })
+    };
+    // NOTE: All the render components must be present in the list, so
+    // if one does not, it is an error. If the same component is
+    // removed twice, it is also an error since the method should only be called
+    // in the destructor of RenderComponent
+    assert(erasedElementCount > 0 && "Render component not found");
+}
 
 void DAE::Renderer::DrawImgui()
 {

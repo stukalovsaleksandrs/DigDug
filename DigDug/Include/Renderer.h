@@ -11,7 +11,12 @@
 
 namespace DAE
 {
-    namespace Components { class RenderComponent; }
+    namespace Components
+    {
+        class RenderComponent;
+        class DebugComponent;
+    }
+
     class Texture2D;
     /**
      * Simple RAII wrapper for the SDL renderer
@@ -32,34 +37,22 @@ namespace DAE
         [[nodiscard]] const SDL_Color& GetBackgroundColor() const { return m_clearColor; }
         void SetBackgroundColor(SDL_Color const& color) { m_clearColor = color; }
 
-        // Adds component for tracking, so the renderer now renders it
-        void RegisterComponent(Components::RenderComponent* renderComponent)
-        {
-            m_pRenderComponents.push_back(renderComponent);
-        }
+        // Adds a RenderComponent for tracking, so the renderer now renders it
+        void RegisterComponent(Components::RenderComponent* pRenderComponent);
+
+        void RegisterComponent(Components::DebugComponent* pDebugComponent);
+
 
         // Removes the given component from tracking, so the renderer will not attempt to render it
-        void UnregisterComponent(Components::RenderComponent* renderComponentToRemove)
-        {
-            // NOTE: [[maybe_unused]] is added to avoid unused variable errors in release build
-            [[maybe_unused]] auto const erasedElementCount{
-                std::erase_if(m_pRenderComponents, [renderComponentToRemove](Components::RenderComponent const* currentRenderComponent)
-                {
-                    return currentRenderComponent == renderComponentToRemove;
-                })
-            };
-            // NOTE: All the render components must be present in the list, so
-            // if one does not, it is an error. If the same component is
-            // removed twice, it is also an error since the method should only be called
-            // in the destructor of RenderComponent
-            assert(erasedElementCount > 0 && "Render component not found");
-        }
+        void UnregisterComponent(Components::RenderComponent* renderComponentToRemove);
 
     private:
         SDL_Renderer* m_pRenderer{};
         SDL_Window* m_pWindow{};
         SDL_Color m_clearColor{};
         std::vector<Components::RenderComponent*> m_pRenderComponents;// Non-owning
+        std::vector<Components::DebugComponent*> m_pDebugComponents;// Non-owning
+        // TODO: Move to the CacheThrashingComponent
         int m_sampleCountEx1{ 10 };
 
         // Ex1

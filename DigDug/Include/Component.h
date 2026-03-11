@@ -46,8 +46,8 @@ namespace DAE::Components {
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;
-        RenderComponent operator= (RenderComponent const&) = delete;
-        RenderComponent operator= (RenderComponent&&) = delete;
+        RenderComponent& operator= (RenderComponent const&) = delete;
+        RenderComponent& operator= (RenderComponent&&) = delete;
 
         void Render() const;
         void SetTexture(std::string_view filename);
@@ -55,6 +55,18 @@ namespace DAE::Components {
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
+    };
+
+    /*******************************************
+     * Debug component
+     *******************************************/
+    // Interface for components to provide debug rendering
+    class DebugComponent : public Component
+    {
+    public:
+        explicit DebugComponent(GameObject& owner) noexcept;
+
+        virtual void DebugRender() = 0;
     };
 
     /*******************************************
@@ -106,6 +118,15 @@ namespace DAE::Components {
 
     private:
         float m_radiansSec{ 0.25f * glm::pi<float>() };
+    };
+
+    /*******************************************
+     * CacheThrash component
+     *******************************************/
+    class CacheThrashComponent final : public DebugComponent
+    {
+    public:
+        void DebugRender() override;
     };
 }
 
