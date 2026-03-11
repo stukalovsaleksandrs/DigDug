@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Components/CacheThrashingComponent.h"
+#include "Components/InputComponent.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
@@ -44,9 +45,10 @@ static void Load()
     pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
     scene.Add(std::move(pGameObject));
 
-    // Thrashing cache
-    pGameObject = std::make_unique<DAE::GameObject>();
-    pGameObject->AddComponent<DAE::Components::CacheThrashingComponent>(*pGameObject.get());
+    // Character
+    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 500, 250 });
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
+    pGameObject->AddComponent<DAE::Components::InputComponent>(*pGameObject.get());
     scene.Add(std::move(pGameObject));
 }
 

@@ -4,21 +4,14 @@
 
 bool DAE::InputManager::ProcessInput()
 {
-    SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_EVENT_QUIT) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_EVENT_QUIT) {
             return false;
         }
-        if (e.type == SDL_EVENT_KEY_DOWN) {
-
-        }
-        if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-
-        }
-        // etc...
 
         // Processing ImGui events
-        ImGui_ImplSDL3_ProcessEvent(&e);
+        ImGui_ImplSDL3_ProcessEvent(&event);
     }
 
     return true;

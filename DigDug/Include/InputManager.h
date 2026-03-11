@@ -4,10 +4,14 @@
 
 namespace DAE
 {
+    namespace Components{ class InputComponent; }
+
     class InputManager final : public Singleton<InputManager>
     {
     public:
-        bool ProcessInput();
+        ///@return Whether the application has to quit
+        [[nodiscard]] static bool ProcessInput();
+
     };
 
 }

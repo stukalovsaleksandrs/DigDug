@@ -1,6 +1,6 @@
 #ifndef CACHETHRASHINGCOMPONENT_H
 #define CACHETHRASHINGCOMPONENT_H
-#include "Components/Component.h"
+#include "Components/Components.h"
 #include <algorithm>
 #include <chrono>
 #include <memory>

@@ -33,6 +33,8 @@ namespace DAE
         [[nodiscard]] const SDL_Color& GetBackgroundColor() const { return m_clearColor; }
         void SetBackgroundColor(SDL_Color const& color) { m_clearColor = color; }
 
+        // TODO: Accept components by ref & Add unregister to the debug component
+
         // Adds a RenderComponent for tracking, so the renderer now renders it
         void RegisterComponent(Components::RenderComponent* pRenderComponent);
 

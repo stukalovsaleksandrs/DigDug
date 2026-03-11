@@ -1,6 +1,6 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-#include "Components/Component.h"
+#include "Components/Components.h"
 #include <memory>
 #include <optional>
 #include <algorithm>
@@ -129,6 +129,7 @@ namespace DAE
         [[nodiscard]] GameObject* GetParent() const{ return m_pParent; };
 
         void SetLocalPosition(glm::vec2 position) noexcept;
+        [[nodiscard]] glm::vec2 GetLocalPosition() const noexcept;
 
         // NOTE: Non-const, because it can update the position
         [[nodiscard]] glm::vec2 GetWorldPosition() noexcept;

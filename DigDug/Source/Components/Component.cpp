@@ -1,4 +1,4 @@
-#include "../../Include/Components/Component.h"
+#include "../../Include/Components/Components.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "GameObject.h"

@@ -105,6 +105,11 @@ void DAE::GameObject::SetLocalPosition(glm::vec2 position) noexcept
     SetPositionDirty();
 }
 
+glm::vec2 DAE::GameObject::GetLocalPosition() const noexcept
+{
+    return m_localPosition;
+}
+
 glm::vec2 DAE::GameObject::GetWorldPosition() noexcept
 {
     if (m_positionIsDirty)

@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "Utils.h"
-#include "Components/Component.h"
+#include "Components/Components.h"
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlrenderer3.h>
@@ -87,6 +87,7 @@ SDL_Renderer* DAE::Renderer::GetSDLRenderer() const
     return m_pSDLRenderer;
 }
 
+// TODO: Add only if does not exist
 void DAE::Renderer::RegisterComponent(Components::RenderComponent* pRenderComponent)
 {
     m_pRenderComponents.push_back(pRenderComponent);
