@@ -49,17 +49,17 @@ static void Load()
     pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 500, 250 });
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
     DAE::Components::MovementComponent& movementComponent {
-        *pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject.get(), 1000.f)
+        *pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject.get(), 500.f)
     };
     scene.Add(std::move(pGameObject));
 
     // Input bindings
     DAE::Input::InputManager& inputManager{ DAE::Input::InputManager::GetInstance() };
     //// Movement
-    inputManager.Bind({SDL_SCANCODE_W, SDL_EVENT_KEY_DOWN}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, -1.f }));
-    inputManager.Bind({SDL_SCANCODE_A, SDL_EVENT_KEY_DOWN}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ -1.f, 0.f }));
-    inputManager.Bind({SDL_SCANCODE_S, SDL_EVENT_KEY_DOWN}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, 1.f }));
-    inputManager.Bind({SDL_SCANCODE_D, SDL_EVENT_KEY_DOWN}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 1.f, 0.f }));
+    inputManager.Bind({SDL_SCANCODE_W, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, 1.f }));
+    inputManager.Bind({SDL_SCANCODE_A, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 1.f, 0.f }));
+    inputManager.Bind({SDL_SCANCODE_S, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, -1.f }));
+    inputManager.Bind({SDL_SCANCODE_D, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ -1.f, 0.f }));
 }
 
 int main(int, char*[]) {

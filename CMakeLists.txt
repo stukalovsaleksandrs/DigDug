@@ -65,8 +65,8 @@ add_library(imgui STATIC
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
 
-# enable c++20 features
-target_compile_features(imgui PUBLIC cxx_std_20)
+# enable c++23 features
+target_compile_features(imgui PUBLIC cxx_std_23)
 
 # Implot
 FetchContent_Declare(
