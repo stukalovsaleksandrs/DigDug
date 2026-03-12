@@ -49,7 +49,7 @@ void DAE::Input::InputManager::ProcessPressing()
         if (std::get<InputType>(action) != InputType::pressed) continue;
 
         // Returning early if the key is not pressed
-        if (keyboardState[std::get<SDL_Scancode>(action.first)]) continue;
+        if (!keyboardState[std::get<SDL_Scancode>(action.first)]) continue;
 
         // Bound to pressed & actually pressed -> executing
         ExecuteIfExists(action);
