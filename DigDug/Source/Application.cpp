@@ -100,7 +100,7 @@ void DAE::Application::Run(std::function<void()> const& load)
 void DAE::Application::RunOneFrame()
 {
     Timer::GetInstance().Update();
-    m_quit = !Input::InputManager::ProcessInput();
+    m_quit = !Input::InputManager::GetInstance().ProcessInput();
     SceneManager::GetInstance().Update();
     Renderer::GetInstance().Render();
 }

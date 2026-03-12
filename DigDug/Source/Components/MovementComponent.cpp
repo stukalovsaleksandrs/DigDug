@@ -5,32 +5,23 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/norm.hpp"
 
-DAE::Components::MovementComponent::MovementComponent(GameObject& owner) noexcept
+DAE::Components::MovementComponent::MovementComponent(GameObject& owner, float pxPerSec) noexcept
     : Component(owner)
+    , m_pxPerSec{ pxPerSec }
 {}
 
 void DAE::Components::MovementComponent::Update() noexcept
 {
-    bool const* const pKeyboardState = SDL_GetKeyboardState(nullptr);
-    glm::vec2 direction{};
-    if (pKeyboardState[SDL_SCANCODE_A] || pKeyboardState[SDL_SCANCODE_LEFT]) {
-        direction.x -= 1;
-    }
-    if (pKeyboardState[SDL_SCANCODE_D] || pKeyboardState[SDL_SCANCODE_RIGHT]) {
-        direction.x += 1;
-    }
-    if (pKeyboardState[SDL_SCANCODE_S] || pKeyboardState[SDL_SCANCODE_DOWN]) {
-        direction.y += 1;
-    }
-    if (pKeyboardState[SDL_SCANCODE_W] || pKeyboardState[SDL_SCANCODE_UP])
-    {
-        direction.y -= 1;
-    }
-    // Returning early if standing in-place to avoid division by 0
-    if (glm::length2(direction) < glm::epsilon<float>()) return;
+    if (glm::length2(m_direction) < glm::epsilon<float>()) return;
 
-    static constexpr float pixelsPerSec{ 100.f };
     m_owner.SetLocalPosition(
-        m_owner.GetLocalPosition() + glm::normalize(direction) * pixelsPerSec * Timer::GetInstance().GetDeltaSec()
+        m_owner.GetLocalPosition() + glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec()
     );
+
+    m_direction = glm::vec2{};
+}
+
+void DAE::Components::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
+{
+    m_direction += direction;
 }

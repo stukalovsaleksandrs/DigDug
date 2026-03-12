@@ -8,11 +8,14 @@ namespace DAE::Components
     class MovementComponent final : public Component
     {
     public:
-        // Normalized before taking into account. Reset after every update
-        glm::vec2 direction{};
-
-        explicit MovementComponent(GameObject& owner) noexcept;
+        explicit MovementComponent(GameObject& owner, float pxPerSec) noexcept;
         void Update() noexcept override;
+        void AddDirection(glm::vec2 direction) noexcept;
+
+    private:
+        float m_pxPerSec{};
+        glm::vec2 m_direction{};
+
     };
 
 }
