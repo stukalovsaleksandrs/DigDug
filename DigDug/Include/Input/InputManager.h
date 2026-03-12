@@ -24,6 +24,7 @@ namespace DAE::Input
         ///@return Whether the application has to quit
         [[nodiscard]] bool ProcessInput();
         void Bind(Action const&, std::unique_ptr<Command>);
+        void Unbind(Action const&);
 
     private:
         struct ActionHash

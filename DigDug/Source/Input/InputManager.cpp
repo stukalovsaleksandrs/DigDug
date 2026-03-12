@@ -34,6 +34,11 @@ void DAE::Input::InputManager::Bind(Action const& action, std::unique_ptr<Comman
     m_actionToCommand[action] = std::move(pCommand);
 }
 
+void DAE::Input::InputManager::Unbind(Action const& action)
+{
+    m_actionToCommand.erase(action);
+}
+
 void DAE::Input::InputManager::ProcessPressing()
 {
     auto const keyboardState{ SDL_GetKeyboardState(nullptr) };
