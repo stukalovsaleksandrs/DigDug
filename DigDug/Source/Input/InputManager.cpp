@@ -3,6 +3,12 @@
 #include <ranges>
 #include <SDL3/SDL.h>
 #include <backends/imgui_impl_sdl3.h>
+#include <print>
+
+DAE::Input::InputManager::InputManager()
+{
+    InitializeGamepad();
+}
 
 bool DAE::Input::InputManager::ProcessInput()
 {
@@ -62,4 +68,19 @@ void DAE::Input::InputManager::ExecuteIfExists(Action const& action) const
     {
         m_actionToCommand.at(action)->Execute();
     }
+}
+
+void DAE::Input::InputManager::InitializeGamepad()
+{
+    // Early returning if no gamepad
+    if (!SDL_HasGamepad())
+    {
+        std::println("No gamepads connected");
+        return;
+    }
+
+    // Getting the first connected gamepad
+    int gamepadCount{};
+    SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
+
 }

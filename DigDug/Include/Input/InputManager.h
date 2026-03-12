@@ -21,6 +21,7 @@ namespace DAE::Input
     class InputManager final : public Singleton<InputManager>
     {
     public:
+        InputManager();
         ///@return Whether the application has to quit
         [[nodiscard]] bool ProcessInput();
         void Bind(Action const&, std::unique_ptr<Command>);
@@ -40,6 +41,7 @@ namespace DAE::Input
 
         void ExecuteIfExists(Action const& action) const;
         void ProcessPressing();
+        void InitializeGamepad();
     };
 
 }

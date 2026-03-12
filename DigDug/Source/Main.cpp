@@ -56,10 +56,13 @@ static void Load()
     // Input bindings
     DAE::Input::InputManager& inputManager{ DAE::Input::InputManager::GetInstance() };
     //// Movement
+    ///// Keyboard
     inputManager.Bind({SDL_SCANCODE_W, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, -1.f }));
     inputManager.Bind({SDL_SCANCODE_A, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ -1.f, 0.f }));
     inputManager.Bind({SDL_SCANCODE_S, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, 1.f }));
     inputManager.Bind({SDL_SCANCODE_D, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 1.f, 0.f }));
+    ///// Gamepad
+    
 }
 
 int main(int, char*[]) {
