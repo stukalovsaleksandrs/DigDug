@@ -15,7 +15,7 @@ DAE::Components::LivesComponent::LivesComponent(GameObject& owner, uint32_t cons
 DAE::Components::LivesComponent::~LivesComponent() noexcept
 {
     // Notifying all the observers that the subject got deleted
-    // NotifyObservers(m_subjectDeletedEvent);// The observer is actually deleted by this point:/
+    NotifyObservers(m_subjectDeletedEvent);// The observer is actually deleted by this point:/
 }
 
 void DAE::Components::LivesComponent::TakeDamage() noexcept

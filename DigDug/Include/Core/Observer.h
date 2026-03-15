@@ -62,10 +62,15 @@ namespace DAE
     class Observer
     {
     public:
-        virtual ~Observer() noexcept = default;
+        virtual ~Observer() noexcept;
 
         // Executed when a delegate is fired
         virtual void OnNotify(Event event, Subject const& caller) noexcept = 0;
+        void AddSubject(Subject& subject) noexcept;
+
+    protected:
+        std::vector<Subject*> m_pSubjects;
+
     };
 
     /*******************************************
