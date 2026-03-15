@@ -41,12 +41,17 @@ static void Load()
 
     // Character
     pGameObject = scene.CreateGameObject(glm::vec2{ 500, 250 });
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("RandomCircle.png");
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("DigDugCharacter.png");
     auto& playerComponent{ pGameObject->AddComponent<DAE::Components::PlayerComponent>(
         pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject, 500.f)
     )};
     auto& livesComponent{ pGameObject->AddComponent<DAE::Components::LivesComponent>(*pGameObject, 2) };
     livesComponent.AddObserver(playerComponent);
+
+    // Lives
+    pGameObject = scene.CreateGameObject(glm::vec2{ 0, 576});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("DigDugCharacter.png");
+
 }
 
 int main(int, char*[]) {
