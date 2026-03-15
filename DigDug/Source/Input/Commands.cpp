@@ -21,11 +21,11 @@ void DAE::Input::MoveCommand::Execute() noexcept
  * Die command
  *******************************************/
 
-DAE::Input::DieCommand::DieCommand(GameObject& object)
-    : m_object(object)
+DAE::Input::TakeDamageCommand::TakeDamageCommand(Components::LivesComponent& livesComponent)
+    : m_livesComponent(livesComponent)
 {}
 
-void DAE::Input::DieCommand::Execute() noexcept
+void DAE::Input::TakeDamageCommand::Execute() noexcept
 {
-    m_object.MarkForDeletion();
+    m_livesComponent.TakeDamage();
 }

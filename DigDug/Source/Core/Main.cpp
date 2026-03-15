@@ -1,4 +1,5 @@
 #include "Components/CacheThrashingComponent.h"
+#include "Components/LivesComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/PlayerComponent.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
@@ -41,9 +42,11 @@ static void Load()
     // Character
     pGameObject = scene.CreateGameObject(glm::vec2{ 500, 250 });
     pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("RandomCircle.png");
-    pGameObject->AddComponent<DAE::Components::PlayerComponent>(
+    auto& playerComponent{ pGameObject->AddComponent<DAE::Components::PlayerComponent>(
         pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject, 500.f)
-    );
+    )};
+    auto& livesComponent{ pGameObject->AddComponent<DAE::Components::LivesComponent>(*pGameObject, 2) };
+    livesComponent.AddObserver(playerComponent);
 }
 
 int main(int, char*[]) {

@@ -2,6 +2,7 @@
 #define COMMANDS_H
 
 #include "../Scene/GameObject.h"
+#include "Components/LivesComponent.h"
 #include "glm/vec2.hpp"
 
 namespace DAE::Components
@@ -46,17 +47,17 @@ namespace DAE::Input
     };
 
     /*******************************************
-     * Die command
+     * Take damage command
      *******************************************/
 
-    class DieCommand final : public Command
+    class TakeDamageCommand final : public Command
     {
     public:
-        explicit DieCommand(GameObject&);
+        explicit TakeDamageCommand(Components::LivesComponent& livesComponent);
         void Execute() noexcept override;
 
     private:
-        GameObject& m_object;
+        Components::LivesComponent& m_livesComponent;
     };
 
 }
