@@ -24,6 +24,8 @@ namespace DAE::Components
 
         virtual void Update() noexcept {};
 
+        GameObject& GetOwner() const noexcept { return m_owner; };
+
     protected:
         GameObject& m_owner;
 

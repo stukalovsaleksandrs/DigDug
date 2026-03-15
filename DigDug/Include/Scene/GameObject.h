@@ -51,11 +51,11 @@ namespace DAE
          * to an existing one if the owner already had a component with the same type
          */
         template<Components::DerivedComponent ComponentType, typename... Args>
-        ComponentType* AddComponent(Args&&... args) noexcept {
+        ComponentType& AddComponent(Args&&... args) noexcept {
             // Trying returning the existing component
             for (auto& [pComponent, markedForDeletion] : m_components) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
-                    return pDerivedComponent;
+                    return *pDerivedComponent;
                 }
             }
             // Returning a new component since there is no existing one
@@ -68,7 +68,7 @@ namespace DAE
                     false
                 )
             );
-            return dynamic_cast<ComponentType*>(m_components.back().pComponent.get());
+            return *dynamic_cast<ComponentType*>(m_components.back().pComponent.get());
         }
 
         /**

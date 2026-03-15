@@ -54,8 +54,8 @@ DAE::Components::DebugComponent::DebugComponent(GameObject& owner) noexcept : Co
 DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
+    , m_pRenderComponent{owner.AddComponent<RenderComponent>(owner)}
 {
-    m_pRenderComponent = owner.AddComponent<RenderComponent>(owner);
     UpdateTexture();
 }
 
@@ -98,7 +98,7 @@ void DAE::Components::TextComponent::UpdateTexture() const {
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
-    m_pRenderComponent->SetTexture(pSDLTexture);
+    m_pRenderComponent.SetTexture(pSDLTexture);
 }
 
 /*******************************************

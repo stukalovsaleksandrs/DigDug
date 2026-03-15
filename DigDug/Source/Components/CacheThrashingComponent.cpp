@@ -2,8 +2,6 @@
 #include "Rendering/Renderer.h"
 #include <imgui.h>
 #include <implot.h>
-#include <backends/imgui_impl_sdl3.h>
-#include <backends/imgui_impl_sdlrenderer3.h>
 
 DAE::Components::CacheThrashingComponent::CacheThrashingComponent(GameObject& owner)
     : DebugComponent(owner)

@@ -37,8 +37,6 @@ namespace DAE::Components
         std::shared_ptr<Texture2D> m_pTexture{};
     };
 
-
-
     /*******************************************
      * Text component
      *******************************************/
@@ -54,7 +52,7 @@ namespace DAE::Components
         std::string m_text;
         std::shared_ptr<Font> m_pFont;
         SDL_Color m_color{ 255, 255, 255, 255 };
-        RenderComponent* m_pRenderComponent;
+        RenderComponent& m_pRenderComponent;
 
         void UpdateTexture() const;
     };
