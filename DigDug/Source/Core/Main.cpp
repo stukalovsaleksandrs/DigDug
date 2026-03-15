@@ -34,7 +34,7 @@ static void Load()
         *pGameObject,
         "Programming 4 Assignment",
         pFont
-        );
+    );
 
     // FPS
     pGameObject = scene.CreateGameObject(glm::vec2{ 10, 10 });
@@ -49,6 +49,7 @@ static void Load()
 
     // Input bindings
     DAE::Input::InputManager& inputManager{ DAE::Input::InputManager::GetInstance() };
+    inputManager.Bind({SDL_SCANCODE_K, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::DieCommand>(*pGameObject));
     //// Movement
     ///// Keyboard
     inputManager.Bind({SDL_SCANCODE_W, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, -1.f }));

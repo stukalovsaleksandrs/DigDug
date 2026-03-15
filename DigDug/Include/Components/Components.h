@@ -4,11 +4,10 @@
 #include "ComponentBase.h"
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
+#include "glm/ext/scalar_constants.hpp"
 #include <memory>
 #include <string_view>
 #include <string>
-
-#include "glm/ext/scalar_constants.hpp"
 
 namespace DAE {
     class GameObject;
@@ -38,17 +37,7 @@ namespace DAE::Components
         std::shared_ptr<Texture2D> m_pTexture{};
     };
 
-    /*******************************************
-     * Debug component
-     *******************************************/
-    // Interface for components to provide debug rendering
-    class DebugComponent : public Component
-    {
-    public:
-        explicit DebugComponent(GameObject& owner) noexcept;
 
-        virtual void DebugRender(SDL_Renderer* pSDLRenderer) = 0;
-    };
 
     /*******************************************
      * Text component

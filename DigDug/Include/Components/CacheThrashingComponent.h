@@ -12,7 +12,7 @@ namespace DAE::Components
     public:
         explicit CacheThrashingComponent(GameObject& owner);
 
-        void DebugRender(SDL_Renderer* pSDLRenderer) override;
+        void DebugRender() override;
 
     private:
         int m_sampleCountEx1{ 10 };

@@ -23,6 +23,7 @@ namespace DAE
         void Init(SDL_Window* pWindow);
         // Calls Render() on all the registered components
         void Render() const;
+
         void Destroy();
 
         void RenderTexture(Texture2D const& texture, glm::vec2 location) const;
@@ -51,6 +52,8 @@ namespace DAE
         std::vector<Components::DebugComponent*> m_pDebugComponents;// Non-owning
 
         void InitializeImGui();
+
+        void RenderDebugInfo() const;
     };
 }
 

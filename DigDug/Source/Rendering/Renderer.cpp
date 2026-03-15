@@ -36,11 +36,7 @@ void DAE::Renderer::Render() const
     pRenderComponent->Render();
     }
 
-    // Rendering debug components
-    for (auto const pDebugComponent : m_pDebugComponents)
-    {
-        pDebugComponent->DebugRender(m_pSDLRenderer);
-    }
+    RenderDebugInfo();
 
     SDL_RenderPresent(m_pSDLRenderer);
 }
@@ -130,5 +126,21 @@ void DAE::Renderer::InitializeImGui()
 
     ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pSDLRenderer);
     ImGui_ImplSDLRenderer3_Init(m_pSDLRenderer);
+}
+
+void DAE::Renderer::RenderDebugInfo() const
+{
+    ImGui_ImplSDLRenderer3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    // Rendering debug components
+    for (auto const pDebugComponent : m_pDebugComponents)
+    {
+        pDebugComponent->DebugRender();
+    }
+
+    ImGui::Render();
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pSDLRenderer);
 }
 

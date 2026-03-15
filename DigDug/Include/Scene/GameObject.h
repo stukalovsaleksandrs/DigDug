@@ -26,13 +26,20 @@ namespace DAE
             bool markedForDeletion{};
         };
 
-    public:
-        bool markedForDeletion{};
+        bool m_markedForDeletion{};
 
+    public:
         HierarchyElement hierarchyElement;
         explicit GameObject(Scene& scene, glm::vec2 localPosition = {}) noexcept;
 
+        /*******************************************
+         * Lifetime
+         *******************************************/
+
         void Update();
+
+        void MarkForDeletion() noexcept;
+        [[nodiscard]] bool IsMarkedForDeletion() const noexcept;
 
         /*******************************************
          * Components
@@ -141,7 +148,7 @@ namespace DAE
 
         void UpdateWorldPosition() noexcept;
 
-        [[nodiscard]] bool IsDirectChildOfScene() noexcept;
+        [[nodiscard]] bool IsDirectChildOfScene() const noexcept;
 
     private:
         std::vector<DeletableComponent> m_components{};

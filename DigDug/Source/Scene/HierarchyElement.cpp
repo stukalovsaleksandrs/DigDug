@@ -134,7 +134,7 @@ void DAE::HierarchyElement::DeleteMarkedGameObjects() noexcept
     // Deleting the direct children
     std::erase_if(m_pChildren, [](std::unique_ptr<GameObject> const& pGameObject)
     {
-        return pGameObject->markedForDeletion;
+        return pGameObject->IsMarkedForDeletion();
     });
 
     // Deleting the indirect children

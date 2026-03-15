@@ -2,11 +2,15 @@
 
 DAE::GameObject::GameObject(Scene& scene, glm::vec2 const localPosition) noexcept
     : hierarchyElement(&scene.hierarchyElement, nullptr)
-    , m_localPosition{ localPosition }
-    , m_scene(scene)
+      , m_localPosition{ localPosition }
+      , m_scene(scene)
 {
     UpdateWorldPosition();
 }
+
+/*******************************************
+ * Lifetime
+ *******************************************/
 
 void DAE::GameObject::Update() {
     DeleteMarkedComponents();
@@ -20,19 +24,21 @@ void DAE::GameObject::Update() {
     hierarchyElement.UpdateChildren();
 }
 
-void DAE::GameObject::DeleteMarkedComponents() noexcept
+void DAE::GameObject::MarkForDeletion() noexcept
 {
-    if (!m_componentDeletionFlagsDirty) return;
-    m_componentDeletionFlagsDirty = false;
-    std::erase_if(m_components,
-        [](DeletableComponent const& component)
-        {
-            return component.markedForDeletion;
-        }
-    );
+    m_markedForDeletion = true;
 }
 
-void DAE::GameObject::SetLocalPosition(glm::vec2 position) noexcept
+bool DAE::GameObject::IsMarkedForDeletion() const noexcept
+{
+    return m_markedForDeletion;
+}
+
+/*******************************************
+ * Transform
+ *******************************************/
+
+void DAE::GameObject::SetLocalPosition(glm::vec2 const position) noexcept
 {
     m_localPosition = position;
     SetPositionDirty();
@@ -53,6 +59,15 @@ glm::vec2 DAE::GameObject::GetWorldPosition() noexcept
     return m_worldPosition;
 }
 
+void DAE::GameObject::SetPositionDirty() noexcept
+{
+    m_positionIsDirty = true;
+    for (auto const& pChild : hierarchyElement.GetChildrenGameObjects())
+    {
+        pChild->SetPositionDirty();
+    }
+}
+
 void DAE::GameObject::UpdateWorldPosition() noexcept
 {
     if (IsDirectChildOfScene())
@@ -67,16 +82,19 @@ void DAE::GameObject::UpdateWorldPosition() noexcept
     }
 }
 
-bool DAE::GameObject::IsDirectChildOfScene() noexcept
+bool DAE::GameObject::IsDirectChildOfScene() const noexcept
 {
     return hierarchyElement.GetParentHierarchyElement() == &m_scene.hierarchyElement;
 }
 
-void DAE::GameObject::SetPositionDirty() noexcept
+void DAE::GameObject::DeleteMarkedComponents() noexcept
 {
-    m_positionIsDirty = true;
-    for (auto const& pChild : hierarchyElement.GetChildrenGameObjects())
-    {
-        pChild->SetPositionDirty();
-    }
+    if (!m_componentDeletionFlagsDirty) return;
+    m_componentDeletionFlagsDirty = false;
+    std::erase_if(m_components,
+                  [](DeletableComponent const& component)
+                  {
+                      return component.markedForDeletion;
+                  }
+    );
 }

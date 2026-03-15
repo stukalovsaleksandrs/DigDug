@@ -27,9 +27,5 @@ DAE::Input::DieCommand::DieCommand(GameObject& object)
 
 void DAE::Input::DieCommand::Execute() noexcept
 {
-    // Well, I want to delete it:)
-    // I have a problem that all my game objects
-    // belong to the scene.
-    // Can I mark it for deletion in here?
-
+    m_object.MarkForDeletion();
 }

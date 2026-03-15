@@ -26,18 +26,10 @@ DAE::Components::CacheThrashingComponent::CacheThrashingComponent(GameObject& ow
     m_gameObjects3DAlt.resize(bufferSize);
 }
 
-void DAE::Components::CacheThrashingComponent::DebugRender(SDL_Renderer* pSDLRenderer)
+void DAE::Components::CacheThrashingComponent::DebugRender()
 {
-    // Rendering ImGui
-    ImGui_ImplSDLRenderer3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
-
     DrawEx1();
     DrawEx2();
-
-    ImGui::Render();
-    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), pSDLRenderer);
 }
 
 void DAE::Components::CacheThrashingComponent::DrawEx1()
