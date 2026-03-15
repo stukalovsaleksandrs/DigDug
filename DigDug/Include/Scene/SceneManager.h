@@ -14,11 +14,12 @@ namespace DAE
         Scene& CreateScene();
 
         void Update();
-        void Render() const;
+
     private:
-        friend class Singleton<SceneManager>;
+        friend class Singleton;
         SceneManager() = default;
         std::vector<std::unique_ptr<Scene>> m_scenes{};
+
     };
 }
 

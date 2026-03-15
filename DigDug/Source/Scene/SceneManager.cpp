@@ -6,6 +6,7 @@ void DAE::SceneManager::Update()
     for(auto const& scene : m_scenes)
     {
         scene->Update();
+        scene->hierarchyElement.DeleteMarkedGameObjects();
     }
 }
 

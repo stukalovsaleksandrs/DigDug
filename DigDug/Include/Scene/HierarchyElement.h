@@ -34,6 +34,8 @@ namespace DAE
 
         void UpdateChildren() const noexcept;
 
+        void DeleteMarkedGameObjects() noexcept;
+
     private:
         HierarchyElement* m_pParentHierarchyElement{};
         HierarchyElement* const m_pSceneHierarchyElement{};

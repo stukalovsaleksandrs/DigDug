@@ -27,6 +27,8 @@ namespace DAE
         };
 
     public:
+        bool markedForDeletion{};
+
         HierarchyElement hierarchyElement;
         explicit GameObject(Scene& scene, glm::vec2 localPosition = {}) noexcept;
 
