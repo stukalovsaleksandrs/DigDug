@@ -20,38 +20,32 @@ static void Load()
     auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
 
     // Background
-    auto pGameObject{ std::make_unique<DAE::GameObject>(glm::vec2{}) };
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Background.png");
-
-    scene.Add(std::move(pGameObject));
+    auto pGameObject{ scene.CreateGameObject(glm::vec2{}) };
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject)->SetTexture("Background.png");
 
     // Logo
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{358, 180});
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("Logo.png");
-    scene.Add(std::move(pGameObject));
+    pGameObject = scene.CreateGameObject(glm::vec2{358, 180});
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject)->SetTexture("Logo.png");
 
     // Title
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 292, 20 });
+    pGameObject = scene.CreateGameObject(glm::vec2{ 292, 20 });
     auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
     pGameObject->AddComponent<DAE::Components::TextComponent>(
-        *pGameObject.get(),
+        *pGameObject,
         "Programming 4 Assignment",
         pFont
         );
-    scene.Add(std::move(pGameObject));
 
     // FPS
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 10, 10 });
-    pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject.get(), pFont);
-    scene.Add(std::move(pGameObject));
+    pGameObject = scene.CreateGameObject(glm::vec2{ 10, 10 });
+    pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject, pFont);
 
     // Character
-    pGameObject = std::make_unique<DAE::GameObject>(glm::vec2{ 500, 250 });
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject.get())->SetTexture("RandomCircle.png");
+    pGameObject = scene.CreateGameObject(glm::vec2{ 500, 250 });
+    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject)->SetTexture("RandomCircle.png");
     DAE::Components::MovementComponent& movementComponent {
-        *pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject.get(), 500.f)
+        *pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject, 500.f)
     };
-    scene.Add(std::move(pGameObject));
 
     // Input bindings
     DAE::Input::InputManager& inputManager{ DAE::Input::InputManager::GetInstance() };
@@ -62,7 +56,7 @@ static void Load()
     inputManager.Bind({SDL_SCANCODE_S, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 0.f, 1.f }));
     inputManager.Bind({SDL_SCANCODE_D, DAE::Input::InputType::pressed}, std::make_unique<DAE::Input::MoveCommand>(movementComponent, glm::vec2{ 1.f, 0.f }));
     ///// Gamepad
-    
+
 }
 
 int main(int, char*[]) {

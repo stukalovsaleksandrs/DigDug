@@ -8,6 +8,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+#include "Scene/HierarchyElement.h"
+
 namespace DAE
 {
     class Texture2D;
@@ -25,9 +27,14 @@ namespace DAE
         };
 
     public:
-        explicit GameObject(glm::vec2 localPosition = {}) noexcept;
+        HierarchyElement hierarchyElement;
+        explicit GameObject(Scene& scene, glm::vec2 localPosition = {}) noexcept;
 
         void Update();
+
+        /*******************************************
+         * Components
+         *******************************************/
 
         /**
          * Attempts to add to the parent game object a new component of the type given
@@ -116,17 +123,10 @@ namespace DAE
             return nullptr;
         }
 
-        // Attempts removing the current game object from
-        // its parent and adding to the new parent.
-        void SetParent(GameObject* pParent, bool keepWorldPosition) noexcept;
 
-        /**
-         * @return Whether the pChild is a child of the current game object
-         */
-        bool IsChild(GameObject* pChild) const noexcept;
-
-        [[nodiscard]] GameObject* GetChild(unsigned int const idx) const{ return m_pChildren.at(idx); };
-        [[nodiscard]] GameObject* GetParent() const{ return m_pParent; };
+        /*******************************************
+         * Transform
+         *******************************************/
 
         void SetLocalPosition(glm::vec2 position) noexcept;
         [[nodiscard]] glm::vec2 GetLocalPosition() const noexcept;
@@ -137,24 +137,22 @@ namespace DAE
         // Marks as dirty the position of the current game object and all its children
         void SetPositionDirty() noexcept;
 
+        void UpdateWorldPosition() noexcept;
+
+        [[nodiscard]] bool IsDirectChildOfScene() noexcept;
+
     private:
         std::vector<DeletableComponent> m_components{};
         bool m_componentDeletionFlagsDirty{};
 
-        GameObject* m_pParent{};
-        std::vector<GameObject*> m_pChildren{};
-
         glm::vec2 m_localPosition{}, m_worldPosition{};
         bool m_positionIsDirty{};
+
+        Scene& m_scene;
 
         // Removes all the components with the deletion flag set
         void DeleteMarkedComponents() noexcept;
 
-        void UpdateWorldPosition() noexcept;
-
-        void RemoveChild(GameObject* pChild) noexcept;
-
-        void AddChild(GameObject* pChild) noexcept;
     };
 
 }

@@ -29,18 +29,13 @@ namespace DAE::Input
     };
 
     /*******************************************
-     * Movement commands
+     * Move command
      *******************************************/
 
     class MoveCommand final : public Command
     {
     public:
         explicit MoveCommand(Components::MovementComponent& movementComponent, glm::vec2 direction);
-        ~MoveCommand() noexcept override = default;
-        MoveCommand(MoveCommand const&) noexcept = delete;
-        MoveCommand& operator=(MoveCommand const&) noexcept = delete;
-        MoveCommand(MoveCommand&&) noexcept = delete;
-        MoveCommand& operator=(MoveCommand&&) noexcept = delete;
 
         void Execute() noexcept override;
 
@@ -48,6 +43,20 @@ namespace DAE::Input
         Components::MovementComponent& m_movementComponent;
         glm::vec2 m_direction{};
 
+    };
+
+    /*******************************************
+     * Die command
+     *******************************************/
+
+    class DieCommand final : public Command
+    {
+    public:
+        explicit DieCommand(GameObject&);
+        void Execute() noexcept override;
+
+    private:
+        GameObject& m_object;
     };
 
 }

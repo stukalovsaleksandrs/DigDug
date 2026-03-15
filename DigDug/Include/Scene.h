@@ -1,31 +1,30 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "GameObject.h"
-#include <memory>
-#include <vector>
+#include "Scene/HierarchyElement.h"
 
 namespace DAE
 {
     class Scene final
     {
     public:
-        void Add(std::unique_ptr<GameObject> object);
-        void Remove(GameObject const& object);
-        void RemoveAll();
-
+        HierarchyElement hierarchyElement{nullptr, nullptr};
         void Update() const;
 
-        ~Scene() = default;
-        Scene(Scene const& other) = delete;
-        Scene(Scene&& other) = delete;
-        Scene& operator=(Scene const& other) = delete;
-        Scene& operator=(Scene&& other) = delete;
+        GameObject* CreateGameObject(glm::vec2 const localPosition) noexcept
+        {
+            return hierarchyElement.AddChild( std::make_unique<GameObject>(*this, localPosition));
+        }
+
+        GameObject* CreateGameObject(GameObject& parent, glm::vec2 const localPosition, bool const keepWorldPosition = false) noexcept
+        {
+            auto const gameObject{ CreateGameObject(localPosition) };
+            gameObject->hierarchyElement.SetParent(parent.hierarchyElement, keepWorldPosition);
+            return gameObject;
+        }
 
     private:
         friend class SceneManager;
-        explicit Scene() = default;
-
-        std::vector<std::unique_ptr<GameObject>> m_objects{};
     };
 
 }

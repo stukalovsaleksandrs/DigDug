@@ -80,7 +80,7 @@ void DAE::Input::InputManager::InitializeGamepad()
     }
 
     // Getting the first connected gamepad
-    int gamepadCount{};
-    SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
-
+    // int gamepadCount{};
+    // SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
+    // TODO: Finish gamepad initialization logic
 }

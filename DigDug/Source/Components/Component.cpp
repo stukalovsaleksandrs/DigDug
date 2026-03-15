@@ -129,7 +129,7 @@ void DAE::Components::OrbitComponent::Update() noexcept
     Component::Update();
 
     // 1. Getting the normalized distance vector and distance
-    auto const distanceVector{ m_owner.GetWorldPosition() - m_owner.GetParent()->GetWorldPosition() };
+    auto const distanceVector{ m_owner.GetWorldPosition() - m_owner.hierarchyElement.GetParentGameObject()->GetWorldPosition() };
     // NOTE: glm::vec2::length always returns 2 for some reason
     float const distance{ glm::sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y) };
     glm::vec2 const distanceVectorNormalized{ glm::normalize(distanceVector) };
