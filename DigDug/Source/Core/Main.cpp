@@ -7,10 +7,10 @@
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
 #endif
-#include "Application.h"
-#include "SceneManager.h"
-#include "ResourceManager.h"
-#include "Scene.h"
+#include "Core/Application.h"
+#include "Scene/SceneManager.h"
+#include "Core/ResourceManager.h"
+#include "Scene/Scene.h"
 #include <filesystem>
 #include <glm/glm.hpp>
 namespace fs = std::filesystem;

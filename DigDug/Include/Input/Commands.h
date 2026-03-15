@@ -1,7 +1,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "GameObject.h"
+#include "../Scene/GameObject.h"
 #include "glm/vec2.hpp"
 
 namespace DAE::Components

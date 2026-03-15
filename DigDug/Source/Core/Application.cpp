@@ -1,10 +1,10 @@
-﻿#include "Application.h"
-#include "../Include/Input/InputManager.h"
-#include "SceneManager.h"
-#include "ResourceManager.h"
-#include "Renderer.h"
-#include "Timer.h"
-#include "Utils.h"
+﻿#include "Core/Application.h"
+#include "Input/InputManager.h"
+#include "Scene/SceneManager.h"
+#include "Core/ResourceManager.h"
+#include "Rendering/Renderer.h"
+#include "Utils/Timer.h"
+#include "Utils/Utils.h"
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <sstream>

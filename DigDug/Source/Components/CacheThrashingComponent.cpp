@@ -1,5 +1,5 @@
 #include "Components/CacheThrashingComponent.h"
-#include "Renderer.h"
+#include "Rendering/Renderer.h"
 #include <imgui.h>
 #include <implot.h>
 #include <backends/imgui_impl_sdl3.h>

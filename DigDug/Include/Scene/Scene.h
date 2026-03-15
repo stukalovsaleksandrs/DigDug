@@ -1,7 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "GameObject.h"
-#include "Scene/HierarchyElement.h"
+#include "HierarchyElement.h"
 
 namespace DAE
 {
@@ -9,7 +9,10 @@ namespace DAE
     {
     public:
         HierarchyElement hierarchyElement{nullptr, nullptr};
-        void Update() const;
+        void Update() const
+        {
+            hierarchyElement.UpdateChildren();
+        }
 
         GameObject* CreateGameObject(glm::vec2 const localPosition) noexcept
         {

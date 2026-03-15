@@ -1,6 +1,6 @@
-#include "Texture2D.h"
-#include "Renderer.h"
-#include "Utils.h"
+#include "Rendering/Texture2D.h"
+#include "Rendering/Renderer.h"
+#include "Utils/Utils.h"
 #include <SDL3/SDL.h>
 #include <format>
 

@@ -1,5 +1,5 @@
 #include "Input/Commands.h"
-#include "GameObject.h"
+#include "Scene/GameObject.h"
 #include "Components/MovementComponent.h"
 
 /*******************************************

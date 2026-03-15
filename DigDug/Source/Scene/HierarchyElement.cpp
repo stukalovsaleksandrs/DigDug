@@ -1,5 +1,5 @@
 #include "Scene/HierarchyElement.h"
-#include "Scene.h"
+#include "Scene/Scene.h"
 
 DAE::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElement, GameObject* pOwnerGameObject) noexcept
     : m_pParentHierarchyElement(pSceneHierarchyElement)

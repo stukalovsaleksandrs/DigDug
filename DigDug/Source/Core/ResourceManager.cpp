@@ -1,7 +1,7 @@
-﻿#include "ResourceManager.h"
-#include "Texture2D.h"
-#include "Font.h"
-#include "Utils.h"
+﻿#include "Core/ResourceManager.h"
+#include "Rendering/Texture2D.h"
+#include "Rendering/Font.h"
+#include "Utils/Utils.h"
 #include <SDL3_ttf/SDL_ttf.h>
 #include <format>
 

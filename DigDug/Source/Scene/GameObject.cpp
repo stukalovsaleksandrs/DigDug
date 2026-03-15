@@ -1,7 +1,4 @@
-#include "Scene.h"
-
-#include <iostream>
-#include <utility>
+#include "Scene/Scene.h"
 
 DAE::GameObject::GameObject(Scene& scene, glm::vec2 const localPosition) noexcept
     : hierarchyElement(&scene.hierarchyElement, nullptr)

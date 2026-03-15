@@ -1,6 +1,6 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-#include "Components/Components.h"
+#include "../Components/Components.h"
 #include <memory>
 #include <optional>
 #include <algorithm>
@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
-#include "Scene/HierarchyElement.h"
+#include "HierarchyElement.h"
 
 namespace DAE
 {

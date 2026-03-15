@@ -1,7 +1,7 @@
-﻿#include "Renderer.h"
-#include "SceneManager.h"
-#include "Texture2D.h"
-#include "Utils.h"
+﻿#include "Rendering/Renderer.h"
+#include "Scene/SceneManager.h"
+#include "Rendering/Texture2D.h"
+#include "Utils/Utils.h"
 #include "Components/Components.h"
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>

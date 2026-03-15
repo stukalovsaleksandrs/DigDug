@@ -1,11 +1,11 @@
-#include "../../Include/Components/Components.h"
-#include "ResourceManager.h"
-#include "Renderer.h"
-#include "GameObject.h"
-#include "Font.h"
-#include "Texture2D.h"
-#include "Utils.h"
-#include "Timer.h"
+#include "Components/Components.h"
+#include "Core/ResourceManager.h"
+#include "Rendering/Renderer.h"
+#include "Scene/GameObject.h"
+#include "Rendering/Font.h"
+#include "Rendering/Texture2D.h"
+#include "Utils/Utils.h"
+#include "Utils/Timer.h"
 #include <SDL3_ttf/SDL_ttf.h>
 #include <glm/glm.hpp>
 

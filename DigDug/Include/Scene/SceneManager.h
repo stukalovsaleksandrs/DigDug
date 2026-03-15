@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include "Scene.h"
-#include "Singleton.h"
+#include "../Core/Singleton.h"
 
 namespace DAE
 {

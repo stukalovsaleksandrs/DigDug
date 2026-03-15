@@ -1,6 +1,6 @@
 #ifndef RENDERER_H
 #define RENDERER_H
-#include "Singleton.h"
+#include "../Core/Singleton.h"
 #include <SDL3/SDL.h>
 #include <glm/vec2.hpp>
 #include <vector>
