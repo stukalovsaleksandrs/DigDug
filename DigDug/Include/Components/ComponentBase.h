@@ -1,6 +1,7 @@
 #ifndef COMPONENTBASE_H
 #define COMPONENTBASE_H
 #include <concepts>
+#include <functional>
 #include <SDL3/SDL_render.h>
 
 namespace DAE
@@ -43,6 +44,9 @@ namespace DAE::Components
         explicit DebugComponent(GameObject& owner) noexcept;
 
         virtual void DebugRender() = 0;
+
+    private:
+        std::function<void()> const m_debugRender{ [this]{this->DebugRender();} };
     };
 }
 #endif // COMPONENTBASE_H

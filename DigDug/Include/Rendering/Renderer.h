@@ -1,15 +1,17 @@
 #ifndef RENDERER_H
 #define RENDERER_H
-#include "../Core/Singleton.h"
+#include "Core/Singleton.h"
 #include <SDL3/SDL.h>
 #include <glm/vec2.hpp>
 #include <vector>
+#include <functional>
+
+using RenderFunctionType = std::function<void()>;
 
 namespace DAE
 {
     namespace Components
     {
-        class RenderComponent;
         class DebugComponent;
     }
 
@@ -34,26 +36,21 @@ namespace DAE
         [[nodiscard]] const SDL_Color& GetBackgroundColor() const { return m_clearColor; }
         void SetBackgroundColor(SDL_Color const& color) { m_clearColor = color; }
 
-        // TODO: Accept components by ref & Add unregister to the debug component
+        // Adds the function for tracking, so the renderer now calls it
+        void RegisterFunction(RenderFunctionType const& renderFunctionToAdd);
 
-        // Adds a RenderComponent for tracking, so the renderer now renders it
-        void RegisterComponent(Components::RenderComponent* pRenderComponent);
-
-        void RegisterComponent(Components::DebugComponent* pDebugComponent);
-
-        // Removes the given component from tracking, so the renderer will not attempt to render it
-        void UnregisterComponent(Components::RenderComponent* renderComponentToRemove);
+        // Removes the function from tracking, so the renderer will not attempt to call it
+        void UnregisterFunction(RenderFunctionType const& renderFunctionToRemove);
 
     private:
         SDL_Renderer* m_pSDLRenderer{};
         SDL_Window* m_pWindow{};
         SDL_Color m_clearColor{  0, 0, 0, 255 };
-        std::vector<Components::RenderComponent*> m_pRenderComponents;// Non-owning
-        std::vector<Components::DebugComponent*> m_pDebugComponents;// Non-owning
+        std::vector<std::function<void()> const*> m_pRenderFunctions;// Non-owning
+        std::vector<std::function<void()> const*> m_pDebugRenderFunctions;// Non-owning
 
         void InitializeImGui();
 
-        void RenderDebugInfo() const;
     };
 }
 

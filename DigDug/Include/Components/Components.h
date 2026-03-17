@@ -1,6 +1,8 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include <functional>
+
 #include "ComponentBase.h"
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
@@ -38,6 +40,7 @@ namespace DAE::Components
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
+        std::function<void()> const m_render{ [this]{this->Render();} };
 
     };
 

@@ -2,12 +2,15 @@
 #include "Rendering/Renderer.h"
 #include <imgui.h>
 #include <implot.h>
+#include <functional>
 
 DAE::Components::CacheThrashingComponent::CacheThrashingComponent(GameObject& owner)
     : DebugComponent(owner)
 {
     // Registering ourselves to the renderer
-    Renderer::GetInstance().RegisterComponent(this);
+    // NOTE: The lambda is required due to the hidden *this
+    auto const debugRender{ [this]{ DebugRender(); } };
+    Renderer::GetInstance().RegisterFunction(debugRender);
 
     // Resizing exercise containers
     size_t constexpr bufferSize{ 10'000'000 };

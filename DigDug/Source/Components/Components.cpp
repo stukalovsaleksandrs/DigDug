@@ -15,12 +15,13 @@
 
 DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
     : Component(owner) {
-    Renderer::GetInstance().RegisterComponent(this);
+    // NOTE: Not a class member, because usage of auto for non-static members is not allowed
+    Renderer::GetInstance().RegisterFunction(m_render);
 }
 
 DAE::Components::RenderComponent::~RenderComponent()
 {
-    Renderer::GetInstance().UnregisterComponent(this);
+    Renderer::GetInstance().UnregisterFunction(m_render);
 }
 
 void DAE::Components::RenderComponent::Render() const {
@@ -49,7 +50,7 @@ glm::vec2 DAE::Components::RenderComponent::GetTextureDims() const noexcept
 
 DAE::Components::DebugComponent::DebugComponent(GameObject& owner) noexcept : Component(owner)
 {
-    Renderer::GetInstance().RegisterComponent(this);
+    Renderer::GetInstance().RegisterFunction(m_debugRender);
 }
 
 /*******************************************

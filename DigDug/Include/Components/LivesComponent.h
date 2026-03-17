@@ -9,7 +9,7 @@ namespace DAE::Components
     class LivesComponent : public Component
     {
     public:
-        Subject onDamageTaken;
+        Subject subject;
 
         explicit LivesComponent(GameObject& owner, uint32_t lives) noexcept;
 
@@ -17,7 +17,8 @@ namespace DAE::Components
 
     private:
         uint32_t m_lives{};
-        Event m_onDiedEvent;
+        Event m_onDiedEvent{MakeSDBMHash("OnDied")},
+            m_onDamageTaken{ MakeSDBMHash("OnDamageTaken") };
 
     };
 }

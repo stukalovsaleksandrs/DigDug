@@ -26,19 +26,25 @@ void DAE::Renderer::Init(SDL_Window* pWindow)
 
 void DAE::Renderer::Render() const
 {
+    // Setting up new ImGui frame
+    ImGui_ImplSDLRenderer3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
     // Clearing the background
     const auto&[r, g, b, a]{ GetBackgroundColor() };
     SDL_SetRenderDrawColor(m_pSDLRenderer, r, g, b, a);
     SDL_RenderClear(m_pSDLRenderer);
 
-    // Rendering the render components
-    for (auto const pRenderComponent : m_pRenderComponents) {
-    pRenderComponent->Render();
-    }
+    // Calling the render functions
+    for (auto* const pRenderFunction : m_pRenderFunctions) pRenderFunction->operator()();
 
-    RenderDebugInfo();
-
+    // Showing the new frame
     SDL_RenderPresent(m_pSDLRenderer);
+
+    // Rendering ImGui
+    ImGui::Render();
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pSDLRenderer);
 }
 
 void DAE::Renderer::Destroy()
@@ -83,30 +89,17 @@ SDL_Renderer* DAE::Renderer::GetSDLRenderer() const
     return m_pSDLRenderer;
 }
 
-// TODO: Add only if does not exist
-void DAE::Renderer::RegisterComponent(Components::RenderComponent* pRenderComponent)
+void DAE::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)
 {
-    m_pRenderComponents.push_back(pRenderComponent);
+    m_pRenderFunctions.push_back(&renderFunctionToAdd);
 }
 
-void DAE::Renderer::RegisterComponent(Components::DebugComponent* pDebugComponent)
-{
-    m_pDebugComponents.push_back(pDebugComponent);
-}
-
-void DAE::Renderer::UnregisterComponent(Components::RenderComponent* renderComponentToRemove)
+void DAE::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionToRemove)
 {
     // NOTE: [[maybe_unused]] is added to avoid unused variable errors in release build
     [[maybe_unused]] auto const erasedElementCount{
-        std::erase_if(m_pRenderComponents, [renderComponentToRemove](Components::RenderComponent const* currentRenderComponent)
-        {
-            return currentRenderComponent == renderComponentToRemove;
-        })
+        std::erase(m_pRenderFunctions, &renderFunctionToRemove)
     };
-    // NOTE: All the render components must be present in the list, so
-    // if one does not, it is an error. If the same component is
-    // removed twice, it is also an error since the method should only be called
-    // in the destructor of RenderComponent
     assert(erasedElementCount > 0 && "Render component not found");
 }
 
@@ -127,20 +120,3 @@ void DAE::Renderer::InitializeImGui()
     ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pSDLRenderer);
     ImGui_ImplSDLRenderer3_Init(m_pSDLRenderer);
 }
-
-void DAE::Renderer::RenderDebugInfo() const
-{
-    ImGui_ImplSDLRenderer3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
-
-    // Rendering debug components
-    for (auto const pDebugComponent : m_pDebugComponents)
-    {
-        pDebugComponent->DebugRender();
-    }
-
-    ImGui::Render();
-    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pSDLRenderer);
-}
-

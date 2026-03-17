@@ -1,5 +1,6 @@
 #include "Components/CacheThrashingComponent.h"
 #include "Components/LivesComponent.h"
+#include "Components/LivesDisplayComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/PlayerComponent.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
@@ -35,12 +36,18 @@ static void Load()
         character.AddComponent<DAE::Components::MovementComponent>(character, 500.f)
     )};
     auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(character, 2) };
-    livesComponent.onDamageTaken.BindObserver(playerComponent);
+    livesComponent.subject.BindObserver(playerComponent);
+
 
     // Lives
     auto& livesDisplay{ scene.CreateGameObject(glm::vec2{ 0.f, windowResolution.y - characterRenderComponent.GetTextureDims().y })};
     livesDisplay.AddComponent<DAE::Components::RenderComponent>(livesDisplay).SetTexture("DigDugCharacter.png");
     // livesDisplay.AddComponent<DAE::Components::LivesDisplayComponent>(livesDisplay);
+
+    // So, I want to subscribe it to onDamageTaken too, and
+    // the LivesDisplayComponent will update the
+    // I
+
 }
 
 int main(int, char*[]) {
