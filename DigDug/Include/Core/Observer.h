@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <utility>
 
 namespace DAE
 {
@@ -80,13 +81,17 @@ namespace DAE
     class Subject
     {
     public:
-        void AddObserver(Observer& observer) noexcept;
+        void BindObserver(Observer& observer) noexcept;
         void RemoveObserver(Observer& observer) noexcept;
 
-        virtual ~Subject() noexcept = default;
-
-    protected:
+        virtual ~Subject() noexcept;
         void NotifyObservers(Event event) const noexcept;
+
+    private:
+        Event const m_subjectDeletedEvent{
+            std::to_underlying(CommonEvents::SubjectDeleted)
+        };
+
         std::vector<Observer*> m_pObservers;
         // std::unordered_map<Event, std::vector<std::function<void()>>> m_EventToFunctions;
 

@@ -35,11 +35,12 @@ static void Load()
         character.AddComponent<DAE::Components::MovementComponent>(character, 500.f)
     )};
     auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(character, 2) };
-    livesComponent.AddObserver(playerComponent);
+    livesComponent.onDamageTaken.BindObserver(playerComponent);
 
     // Lives
     auto& livesDisplay{ scene.CreateGameObject(glm::vec2{ 0.f, windowResolution.y - characterRenderComponent.GetTextureDims().y })};
     livesDisplay.AddComponent<DAE::Components::RenderComponent>(livesDisplay).SetTexture("DigDugCharacter.png");
+    // livesDisplay.AddComponent<DAE::Components::LivesDisplayComponent>(livesDisplay);
 }
 
 int main(int, char*[]) {

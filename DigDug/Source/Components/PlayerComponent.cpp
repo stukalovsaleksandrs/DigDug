@@ -28,6 +28,7 @@ void DAE::Components::PlayerComponent::BindInput() const
 
 void DAE::Components::PlayerComponent::OnNotify(Event const event, Subject const&) noexcept
 {
+    // TODO: Bind functions to the events directly. Do not use OnNotify.
     switch (event.id)
     {
     case MakeSDBMHash("OnDied"):

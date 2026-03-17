@@ -16,7 +16,7 @@ void DAE::Observer::AddSubject(Subject& subject) noexcept
     m_pSubjects.push_back(&subject);
 }
 
-void DAE::Subject::AddObserver(Observer& observer) noexcept
+void DAE::Subject::BindObserver(Observer& observer) noexcept
 {
     if (std::ranges::binary_search(m_pObservers, &observer)) return;
     observer.AddSubject(*this);
@@ -26,6 +26,12 @@ void DAE::Subject::AddObserver(Observer& observer) noexcept
 void DAE::Subject::RemoveObserver(Observer& observer) noexcept
 {
     std::erase(m_pObservers, &observer);
+}
+
+DAE::Subject::~Subject() noexcept
+{
+    // Notifying all the observers that the subject got deleted
+    NotifyObservers(m_subjectDeletedEvent);// The observer is actually deleted by this point:/
 }
 
 void DAE::Subject::NotifyObservers(Event const event) const noexcept

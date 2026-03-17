@@ -12,19 +12,13 @@ DAE::Components::LivesComponent::LivesComponent(GameObject& owner, uint32_t cons
     inputManager.Bind({SDL_SCANCODE_K, DAE::Input::InputType::released}, std::make_unique<DAE::Input::TakeDamageCommand>(*this));
 }
 
-DAE::Components::LivesComponent::~LivesComponent() noexcept
-{
-    // Notifying all the observers that the subject got deleted
-    NotifyObservers(m_subjectDeletedEvent);// The observer is actually deleted by this point:/
-}
-
 void DAE::Components::LivesComponent::TakeDamage() noexcept
 {
     if (!m_lives) return;// Corpse does not care about damage
     --m_lives;
     if (!m_lives)// Just died
     {
-        NotifyObservers(m_onDiedEvent);
+        onDamageTaken.NotifyObservers(m_onDiedEvent);
         return;
     }
     std::println("Took damage, lives: {}", m_lives);
