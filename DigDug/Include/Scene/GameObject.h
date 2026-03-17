@@ -52,6 +52,9 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType, typename... Args>
         ComponentType& AddComponent(Args&&... args) noexcept {
+            // TODO: Make passing this pointer automatic to prevent users from adding component to one game object,
+            // and passing a reference to another
+
             // Trying returning the existing component
             for (auto& [pComponent, markedForDeletion] : m_components) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {

@@ -23,23 +23,23 @@ static void Load()
     auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
 
     // FPS
-    auto* pFPS{ scene.CreateGameObject(glm::vec2{ 10, 10 }) };
+    auto& fps{ scene.CreateGameObject(glm::vec2{ 10, 10 }) };
     auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
-    pFPS->AddComponent<DAE::Components::FPSComponent>(*pFPS, pFont);
+    fps.AddComponent<DAE::Components::FPSComponent>(fps, pFont);
 
     // Character
-    auto* pCharacter{ scene.CreateGameObject(glm::vec2{ 500, 250 }) };
-    auto& characterRenderComponent{ pCharacter->AddComponent<DAE::Components::RenderComponent>(*pCharacter) };
+    auto& character{ scene.CreateGameObject(glm::vec2{ 500.f, 250.f }) };
+    auto& characterRenderComponent{ character.AddComponent<DAE::Components::RenderComponent>(character) };
     characterRenderComponent.SetTexture("DigDugCharacter.png");
-    auto& playerComponent{ pCharacter->AddComponent<DAE::Components::PlayerComponent>(
-        pCharacter->AddComponent<DAE::Components::MovementComponent>(*pCharacter, 500.f)
+    auto& playerComponent{ character.AddComponent<DAE::Components::PlayerComponent>(
+        character.AddComponent<DAE::Components::MovementComponent>(character, 500.f)
     )};
-    auto& livesComponent{ pCharacter->AddComponent<DAE::Components::LivesComponent>(*pCharacter, 2) };
+    auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(character, 2) };
     livesComponent.AddObserver(playerComponent);
 
     // Lives
-    pCharacter = scene.CreateGameObject(glm::vec2{ 0, windowResolution.y - characterRenderComponent.GetTextureDims().y });
-    pCharacter->AddComponent<DAE::Components::RenderComponent>(*pCharacter).SetTexture("DigDugCharacter.png");
+    auto& livesDisplay{ scene.CreateGameObject(glm::vec2{ 0.f, windowResolution.y - characterRenderComponent.GetTextureDims().y })};
+    livesDisplay.AddComponent<DAE::Components::RenderComponent>(livesDisplay).SetTexture("DigDugCharacter.png");
 }
 
 int main(int, char*[]) {

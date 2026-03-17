@@ -13,6 +13,9 @@ namespace DAE
     public:
         // NOTE: First argument is nullptr for the scene, the second is nullptr for the scene's direct children
         explicit HierarchyElement(HierarchyElement* pSceneHierarchyElement, GameObject* pOwnerGameObject) noexcept;
+        // NOTE: Deleting the copy semantics, because std::unique_ptr is not copyable
+        HierarchyElement(const HierarchyElement&) = delete;
+        HierarchyElement& operator=(const HierarchyElement&) = delete;
 
         // Attempts removing the current game object from
         // its parent and adding to the new parent.
