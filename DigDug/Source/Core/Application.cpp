@@ -53,7 +53,7 @@ void PrintSDLVersion()
     LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
-DAE::Application::Application(std::filesystem::path const& dataPath)
+DAE::Application::Application(std::filesystem::path const& dataPath, glm::ivec2 const& windowResolution)
 {
     PrintSDLVersion();
 
@@ -63,11 +63,12 @@ DAE::Application::Application(std::filesystem::path const& dataPath)
         Utils::ThrowSDLError("SDL_Init Error");
     }
 
+
     g_window = SDL_CreateWindow(
-        "Programming 4 assignment",
-        1024,
-        576,
-        SDL_WINDOW_OPENGL
+        "Dig Dug",
+        windowResolution.x,
+        windowResolution.y,
+        SDL_WINDOW_VULKAN
     );
     if (!g_window)
     {

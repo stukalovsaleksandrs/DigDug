@@ -9,11 +9,11 @@ DAE::Texture2D::~Texture2D()
 	SDL_DestroyTexture(m_pTexture);
 }
 
-glm::vec2 DAE::Texture2D::GetSize() const
+glm::vec2 DAE::Texture2D::GetDims() const
 {
-    glm::vec2 size{};
-    SDL_GetTextureSize(m_pTexture, &size.x, &size.y);
-    return size;
+    glm::vec2 dims{};
+    SDL_GetTextureSize(m_pTexture, &dims.x, &dims.y);
+    return dims;
 }
 
 SDL_Texture* DAE::Texture2D::GetSDLTexture() const

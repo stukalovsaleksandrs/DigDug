@@ -9,6 +9,8 @@
 #include <string_view>
 #include <string>
 
+#include "glm/vec2.hpp"
+
 namespace DAE {
     class GameObject;
     class Texture2D;
@@ -32,9 +34,11 @@ namespace DAE::Components
         void Render() const;
         void SetTexture(std::string_view filename);
         void SetTexture(SDL_Texture* pSDLTexture);
+        [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
+
     };
 
     /*******************************************

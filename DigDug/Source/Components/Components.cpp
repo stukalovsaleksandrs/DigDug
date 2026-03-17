@@ -38,6 +38,11 @@ void DAE::Components::RenderComponent::SetTexture(SDL_Texture* pSDLTexture) {
     m_pTexture = std::make_shared<Texture2D>(pSDLTexture);
 }
 
+glm::vec2 DAE::Components::RenderComponent::GetTextureDims() const noexcept
+{
+    return m_pTexture->GetDims();
+}
+
 /*******************************************
  * Debug renderer
  *******************************************/

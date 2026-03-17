@@ -18,7 +18,7 @@ namespace DAE
         explicit Texture2D(std::string_view fullPath);
         ~Texture2D();
 
-        glm::vec2 GetSize() const;
+        glm::vec2 GetDims() const;
 
         Texture2D(const Texture2D &) = delete;
         Texture2D(Texture2D &&) = delete;

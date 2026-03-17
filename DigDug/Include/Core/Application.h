@@ -3,13 +3,14 @@
 
 #include <functional>
 #include <filesystem>
+#include "glm/vec2.hpp"
 
 namespace DAE
 {
     class Application final
     {
     public:
-        explicit Application(std::filesystem::path const& dataPath);
+        explicit Application(std::filesystem::path const& dataPath, glm::ivec2 const& windowResolution);
         ~Application();
         Application(Application const& other) = delete;
         Application(Application&& other) = delete;

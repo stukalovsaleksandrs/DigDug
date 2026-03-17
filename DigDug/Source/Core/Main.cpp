@@ -14,44 +14,32 @@
 #include <glm/glm.hpp>
 namespace fs = std::filesystem;
 
+float constexpr resolutionScale{ 3 };
+glm::vec2 constexpr originalGameResolution{ 224.f, 288.f },
+    windowResolution{ originalGameResolution * resolutionScale };
+
 static void Load()
 {
     auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
 
-    // Background
-    auto pGameObject{ scene.CreateGameObject(glm::vec2{}) };
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("Background.png");
-
-    // Logo
-    pGameObject = scene.CreateGameObject(glm::vec2{358, 180});
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("Logo.png");
-
-    // Title
-    pGameObject = scene.CreateGameObject(glm::vec2{ 292, 20 });
-    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
-    pGameObject->AddComponent<DAE::Components::TextComponent>(
-        *pGameObject,
-        "Programming 4 Assignment",
-        pFont
-    );
-
     // FPS
-    pGameObject = scene.CreateGameObject(glm::vec2{ 10, 10 });
-    pGameObject->AddComponent<DAE::Components::FPSComponent>(*pGameObject, pFont);
+    auto* pFPS{ scene.CreateGameObject(glm::vec2{ 10, 10 }) };
+    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
+    pFPS->AddComponent<DAE::Components::FPSComponent>(*pFPS, pFont);
 
     // Character
-    pGameObject = scene.CreateGameObject(glm::vec2{ 500, 250 });
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("DigDugCharacter.png");
-    auto& playerComponent{ pGameObject->AddComponent<DAE::Components::PlayerComponent>(
-        pGameObject->AddComponent<DAE::Components::MovementComponent>(*pGameObject, 500.f)
+    auto* pCharacter{ scene.CreateGameObject(glm::vec2{ 500, 250 }) };
+    auto& characterRenderComponent{ pCharacter->AddComponent<DAE::Components::RenderComponent>(*pCharacter) };
+    characterRenderComponent.SetTexture("DigDugCharacter.png");
+    auto& playerComponent{ pCharacter->AddComponent<DAE::Components::PlayerComponent>(
+        pCharacter->AddComponent<DAE::Components::MovementComponent>(*pCharacter, 500.f)
     )};
-    auto& livesComponent{ pGameObject->AddComponent<DAE::Components::LivesComponent>(*pGameObject, 2) };
+    auto& livesComponent{ pCharacter->AddComponent<DAE::Components::LivesComponent>(*pCharacter, 2) };
     livesComponent.AddObserver(playerComponent);
 
     // Lives
-    pGameObject = scene.CreateGameObject(glm::vec2{ 0, 576});
-    pGameObject->AddComponent<DAE::Components::RenderComponent>(*pGameObject).SetTexture("DigDugCharacter.png");
-
+    pCharacter = scene.CreateGameObject(glm::vec2{ 0, windowResolution.y - characterRenderComponent.GetTextureDims().y });
+    pCharacter->AddComponent<DAE::Components::RenderComponent>(*pCharacter).SetTexture("DigDugCharacter.png");
 }
 
 int main(int, char*[]) {
@@ -62,7 +50,7 @@ int main(int, char*[]) {
     if(!fs::exists(data_location))
         data_location = "../Data/";
 #endif
-    DAE::Application game(data_location);
+    DAE::Application game(data_location, windowResolution);
     game.Run(Load);
     return 0;
 }
