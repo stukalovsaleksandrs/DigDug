@@ -33,7 +33,8 @@ void DAE::Subject::BindObserver(Observer& observer) noexcept
 
 void DAE::Subject::RemoveObserver(Observer& observer) noexcept
 {
-    std::erase(m_pObservers, &observer);
+    auto& vec = m_pObservers;
+    vec.erase(std::remove(vec.begin(), vec.end(), &observer), vec.end());
 }
 
 DAE::Subject::~Subject() noexcept
