@@ -7,6 +7,8 @@
 
 namespace DAE::Components
 {
+    // TODO: Just move all of this to PlayerComponent
+
     class LivesComponent : public Component
     {
     public:

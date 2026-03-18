@@ -3,6 +3,7 @@
 #include "Components/LivesDisplayComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/PlayerComponent.h"
+#include "Components/PointDisplayComponent.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
@@ -47,6 +48,11 @@ static void Load()
     auto const& pTutorialFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20)};
     tutorial.AddComponent<DAE::Components::TextComponent>("Use WASD to move Dig Dug, K to inflict damage", pTutorialFont);
 
+    // Point display
+    auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 100.f}) };
+    pointDisplay.AddComponent<DAE::Components::TextComponent>("Points ", pFont);
+    auto& pointDisplayComponent{ pointDisplay.AddComponent<DAE::Components::PointDisplayComponent>(playerComponent) };
+    playerComponent.subject.BindObserver(pointDisplayComponent);
 }
 
 int main(int, char*[]) {

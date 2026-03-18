@@ -3,11 +3,13 @@
 
 #include "../Scene/GameObject.h"
 #include "Components/LivesComponent.h"
+#include "Components/PlayerComponent.h"
 #include "glm/vec2.hpp"
 
 namespace DAE::Components
 {
     class MovementComponent;
+    class PlayerComponent;
 }
 
 namespace DAE::Input
@@ -62,6 +64,20 @@ namespace DAE::Input
 
     };
 
+    /*******************************************
+     * Point command
+     *******************************************/
+
+    class PointCommand final : public Command
+    {
+    public:
+        explicit PointCommand(Components::PlayerComponent& playerComponent);
+        void Execute() noexcept override;
+
+    private:
+        Components::PlayerComponent& m_playerComponent;
+
+    };
 }
 
 #endif // COMMANDS_H

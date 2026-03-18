@@ -13,19 +13,19 @@ DAE::Components::LivesDisplayComponent::LivesDisplayComponent(GameObject& owner,
     m_pTextComponent->SetText(std::format("Lives: {}", m_pLivesComponent->GetLives()));
 }
 
-void DAE::Components::LivesDisplayComponent::OnNotify(Event const event, Subject const& subject) noexcept
+void DAE::Components::LivesDisplayComponent::OnNotify(Event const event, Subject const& caller) noexcept
 {
     switch (event.id)
     {
         case MakeSDBMHash("OnDamageTaken"):
         {
-            auto const lives{ m_pLivesComponent->GetLives() };
-            m_pTextComponent->SetText(std::format("Lives: {}", lives));
+            m_pTextComponent->SetText(std::format("Lives: {}", m_pLivesComponent->GetLives()));
             break;
         }
         case std::to_underlying(CommonEvents::SubjectDeleted):
         {
-            std::erase(m_pSubjects, &subject);
+            std::erase(m_pSubjects, &caller);
+            break;
         }
         default:
             break;

@@ -36,3 +36,18 @@ void DAE::Input::TakeDamageCommand::Execute() noexcept
         m_canExecute = false;
     }
 }
+
+/*******************************************
+ * Point command
+ *******************************************/
+
+DAE::Input::PointCommand::PointCommand(Components::PlayerComponent& playerComponent)
+    : m_playerComponent(playerComponent)
+{}
+
+void DAE::Input::PointCommand::Execute() noexcept
+{
+    m_playerComponent.AddPoints(1);
+}
+
+

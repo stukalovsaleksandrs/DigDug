@@ -81,10 +81,10 @@ namespace DAE
     class Subject
     {
     public:
+        virtual ~Subject() noexcept;
         void BindObserver(Observer& observer) noexcept;
         void RemoveObserver(Observer& observer) noexcept;
 
-        virtual ~Subject() noexcept;
         void NotifyObservers(Event event) const noexcept;
 
     private:
