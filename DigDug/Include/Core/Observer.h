@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <functional>
 #include <utility>
+#include <array>
 
 namespace DAE
 {
@@ -40,7 +41,7 @@ namespace DAE
         EventId const id;
         static constexpr uint8_t maxArgumentCount{ 8 };
         uint8_t argumentCount;
-        // TODO: Use memory pool
+        // TODO: Use memory pool. Actually remove, I use the pull model
         std::array<EventArgument, maxArgumentCount> arguments{};
 
         explicit Event(EventId const in_id, uint8_t const in_argumentCount = 0)

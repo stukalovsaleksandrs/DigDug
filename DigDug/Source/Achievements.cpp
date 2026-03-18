@@ -1,3 +1,4 @@
+#ifdef USE_STEAMWORKS
 #include "Achievements.h"
 
 #include <isteamuser.h>
@@ -81,3 +82,4 @@ void DAE::CSteamAchievements::OnAchievementStored( UserAchievementStored_t *pCal
         std::println( "Stored Achievement for Steam\n" );
     }
 }
+#endif

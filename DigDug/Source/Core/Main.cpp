@@ -17,8 +17,8 @@
 #include <glm/glm.hpp>
 namespace fs = std::filesystem;
 
-#if USE_STEAMWORKS
-#if WINDOWS
+#ifdef USE_STEAMWORKS
+#ifdef WINDOWS
 #pragma warning (push)
 #pragma warning (disable: 4996)
 #endif
@@ -26,8 +26,6 @@ namespace fs = std::filesystem;
 #if WINDOWS
 #pragma warning (pop)
 #endif
-#endif
-#include "steam_api.h"
 
 // Defining our achievements
 enum EAchievements
@@ -49,6 +47,7 @@ inline DAE::Achievement_t g_Achievements[] =
 
 // Global access to Achievements object
 DAE::CSteamAchievements*	g_SteamAchievements = NULL;
+#endif
 
 float constexpr resolutionScale{ 3 };
 glm::vec2 constexpr originalGameResolution{ 224.f, 288.f },
@@ -63,8 +62,10 @@ class AchievementManager : public DAE::Observer
         {
             case DAE::MakeSDBMHash("OnCollected5Points"):
             {
+#ifdef USE_STEAMWORKS
                 if (g_SteamAchievements)
                     g_SteamAchievements->SetAchievement("ACH_WIN_ONE_GAME");
+#endif
             }
             default: break;
         }

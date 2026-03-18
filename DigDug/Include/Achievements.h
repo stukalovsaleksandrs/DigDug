@@ -1,5 +1,6 @@
 #ifndef ACHIEVEMENTS_H
 #define ACHIEVEMENTS_H
+#ifdef USE_STEAMWORKS
 
 #define _ACH_ID( id, name ) { id, #id, name, "", 0, 0 }
 #include <isteamuserstats.h>
@@ -42,4 +43,5 @@ namespace DAE
     };
 }
 
+#endif
 #endif
