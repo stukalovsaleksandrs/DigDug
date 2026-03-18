@@ -4,13 +4,19 @@
 
 #include "Components/MovementComponent.h"
 
-DAE::Components::PlayerComponent::PlayerComponent(GameObject& owner)
+DAE::Components::PlayerComponent::PlayerComponent(GameObject& owner) noexcept
     : Component(owner)
     , m_movementComponent(*owner.GetComponent<MovementComponent>())
 {
     BindInput();
 
 }
+
+// DAE::Components::PlayerComponent::~PlayerComponent() noexcept
+// {
+       // TODO: Fix uncommenting this giving a segfault
+//     UnbindInput();
+// }
 
 void DAE::Components::PlayerComponent::BindInput() const
 {

@@ -23,11 +23,6 @@ static void Load()
 {
     auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
 
-    // FPS
-    auto& fps{ scene.CreateGameObject(glm::vec2{ 10, 10 }) };
-    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
-    fps.AddComponent<DAE::Components::FPSComponent>(pFont);
-
     // Character
     auto& character{ scene.CreateGameObject(glm::vec2{ 500.f, 250.f }) };
 
@@ -42,9 +37,16 @@ static void Load()
 
     // Lives display
     auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 50.f}) };
+    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
     livesDisplay.AddComponent<DAE::Components::TextComponent>(" ", pFont);// NOTE: Text must not be empty
     auto& livesDisplayComponent{ livesDisplay.AddComponent<DAE::Components::LivesDisplayComponent>(livesComponent) };
     livesComponent.subject.BindObserver(livesDisplayComponent);
+
+    // Tutorial
+    auto& tutorial{ scene.CreateGameObject(glm::vec2{10.f, 0.1f * windowResolution.y }) };
+    auto const& pTutorialFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20)};
+    tutorial.AddComponent<DAE::Components::TextComponent>("Use WASD to move Dig Dug, K to inflict damage", pTutorialFont);
+
 }
 
 int main(int, char*[]) {

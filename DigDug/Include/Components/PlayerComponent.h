@@ -10,7 +10,12 @@ namespace DAE::Components
     class PlayerComponent : public Component, public Observer
     {
     public:
-        explicit PlayerComponent(GameObject& owner);
+        explicit PlayerComponent(GameObject& owner) noexcept;
+        // ~PlayerComponent() noexcept override;
+        PlayerComponent(PlayerComponent&&) noexcept = delete;
+        PlayerComponent(PlayerComponent const&) noexcept = delete;
+        PlayerComponent& operator=(PlayerComponent const&) noexcept = delete;
+        PlayerComponent& operator=(PlayerComponent&&) noexcept = delete;
 
         void BindInput() const;
         void UnbindInput() const;
