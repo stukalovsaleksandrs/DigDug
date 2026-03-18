@@ -109,6 +109,7 @@ void DAE::Components::TextComponent::UpdateTexture() const {
 /*******************************************
  * FPS component
  *******************************************/
+
 DAE::Components::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
     : Component(owner)
 {
@@ -124,6 +125,7 @@ void DAE::Components::FPSComponent::Update() noexcept {
 /*******************************************
  * Orbit component
  *******************************************/
+
 DAE::Components::OrbitComponent::OrbitComponent(GameObject& owner, float const radiansSec) noexcept
     : Component(owner)
     , m_radiansSec{ radiansSec }
