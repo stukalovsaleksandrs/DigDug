@@ -11,14 +11,67 @@
 #include "Core/Application.h"
 #include "Scene/SceneManager.h"
 #include "Core/ResourceManager.h"
+#include "Core/Observer.h"
 #include "Scene/Scene.h"
 #include <filesystem>
 #include <glm/glm.hpp>
 namespace fs = std::filesystem;
 
+#if USE_STEAMWORKS
+#if WINDOWS
+#pragma warning (push)
+#pragma warning (disable: 4996)
+#endif
+#include <steam_api.h>
+#if WINDOWS
+#pragma warning (pop)
+#endif
+#endif
+#include "steam_api.h"
+
+// Defining our achievements
+enum EAchievements
+{
+    ACH_WIN_ONE_GAME = 0,
+    ACH_WIN_100_GAMES = 1,
+    ACH_TRAVEL_FAR_ACCUM = 2,
+    ACH_TRAVEL_FAR_SINGLE = 3,
+};
+
+// Achievement array which will hold data about the achievements and their state
+inline DAE::Achievement_t g_Achievements[] =
+{
+    _ACH_ID( ACH_WIN_ONE_GAME, "Winner" ),
+    _ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
+    _ACH_ID( ACH_TRAVEL_FAR_ACCUM, "Interstellar" ),
+    _ACH_ID( ACH_TRAVEL_FAR_SINGLE, "Orbiter" ),
+};
+
+// Global access to Achievements object
+DAE::CSteamAchievements*	g_SteamAchievements = NULL;
+
 float constexpr resolutionScale{ 3 };
 glm::vec2 constexpr originalGameResolution{ 224.f, 288.f },
     windowResolution{ originalGameResolution * resolutionScale };
+
+// Sorry for putting it here, I'm just getting to this too late:/
+class AchievementManager : public DAE::Observer
+{
+    void OnNotify(DAE::Event const event, DAE::Subject const&) noexcept override
+    {
+        switch (event.id)
+        {
+            case DAE::MakeSDBMHash("OnCollected5Points"):
+            {
+                if (g_SteamAchievements)
+                    g_SteamAchievements->SetAchievement("ACH_WIN_ONE_GAME");
+            }
+            default: break;
+        }
+    }
+};
+
+AchievementManager g_AchievementManager;// Fuck me, I know
 
 static void Load()
 {
@@ -36,6 +89,8 @@ static void Load()
     auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(2) };
     livesComponent.subject.BindObserver(playerComponent);
 
+    playerComponent.subject.BindObserver(g_AchievementManager);
+
     // Lives display
     auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 50.f}) };
     auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
@@ -46,7 +101,7 @@ static void Load()
     // Tutorial
     auto& tutorial{ scene.CreateGameObject(glm::vec2{10.f, 0.1f * windowResolution.y }) };
     auto const& pTutorialFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20)};
-    tutorial.AddComponent<DAE::Components::TextComponent>("Use WASD to move Dig Dug, K to inflict damage", pTutorialFont);
+    tutorial.AddComponent<DAE::Components::TextComponent>("Use WASD to move Dig Dug, K to inflict damage, P to add points", pTutorialFont);
 
     // Point display
     auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 100.f}) };
@@ -56,6 +111,16 @@ static void Load()
 }
 
 int main(int, char*[]) {
+#if USE_STEAMWORKS
+    if (!SteamAPI_Init())
+        throw std::runtime_error(std::string("Fatal Error - Steam must be running to play this game (SteamAPI_Init() failed)."));
+
+    g_SteamAchievements = new DAE::CSteamAchievements(g_Achievements, 4);
+    // // SteamFriends()->ActivateGameOverlay("achievements");
+    // std::string const name{ "ARCH_WIN_ONE_GAME" };
+    // SteamUserStats()->SetAchievement(name.c_str());
+    // SteamUserStats()->StoreStats();
+#endif
 #if __EMSCRIPTEN__
     fs::path data_location = "";
 #else
@@ -65,5 +130,10 @@ int main(int, char*[]) {
 #endif
     DAE::Application game(data_location, windowResolution);
     game.Run(Load);
+#if USE_STEAMWORKS
+    SteamAPI_Shutdown();
+    if (g_SteamAchievements)
+        delete g_SteamAchievements;
+#endif
     return 0;
 }

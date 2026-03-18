@@ -77,6 +77,7 @@ DAE::Application::Application(std::filesystem::path const& dataPath, glm::ivec2 
 
     Renderer::GetInstance().Init(g_window);
     ResourceManager::GetInstance().Init(dataPath);
+
 }
 
 DAE::Application::~Application()
@@ -85,6 +86,7 @@ DAE::Application::~Application()
     SDL_DestroyWindow(g_window);
     g_window = nullptr;
     SDL_Quit();
+
 }
 
 void DAE::Application::Run(std::function<void()> const& load)
@@ -96,10 +98,14 @@ void DAE::Application::Run(std::function<void()> const& load)
 #else
     emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
+
 }
 
 void DAE::Application::RunOneFrame()
 {
+#if USE_STEAMWORKS
+    SteamAPI_RunCallbacks();
+#endif
     Timer::GetInstance().Update();
     m_quit = !Input::InputManager::GetInstance().ProcessInput();
     SceneManager::GetInstance().Update();

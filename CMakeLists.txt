@@ -149,6 +149,10 @@ if (WIN32)
   find_package(VLD CONFIG)
 endif()
 
+if(POLICY CMP0144)
+  cmake_policy(SET CMP0144 NEW)
+endif()
+
 # Add steam if available
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
@@ -218,7 +222,9 @@ elseif(WIN32)
     )
   endforeach()
 
+  message("HELLOO??????!!!!?!?!?!??!")
   if(Steamworks_FOUND)
+    message("Steamworks found")
     target_link_libraries("${TARGET_NAME}" PUBLIC Steamworks::Steamworks)
     target_compile_definitions(${TARGET_NAME} PRIVATE USE_STEAMWORKS)
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
@@ -227,6 +233,8 @@ elseif(WIN32)
       COMMAND "${CMAKE_COMMAND}" -E echo "480" > "$<TARGET_FILE_DIR:${TARGET_NAME}>/steam_appid.txt"
       COMMENT "Generating steam_appid.txt"
     )
+  else()
+    message("Steamworks not found")
   endif()
 
   add_custom_command(TARGET ${TARGET_NAME} POST_BUILD

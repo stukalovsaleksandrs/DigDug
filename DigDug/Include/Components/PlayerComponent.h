@@ -37,6 +37,7 @@ namespace DAE::Components
         // DAE::Input::Action m_rightAction;
 
         Event m_onPointsIncreased{ MakeSDBMHash("OnPointsIncreased") };
+        Event m_onCollected5Points{ MakeSDBMHash("OnCollected5Points") };
     };
 }
 
