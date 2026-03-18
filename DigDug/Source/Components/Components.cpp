@@ -15,7 +15,6 @@
 
 DAE::Components::RenderComponent::RenderComponent(GameObject &owner) noexcept
     : Component(owner) {
-    // NOTE: Not a class member, because usage of auto for non-static members is not allowed
     Renderer::GetInstance().RegisterFunction(m_render);
 }
 
@@ -60,7 +59,7 @@ DAE::Components::DebugComponent::DebugComponent(GameObject& owner) noexcept : Co
 DAE::Components::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
-    , m_pRenderComponent{owner.AddComponent<RenderComponent>(owner)}
+    , m_pRenderComponent{owner.AddComponent<RenderComponent>()}
 {
     UpdateTexture();
 }
@@ -113,7 +112,7 @@ void DAE::Components::TextComponent::UpdateTexture() const {
 DAE::Components::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
     : Component(owner)
 {
-    owner.AddComponent<TextComponent>(owner, "FPS", pFont, color);
+    owner.AddComponent<TextComponent>("FPS", pFont, color);
 }
 
 void DAE::Components::FPSComponent::Update() noexcept {

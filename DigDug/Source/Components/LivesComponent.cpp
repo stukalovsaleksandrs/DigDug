@@ -13,7 +13,7 @@ DAE::Components::LivesComponent::LivesComponent(GameObject& owner, uint32_t cons
 
 void DAE::Components::LivesComponent::TakeDamage() noexcept
 {
-    if (!m_lives) return;// Corpse does not care about damage
+    if (!m_lives) return;// Corpses do not care about damage
     --m_lives;
     subject.NotifyObservers(m_onDamageTaken);
     if (!m_lives)// Just died
@@ -22,4 +22,9 @@ void DAE::Components::LivesComponent::TakeDamage() noexcept
         return;
     }
     std::println("Took damage, lives: {}", m_lives);
+}
+
+uint32_t DAE::Components::LivesComponent::GetLives() const noexcept
+{
+    return m_lives;
 }

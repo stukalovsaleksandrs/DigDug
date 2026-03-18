@@ -5,9 +5,9 @@
 #include "Components/MovementComponent.h"
 #include "Input/InputManager.h"
 
-DAE::Components::PlayerComponent::PlayerComponent(MovementComponent& movementComponent)
-    : Component(movementComponent.GetOwner())
-    , m_movementComponent(movementComponent)
+DAE::Components::PlayerComponent::PlayerComponent(GameObject& owner)
+    : Component(owner)
+    , m_movementComponent(*owner.GetComponent<MovementComponent>())
 {
     BindInput();
 

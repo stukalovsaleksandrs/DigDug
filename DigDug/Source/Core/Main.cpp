@@ -25,29 +25,26 @@ static void Load()
 
     // FPS
     auto& fps{ scene.CreateGameObject(glm::vec2{ 10, 10 }) };
-    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) };
-    fps.AddComponent<DAE::Components::FPSComponent>(fps, pFont);
+    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
+    fps.AddComponent<DAE::Components::FPSComponent>(pFont);
 
     // Character
     auto& character{ scene.CreateGameObject(glm::vec2{ 500.f, 250.f }) };
-    auto& characterRenderComponent{ character.AddComponent<DAE::Components::RenderComponent>(character) };
+
+    auto& characterRenderComponent{ character.AddComponent<DAE::Components::RenderComponent>() };
     characterRenderComponent.SetTexture("DigDugCharacter.png");
-    auto& playerComponent{ character.AddComponent<DAE::Components::PlayerComponent>(
-        character.AddComponent<DAE::Components::MovementComponent>(character, 500.f)
-    )};
-    auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(character, 2) };
+
+    character.AddComponent<DAE::Components::MovementComponent>(500.f);
+    auto& playerComponent{ character.AddComponent<DAE::Components::PlayerComponent>()};
+
+    auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(2) };
     livesComponent.subject.BindObserver(playerComponent);
 
-
-    // Lives
-    auto& livesDisplay{ scene.CreateGameObject(glm::vec2{ 0.f, windowResolution.y - characterRenderComponent.GetTextureDims().y })};
-    livesDisplay.AddComponent<DAE::Components::RenderComponent>(livesDisplay).SetTexture("DigDugCharacter.png");
-    // livesDisplay.AddComponent<DAE::Components::LivesDisplayComponent>(livesDisplay);
-
-    // So, I want to subscribe it to onDamageTaken too, and
-    // the LivesDisplayComponent will update the
-    // I
-
+    // Lives display
+    auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 50.f}) };
+    livesDisplay.AddComponent<DAE::Components::TextComponent>(" ", pFont);// NOTE: Text must not be empty
+    auto& livesDisplayComponent{ livesDisplay.AddComponent<DAE::Components::LivesDisplayComponent>(livesComponent) };
+    livesComponent.subject.BindObserver(livesDisplayComponent);
 }
 
 int main(int, char*[]) {

@@ -45,15 +45,14 @@ namespace DAE
          * Components
          *******************************************/
 
+
         /**
-         * Attempts to add to the parent game object a new component of the type given
-         * @return A raw(non-owning) pointer to the newly-added component or
-         * to an existing one if the owner already had a component with the same type
+         * Adds to the owner game object a new component of the type given or returns an existing one
+         * @return A raw(non-owning) pointer to the newly-added component or to the existing one
          */
         template<Components::DerivedComponent ComponentType, typename... Args>
         ComponentType& AddComponent(Args&&... args) noexcept {
-            // TODO: Make passing this pointer automatic to prevent users from adding component to one game object,
-            // and passing a reference to another
+            // TODO: Add a setting controlling whether a component can be added multiple times to the same object or not
 
             // Trying returning the existing component
             for (auto& [pComponent, markedForDeletion] : m_components) {
@@ -61,12 +60,13 @@ namespace DAE
                     return *pDerivedComponent;
                 }
             }
+
             // Returning a new component since there is no existing one
             m_components.emplace_back(
                 DeletableComponent(
                     std::unique_ptr<ComponentType>(
                         // NOTE: Not using std::make_unique since it cannot access protected constructors
-                        new ComponentType(std::forward<Args>(args)...)
+                        new ComponentType(*this, std::forward<Args>(args)...)
                     ),
                     false
                 )
@@ -95,7 +95,7 @@ namespace DAE
         }
 
         /**
-         * Attempts to remove the input component from the owner
+         * Attempts to remove the component of the input type from the owner
          * @note Nothing happens if the owner does not have a component of the type given
          */
         template<Components::DerivedComponent ComponentType>
@@ -128,6 +128,8 @@ namespace DAE
          */
         template<Components::DerivedComponent ComponentType>
         ComponentType* GetComponent() noexcept {
+            // TODO: If there can be multiple components of the same type, return a subrange. Note that
+            // there will be a need to sort the components once a component is added then
             if (auto const& pComponent{ TryGettingComponent<ComponentType>() }; pComponent.has_value()) {
                 return pComponent.value();
             }

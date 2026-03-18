@@ -9,7 +9,7 @@ namespace DAE::Components
     class PlayerComponent : public Component, public Observer
     {
     public:
-        explicit PlayerComponent(MovementComponent& movementComponent);
+        explicit PlayerComponent(GameObject& owner);
 
         void BindInput() const;
 

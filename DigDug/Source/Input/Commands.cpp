@@ -27,5 +27,12 @@ DAE::Input::TakeDamageCommand::TakeDamageCommand(Components::LivesComponent& liv
 
 void DAE::Input::TakeDamageCommand::Execute() noexcept
 {
+    if (!m_canExecute) return;
     m_livesComponent.TakeDamage();
+
+    // To make sure the command does not try using a deleted observer
+    if (m_livesComponent.GetLives() == 0)
+    {
+        m_canExecute = false;
+    }
 }

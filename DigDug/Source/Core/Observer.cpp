@@ -1,6 +1,10 @@
 #include "Core/Observer.h"
 #include <algorithm>
 
+/*******************************************
+ * Observer
+ *******************************************/
+
 DAE::Observer::~Observer() noexcept
 {
     // Unsubscribing the observer from the subjects
@@ -15,6 +19,10 @@ void DAE::Observer::AddSubject(Subject& subject) noexcept
     if (std::ranges::binary_search(m_pSubjects, &subject)) return;
     m_pSubjects.push_back(&subject);
 }
+
+/*******************************************
+ * Subject
+ *******************************************/
 
 void DAE::Subject::BindObserver(Observer& observer) noexcept
 {

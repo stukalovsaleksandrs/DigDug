@@ -6,7 +6,7 @@
 
 DAE::Texture2D::~Texture2D()
 {
-	SDL_DestroyTexture(m_pTexture);
+    SDL_DestroyTexture(m_pTexture);
 }
 
 glm::vec2 DAE::Texture2D::GetDims() const
@@ -18,7 +18,7 @@ glm::vec2 DAE::Texture2D::GetDims() const
 
 SDL_Texture* DAE::Texture2D::GetSDLTexture() const
 {
-	return m_pTexture;
+    return m_pTexture;
 }
 
 DAE::Texture2D::Texture2D(std::string_view const fullPath)
@@ -45,6 +45,6 @@ DAE::Texture2D::Texture2D(std::string_view const fullPath)
 DAE::Texture2D::Texture2D(SDL_Texture* pTexture)
     : m_pTexture{ pTexture }
 {
-	assert(m_pTexture);
+    assert(m_pTexture);
 }
 

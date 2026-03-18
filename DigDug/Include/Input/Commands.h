@@ -58,6 +58,8 @@ namespace DAE::Input
 
     private:
         Components::LivesComponent& m_livesComponent;
+        bool m_canExecute{ true };
+
     };
 
 }
