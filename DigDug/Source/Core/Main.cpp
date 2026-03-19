@@ -125,9 +125,10 @@ int main(int, char*[]) {
 #if __EMSCRIPTEN__
     fs::path data_location = "";
 #else
-    fs::path data_location = "./Data/";
+    auto resourceFolderName{ "Resources" };
+    fs::path data_location = std::format("./{}/", resourceFolderName);
     if(!fs::exists(data_location))
-        data_location = "../Data/";
+        data_location = std::format("../{}/", resourceFolderName);
 #endif
     DAE::Application game(data_location, windowResolution);
     game.Run(Load);
