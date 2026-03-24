@@ -47,9 +47,6 @@ void DAE::Components::PlayerComponent::OnNotify(Event const event, Subject const
     }
 }
 
-// PlayerComponent gets 5 points, fires an event -> Achievement system subscribed to this event,
-// gives an achievement on this event. So,
-
 void DAE::Components::PlayerComponent::AddPoints(uint32_t const points) noexcept
 {
     m_points += points;

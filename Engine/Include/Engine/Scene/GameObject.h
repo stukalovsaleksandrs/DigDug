@@ -1,6 +1,6 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-#include "../Components/Components.h"
+#include "Engine/Components/Components.h"
 #include <memory>
 #include <optional>
 #include <algorithm>

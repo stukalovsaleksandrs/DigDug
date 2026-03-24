@@ -1,6 +1,6 @@
 #ifndef TIMER_H
 #define TIMER_H
-#include "../Core/Singleton.h"
+#include "Core/Singleton.h"
 
 namespace DAE {
     class Timer final : public Singleton<Timer> {

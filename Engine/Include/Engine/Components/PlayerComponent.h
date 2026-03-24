@@ -1,8 +1,8 @@
 #ifndef PLAYER_CONTROLLER_H
 #define PLAYER_CONTROLLER_H
 #include "ComponentBase.h"
-#include "Core/Observer.h"
-#include "Input/InputManager.h"
+#include "Engine/Core/Observer.h"
+#include "Engine/Input/InputManager.h"
 
 namespace DAE::Components
 {

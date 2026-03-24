@@ -1,9 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "../Scene/GameObject.h"
-#include "Components/LivesComponent.h"
-#include "Components/PlayerComponent.h"
+#include "Engine/Scene/GameObject.h"
+#include "Engine/Components/LivesComponent.h"
 #include "glm/vec2.hpp"
 
 namespace DAE::Components
@@ -67,7 +66,7 @@ namespace DAE::Input
     /*******************************************
      * Point command
      *******************************************/
-
+    // TODO: Fix the crash when player is dead
     class PointCommand final : public Command
     {
     public:

@@ -3,7 +3,7 @@
 
 #include "ComponentBase.h"
 #include "Components.h"
-#include "Core/Observer.h"
+#include "Engine/Core/Observer.h"
 
 namespace DAE::Components
 {

@@ -1,18 +1,18 @@
-#include "Components/CacheThrashingComponent.h"
-#include "Components/LivesComponent.h"
-#include "Components/LivesDisplayComponent.h"
-#include "Components/MovementComponent.h"
-#include "Components/PlayerComponent.h"
-#include "Components/PointDisplayComponent.h"
+#include "Engine/Components/CacheThrashingComponent.h"
+#include "Engine/Components/LivesComponent.h"
+#include "Engine/Components/LivesDisplayComponent.h"
+#include "Engine/Components/MovementComponent.h"
+#include "Engine/Components/PlayerComponent.h"
+#include "Engine/Components/PointDisplayComponent.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
 #endif
-#include "Core/Application.h"
-#include "Scene/SceneManager.h"
-#include "Core/ResourceManager.h"
-#include "Core/Observer.h"
-#include "Scene/Scene.h"
+#include "Engine/Core/Application.h"
+#include "Engine/Scene/SceneManager.h"
+#include "Engine/Core/ResourceManager.h"
+#include "Engine/Core/Observer.h"
+#include "Engine/Scene/Scene.h"
 #include <filesystem>
 #include <glm/glm.hpp>
 namespace fs = std::filesystem;

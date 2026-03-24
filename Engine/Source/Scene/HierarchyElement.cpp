@@ -6,6 +6,10 @@ DAE::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElement
     , m_pSceneHierarchyElement(pSceneHierarchyElement)
     , m_pOwnerGameObject(pOwnerGameObject)
 {
+    if (m_pOwnerGameObject)
+    {
+        m_pOwnerGameObject->SetPositionDirty();
+    }
 }
 
 void DAE::HierarchyElement::SetParent(HierarchyElement& newParent, bool const keepWorldPosition) noexcept

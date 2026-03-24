@@ -2,7 +2,7 @@
 #define __LIVESDISPLAYCOMPONENT_H__
 
 #include "ComponentBase.h"
-#include "Core/Observer.h"
+#include "Engine/Core/Observer.h"
 
 namespace DAE::Components
 {

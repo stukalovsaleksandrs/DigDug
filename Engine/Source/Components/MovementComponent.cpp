@@ -1,6 +1,6 @@
 #include "Components/MovementComponent.h"
-#include "../../Include/Utils/Timer.h"
-#include "../../Include/Scene/GameObject.h"
+#include "Utils/Timer.h"
+#include "Scene/GameObject.h"
 #include <SDL3/SDL_keyboard.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/norm.hpp"
