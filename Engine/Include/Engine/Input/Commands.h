@@ -2,7 +2,7 @@
 #define COMMANDS_H
 
 #include "Engine/Scene/GameObject.h"
-#include "Engine/Components/LivesComponent.h"
+#include "../../../../Game/Include/Components/LivesComponent.h"
 #include "glm/vec2.hpp"
 
 namespace DAE::Components

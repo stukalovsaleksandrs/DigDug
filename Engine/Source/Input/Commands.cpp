@@ -1,7 +1,7 @@
 #include "Input/Commands.h"
 #include "Scene/GameObject.h"
 #include "Components/MovementComponent.h"
-#include "Components/PlayerComponent.h"
+#include "../../../Game/Include/Components/PlayerComponent.h"
 
 /*******************************************
  * Move command

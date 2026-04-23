@@ -1,6 +1,5 @@
 #include "Components/PlayerComponent.h"
-#include "Components/MovementComponent.h"
-#include <print>
+#include "Engine/Components/MovementComponent.h"
 
 DAE::Components::PlayerComponent::PlayerComponent(GameObject& owner) noexcept
     : Component(owner)
@@ -45,7 +44,6 @@ void DAE::Components::PlayerComponent::OnNotify(Event const event, Subject const
     case MakeSDBMHash("OnDied"):
         {
             m_owner.MarkForDeletion();
-            std::println("Player died");
             break;
         }
     default: ;

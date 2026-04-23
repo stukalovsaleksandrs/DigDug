@@ -1,7 +1,7 @@
 #ifndef __LIVESDISPLAYCOMPONENT_H__
 #define __LIVESDISPLAYCOMPONENT_H__
 
-#include "ComponentBase.h"
+#include "../../../Engine/Include/Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
 
 namespace DAE::Components

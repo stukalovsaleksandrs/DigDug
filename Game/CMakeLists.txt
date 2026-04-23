@@ -18,6 +18,8 @@ set(RESOURCE_DIR_NAME "Resources")
 
 target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME})
 
+target_include_directories(${GAME_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Include")
+
 ###########################################################################
 # Emscripten
 ###########################################################################

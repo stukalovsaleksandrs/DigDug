@@ -1,6 +1,6 @@
 #include "Components/LivesDisplayComponent.h"
 #include "Components/LivesComponent.h"
-#include "Scene/GameObject.h"
+#include "Engine/Scene/GameObject.h"
 #include <format>
 
 // TODO: For displaying sprites as lives, I can spawn a game object for every live

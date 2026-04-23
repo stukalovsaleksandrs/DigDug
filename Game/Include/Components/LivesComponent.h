@@ -1,8 +1,8 @@
 #ifndef HEALTH_COMPONENT_H
 #define HEALTH_COMPONENT_H
 
-#include "ComponentBase.h"
-#include "Components.h"
+#include "../../../Engine/Include/Engine/Components/ComponentBase.h"
+#include "../../../Engine/Include/Engine/Components/Components.h"
 #include "Engine/Core/Observer.h"
 
 namespace DAE::Components

@@ -1,9 +1,7 @@
 #include "Components/PointDisplayComponent.h"
-
-#include <format>
-
-#include "Scene/GameObject.h"
 #include "Components/PlayerComponent.h"
+#include "Engine/Scene/GameObject.h"
+#include <format>
 
 DAE::Components::PointDisplayComponent::PointDisplayComponent(GameObject& owner, PlayerComponent& playerComponent) noexcept
     : Component(owner)

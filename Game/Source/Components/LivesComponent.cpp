@@ -1,6 +1,6 @@
 #include "Components/LivesComponent.h"
-#include "Scene/GameObject.h"
-#include "Input/InputManager.h"
+#include "Engine/Scene/GameObject.h"
+#include "Engine/Input/InputManager.h"
 #include <print>
 
 DAE::Components::LivesComponent::LivesComponent(GameObject& owner, uint32_t const lives) noexcept
