@@ -67,6 +67,7 @@ namespace DAE::Input
      * Point command
      *******************************************/
     // TODO: Fix the crash when player is dead
+    // TODO: Move to the game logic
     class PointCommand final : public Command
     {
     public:

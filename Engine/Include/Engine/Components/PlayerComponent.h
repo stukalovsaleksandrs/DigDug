@@ -13,28 +13,29 @@ namespace DAE::Components
         Subject subject;
 
         explicit PlayerComponent(GameObject& owner) noexcept;
-        ~PlayerComponent() noexcept override = default;
+        ~PlayerComponent() noexcept override;
         PlayerComponent(PlayerComponent&&) noexcept = delete;
         PlayerComponent(PlayerComponent const&) noexcept = delete;
         PlayerComponent& operator=(PlayerComponent const&) noexcept = delete;
         PlayerComponent& operator=(PlayerComponent&&) noexcept = delete;
 
-        void BindInput() ;
-        void UnbindInput();
+        void BindInput();
+        void UnbindInput() const;
 
         void OnNotify(Event event, Subject const& caller) noexcept override;
 
         [[nodiscard]] uint32_t GetPoints() const noexcept{ return m_points; };
-        void AddPoints(uint32_t const points) noexcept;;
+        void AddPoints(uint32_t points) noexcept;;
 
     private:
         uint32_t m_points{};
         MovementComponent& m_movementComponent;
-        // TODO: Create a binding class that will bind and undind actions in the constructor and destructor(RAII)
-        // DAE::Input::Action m_upAction;
-        // DAE::Input::Action m_leftAction;
-        // DAE::Input::Action m_downAction
-        // DAE::Input::Action m_rightAction;
+
+       Input::Action m_upAction{SDL_SCANCODE_W, Input::InputType::held};
+       Input::Action m_leftAction{SDL_SCANCODE_A, Input::InputType::held};
+       Input::Action m_downAction{SDL_SCANCODE_S, Input::InputType::held};
+       Input::Action m_rightAction{SDL_SCANCODE_D, Input::InputType::held};
+        Input::Action m_pointAction{SDL_SCANCODE_P, Input::InputType::released};
 
         Event m_onPointsIncreased{ MakeSDBMHash("OnPointsIncreased") };
         Event m_onCollected5Points{ MakeSDBMHash("OnCollected5Points") };

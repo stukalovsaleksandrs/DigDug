@@ -49,14 +49,14 @@ void DAE::Input::InputManager::ProcessPressing()
     auto const keyboardState{ SDL_GetKeyboardState(nullptr) };
     for (const auto& key : m_actionToCommand | std::views::keys)
     {
-        // Returning early if the action is not bound to the pressed type
+        // Returning early if the action is not bound to the held type
         auto const & action{ key };
-        if (std::get<InputType>(action) != InputType::pressed) continue;
+        if (std::get<InputType>(action) != InputType::held) continue;
 
-        // Returning early if the key is not pressed
+        // Returning early if the key is not held
         if (!keyboardState[std::get<SDL_Scancode>(action.first)]) continue;
 
-        // Bound to pressed & actually pressed -> executing
+        // Bound to held & actually held -> executing
         ExecuteIfExists(action);
     }
 }

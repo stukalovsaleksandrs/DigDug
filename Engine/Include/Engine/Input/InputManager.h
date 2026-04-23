@@ -12,7 +12,7 @@ namespace DAE::Input
 
     enum class InputType
     {
-        pressed,
+        held,
         released,
     };
 
