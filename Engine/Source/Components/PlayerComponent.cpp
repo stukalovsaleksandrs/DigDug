@@ -5,32 +5,10 @@
 DAE::Components::PlayerComponent::PlayerComponent(GameObject& owner) noexcept
     : Component(owner)
     , m_movementComponent(*owner.GetComponent<MovementComponent>())
-{
-    BindInput();
+{}
 
-}
-
-void DAE::Components::PlayerComponent::BindInput()
-{
-    Input::InputManager& inputManager{ Input::InputManager::GetInstance() };
-    // Movement
-    // Keyboard
-    inputManager.Bind({SDL_SCANCODE_W, DAE::Input::InputType::pressed}, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, -1.f }));
-    inputManager.Bind({SDL_SCANCODE_A, DAE::Input::InputType::pressed}, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ -1.f, 0.f }));
-    inputManager.Bind({SDL_SCANCODE_S, DAE::Input::InputType::pressed}, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, 1.f }));
-    inputManager.Bind({SDL_SCANCODE_D, DAE::Input::InputType::pressed}, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 1.f, 0.f }));
-    inputManager.Bind({SDL_SCANCODE_P, DAE::Input::InputType::released}, std::make_unique<Input::PointCommand>(*this));
-    /// TODO: Gamepad
-}
-
-void DAE::Components::PlayerComponent::UnbindInput()
-{
-    // Input::InputManager& inputManager{ Input::InputManager::GetInstance() };
-    // inputManager.Unbind(m_upAction);
-    // inputManager.Unbind(m_leftAction);
-    // inputManager.Unbind(m_downAction);
-    // inputManager.Unbind(m_rightAction);
-}
+DAE::Components::PlayerComponent::~PlayerComponent() noexcept
+{}
 
 void DAE::Components::PlayerComponent::OnNotify(Event const event, Subject const&) noexcept
 {

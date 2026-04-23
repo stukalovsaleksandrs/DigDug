@@ -13,28 +13,43 @@ namespace DAE::Components
         Subject subject;
 
         explicit PlayerComponent(GameObject& owner) noexcept;
-        ~PlayerComponent() noexcept override = default;
+        ~PlayerComponent() noexcept override;
         PlayerComponent(PlayerComponent&&) noexcept = delete;
         PlayerComponent(PlayerComponent const&) noexcept = delete;
         PlayerComponent& operator=(PlayerComponent const&) noexcept = delete;
         PlayerComponent& operator=(PlayerComponent&&) noexcept = delete;
 
-        void BindInput() ;
-        void UnbindInput();
-
         void OnNotify(Event event, Subject const& caller) noexcept override;
 
         [[nodiscard]] uint32_t GetPoints() const noexcept{ return m_points; };
-        void AddPoints(uint32_t const points) noexcept;;
+        void AddPoints(uint32_t points) noexcept;;
 
     private:
         uint32_t m_points{};
         MovementComponent& m_movementComponent;
-        // TODO: Create a binding class that will bind and undind actions in the constructor and destructor(RAII)
-        // DAE::Input::Action m_upAction;
-        // DAE::Input::Action m_leftAction;
-        // DAE::Input::Action m_downAction
-        // DAE::Input::Action m_rightAction;
+
+        std::vector<DAE::Input::Binding> m_bindings{
+            std::move({
+                {SDL_SCANCODE_W, DAE::Input::InputMode::held},
+                std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, -1.f })
+            }),
+            {
+                {SDL_SCANCODE_A, DAE::Input::InputMode::held},
+                std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ -1.f, 0.f })
+            },
+            {
+                {SDL_SCANCODE_S, DAE::Input::InputMode::held},
+                std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, 1.f })
+            },
+            {
+                {SDL_SCANCODE_D, DAE::Input::InputMode::held},
+                std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 1.f, 0.f })
+            },
+            {
+                {SDL_SCANCODE_P, DAE::Input::InputMode::released},
+                std::make_unique<Input::PointCommand>(*this)
+            }
+        };
 
         Event m_onPointsIncreased{ MakeSDBMHash("OnPointsIncreased") };
         Event m_onCollected5Points{ MakeSDBMHash("OnCollected5Points") };

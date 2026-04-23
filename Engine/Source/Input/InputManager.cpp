@@ -4,6 +4,17 @@
 #include <backends/imgui_impl_sdl3.h>
 #include <print>
 
+DAE::Input::Binding::Binding(Action const action, std::unique_ptr<Command> pCommand) noexcept
+    : m_action{ action }
+{
+    InputManager::GetInstance().Bind(m_action, std::move(pCommand));
+}
+
+DAE::Input::Binding::~Binding()
+{
+    InputManager::GetInstance().Unbind(m_action);
+}
+
 DAE::Input::InputManager::InputManager()
 {
     InitializeGamepad();
@@ -20,7 +31,7 @@ bool DAE::Input::InputManager::ProcessInput()
         switch (event.type)
         {
         case SDL_EVENT_KEY_UP:
-            ExecuteIfExists({event.key.scancode, InputType::released});
+            ExecuteIfExists({event.key.scancode, InputMode::released});
             break;
         default:;
         }
@@ -29,34 +40,42 @@ bool DAE::Input::InputManager::ProcessInput()
         ImGui_ImplSDL3_ProcessEvent(&event);
     }
 
-    ProcessPressing();
+    ProcessHolding();
 
     return true;
 }
 
-void DAE::Input::InputManager::Bind(Action const& action, std::unique_ptr<Command> pCommand)
+void DAE::Input::InputManager::Bind(Action action, std::unique_ptr<Command> pCommand)
 {
     m_actionToCommand[action] = std::move(pCommand);
 }
 
-void DAE::Input::InputManager::Unbind(Action const& action)
+void DAE::Input::InputManager::Unbind(Action action)
 {
     m_actionToCommand.erase(action);
 }
 
-void DAE::Input::InputManager::ProcessPressing()
+void DAE::Input::InputManager::ProcessHolding()
 {
     auto const keyboardState{ SDL_GetKeyboardState(nullptr) };
-    for (const auto& key : m_actionToCommand | std::views::keys)
+    for (Action const& action : m_actionToCommand | std::views::keys)
     {
         // Returning early if the action is not bound to the pressed type
-        auto const & action{ key };
-        if (std::get<InputType>(action) != InputType::pressed) continue;
+        if (action.mode != InputMode::held) continue;
 
-        // Returning early if the key is not pressed
-        if (!keyboardState[std::get<SDL_Scancode>(action.first)]) continue;
+        // Checking if input is a keyboard key
+        if (SDL_Scancode const* const pScancode{ std::get_if<SDL_Scancode>(&action.input) })
+        {
+            // Returning early if the key is not pressed
+            if (!keyboardState[*pScancode]) continue;
+        }
+        else// Gamepad button
+        {
+            // Returning early if the button is not pressed
+            if (!keyboardState[std::get<SDL_GamepadButton>(action.input)]) continue;
+        }
 
-        // Bound to pressed & actually pressed -> executing
+        // Bound to held & actually held -> executing
         ExecuteIfExists(action);
     }
 }
@@ -68,6 +87,7 @@ void DAE::Input::InputManager::ExecuteIfExists(Action const& action) const
         m_actionToCommand.at(action)->Execute();
     }
 }
+
 
 void DAE::Input::InputManager::InitializeGamepad()
 {

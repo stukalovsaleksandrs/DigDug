@@ -8,7 +8,7 @@ DAE::Components::LivesComponent::LivesComponent(GameObject& owner, uint32_t cons
     , m_lives(lives)
 {
     Input::InputManager& inputManager{ Input::InputManager::GetInstance() };
-    inputManager.Bind({SDL_SCANCODE_K, DAE::Input::InputType::released}, std::make_unique<DAE::Input::TakeDamageCommand>(*this));
+    inputManager.Bind({SDL_SCANCODE_K, DAE::Input::InputMode::released}, std::make_unique<DAE::Input::TakeDamageCommand>(*this));
 }
 
 void DAE::Components::LivesComponent::TakeDamage() noexcept
