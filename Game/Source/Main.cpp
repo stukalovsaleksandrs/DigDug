@@ -53,27 +53,6 @@ float constexpr resolutionScale{ 3 };
 glm::vec2 constexpr originalGameResolution{ 224.f, 288.f },
     windowResolution{ originalGameResolution * resolutionScale };
 
-// Sorry for putting it here, I'm just getting to this too late:/
-class AchievementManager : public DAE::Observer
-{
-    void OnNotify(DAE::Event const event, DAE::Subject const&) noexcept override
-    {
-        switch (event.id)
-        {
-            case DAE::MakeSDBMHash("OnCollected5Points"):
-            {
-#ifdef USE_STEAMWORKS
-                if (g_SteamAchievements)
-                    g_SteamAchievements->SetAchievement("ACH_WIN_ONE_GAME");
-#endif
-            }
-            default: break;
-        }
-    }
-};
-
-AchievementManager g_AchievementManager;// Fuck me, I know
-
 static void Load()
 {
     auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
@@ -89,8 +68,6 @@ static void Load()
 
     auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(2) };
     livesComponent.subject.BindObserver(playerComponent);
-
-    playerComponent.subject.BindObserver(g_AchievementManager);
 
     // Lives display
     auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 50.f}) };
