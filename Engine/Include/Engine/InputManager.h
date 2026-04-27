@@ -1,12 +1,14 @@
-#ifndef INPUT_MANAGER_H
-#define INPUT_MANAGER_H
+#ifndef SE_INPUT_MANAGER_H
+#define SE_INPUT_MANAGER_H
 
-#include "Commands.h"
+// Engine
+#include "Engine/Commands.h"
 #include "Engine/Core/Singleton.h"
+// Standard
 #include <variant>
 #include <utility>
 
-namespace DAE::Input
+namespace Engine
 {
     class Command;
 
@@ -46,4 +48,4 @@ namespace DAE::Input
 
 }
 
-#endif
+#endif// SE_INPUT_MANAGER_H

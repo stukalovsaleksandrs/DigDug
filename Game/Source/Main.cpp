@@ -36,7 +36,7 @@ enum EAchievements
 };
 
 // Achievement array which will hold data about the achievements and their state
-inline DAE::Achievement_t g_Achievements[] =
+inline Engine::Achievement_t g_Achievements[] =
 {
     _ACH_ID( ACH_WIN_ONE_GAME, "Winner" ),
     _ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
@@ -45,7 +45,7 @@ inline DAE::Achievement_t g_Achievements[] =
 };
 
 // Global access to Achievements object
-DAE::CSteamAchievements*	g_SteamAchievements = NULL;
+Engine::CSteamAchievements*	g_SteamAchievements = NULL;
 #endif
 
 float constexpr resolutionScale{ 3 };
@@ -54,36 +54,36 @@ glm::vec2 constexpr originalGameResolution{ 224.f, 288.f },
 
 static void Load()
 {
-    auto& scene{ DAE::SceneManager::GetInstance().CreateScene() };
+    auto& scene{ Engine::SceneManager::GetInstance().CreateScene() };
 
     // Character
     auto& character{ scene.CreateGameObject(glm::vec2{ 500.f, 250.f }) };
 
-    auto& characterRenderComponent{ character.AddComponent<DAE::Components::RenderComponent>() };
+    auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
     characterRenderComponent.SetTexture("DigDugCharacter.png");
 
-    character.AddComponent<DAE::Components::MovementComponent>(500.f);
-    auto& playerComponent{ character.AddComponent<DAE::Components::PlayerComponent>()};
+    character.AddComponent<Engine::MovementComponent>(500.f);
+    auto& playerComponent{ character.AddComponent<Game::PlayerComponent>()};
 
-    auto& livesComponent{ character.AddComponent<DAE::Components::LivesComponent>(2) };
+    auto& livesComponent{ character.AddComponent<Game::LivesComponent>(2) };
     livesComponent.subject.BindObserver(playerComponent);
 
     // Lives display
     auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 50.f}) };
-    auto const& pFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
-    livesDisplay.AddComponent<DAE::Components::TextComponent>(" ", pFont);// NOTE: Text must not be empty
-    auto& livesDisplayComponent{ livesDisplay.AddComponent<DAE::Components::LivesDisplayComponent>(livesComponent) };
+    auto const& pFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
+    livesDisplay.AddComponent<Engine::TextComponent>(" ", pFont);// NOTE: Text must not be empty
+    auto& livesDisplayComponent{ livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent) };
     livesComponent.subject.BindObserver(livesDisplayComponent);
 
     // Tutorial
     auto& tutorial{ scene.CreateGameObject(glm::vec2{10.f, 0.1f * windowResolution.y }) };
-    auto const& pTutorialFont{ DAE::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20)};
-    tutorial.AddComponent<DAE::Components::TextComponent>("Use WASD to move Dig Dug, K to inflict damage, P to add points", pTutorialFont);
+    auto const& pTutorialFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20)};
+    tutorial.AddComponent<Engine::TextComponent>("Use WASD to move Dig Dug, K to inflict damage, P to add points", pTutorialFont);
 
     // Point display
     auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowResolution.y - 100.f}) };
-    pointDisplay.AddComponent<DAE::Components::TextComponent>("Points ", pFont);
-    auto& pointDisplayComponent{ pointDisplay.AddComponent<DAE::Components::PointDisplayComponent>(playerComponent) };
+    pointDisplay.AddComponent<Engine::TextComponent>("Points ", pFont);
+    auto& pointDisplayComponent{ pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent) };
     playerComponent.subject.BindObserver(pointDisplayComponent);
 }
 
@@ -92,7 +92,7 @@ int main(int, char*[]) {
     if (!SteamAPI_Init())
         throw std::runtime_error(std::string("Fatal Error - Steam must be running to play this game (SteamAPI_Init() failed)."));
 
-    g_SteamAchievements = new DAE::CSteamAchievements(g_Achievements, 4);
+    g_SteamAchievements = new Engine::CSteamAchievements(g_Achievements, 4);
     // // SteamFriends()->ActivateGameOverlay("achievements");
     // std::string const name{ "ARCH_WIN_ONE_GAME" };
     // SteamUserStats()->SetAchievement(name.c_str());
@@ -106,7 +106,7 @@ int main(int, char*[]) {
     if(!fs::exists(data_location))
         data_location = std::format("../{}/", resourceFolderName);
 #endif
-    DAE::Application game(data_location, windowResolution);
+    Engine::Application game(data_location, windowResolution);
     game.Run(Load);
 #if USE_STEAMWORKS
     SteamAPI_Shutdown();

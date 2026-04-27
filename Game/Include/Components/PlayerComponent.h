@@ -1,18 +1,19 @@
 #ifndef PLAYER_CONTROLLER_H
 #define PLAYER_CONTROLLER_H
+// Engine
 #include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
-#include "Engine/Input/InputManager.h"
+#include "Engine/InputManager.h"
 
-namespace DAE::Components
+namespace Game
 {
     class MovementComponent;
-    class PlayerComponent : public Component, public Observer
+    class PlayerComponent : public Engine::Component, public Engine::Observer
     {
     public:
-        Subject subject;
+        Engine::Subject subject;
 
-        explicit PlayerComponent(GameObject& owner) noexcept;
+        explicit PlayerComponent(Engine::GameObject& owner) noexcept;
         ~PlayerComponent() noexcept override;
         PlayerComponent(PlayerComponent&&) noexcept = delete;
         PlayerComponent(PlayerComponent const&) noexcept = delete;
@@ -22,23 +23,23 @@ namespace DAE::Components
         void BindInput();
         void UnbindInput() const;
 
-        void OnNotify(Event event, Subject const& caller) noexcept override;
+        void OnNotify(Engine::Event event, Engine::Subject const& caller) noexcept override;
 
         [[nodiscard]] uint32_t GetPoints() const noexcept{ return m_points; };
         void AddPoints(uint32_t points) noexcept;;
 
     private:
         uint32_t m_points{};
-        MovementComponent& m_movementComponent;
+        Engine::MovementComponent& m_movementComponent;
 
-       Input::Action m_upAction{SDL_SCANCODE_W, Input::InputType::held};
-       Input::Action m_leftAction{SDL_SCANCODE_A, Input::InputType::held};
-       Input::Action m_downAction{SDL_SCANCODE_S, Input::InputType::held};
-       Input::Action m_rightAction{SDL_SCANCODE_D, Input::InputType::held};
-        Input::Action m_pointAction{SDL_SCANCODE_P, Input::InputType::released};
+        Engine::Action m_upAction{SDL_SCANCODE_W, Engine::InputType::held};
+        Engine::Action m_leftAction{SDL_SCANCODE_A, Engine::InputType::held};
+        Engine::Action m_downAction{SDL_SCANCODE_S, Engine::InputType::held};
+        Engine::Action m_rightAction{SDL_SCANCODE_D, Engine::InputType::held};
+        Engine::Action m_pointAction{SDL_SCANCODE_P, Engine::InputType::released};
 
-        Event m_onPointsIncreased{ MakeSDBMHash("OnPointsIncreased") };
-        Event m_onCollected5Points{ MakeSDBMHash("OnCollected5Points") };
+        Engine::Event m_onPointsIncreased{ Engine::MakeSDBMHash("OnPointsIncreased") };
+        Engine::Event m_onCollected5Points{ Engine::MakeSDBMHash("OnCollected5Points") };
     };
 }
 

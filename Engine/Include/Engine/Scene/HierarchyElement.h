@@ -1,9 +1,11 @@
-#ifndef HIERARCHY_ELEMENT_H
-#define HIERARCHY_ELEMENT_H
+#ifndef SE_HIERARCHY_ELEMENT_H
+#define SE_HIERARCHY_ELEMENT_H
+
+// Standard
 #include <memory>
 #include <vector>
 
-namespace DAE
+namespace Engine
 {
     class GameObject;
 
@@ -49,4 +51,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_HIERARCHY_ELEMENT

@@ -1,9 +1,11 @@
-#ifndef INPUTCOMPONENT_H
-#define INPUTCOMPONENT_H
-#include "ComponentBase.h"
+#ifndef SE_INPUT_COMPONENT_H
+#define SE_INPUT_COMPONENT_H
+// Engine
+#include "Engine/Components/ComponentBase.h"
+// Third-parth
 #include "glm/vec2.hpp"
 
-namespace DAE::Components
+namespace Engine
 {
     class MovementComponent final : public Component
     {
@@ -20,4 +22,4 @@ namespace DAE::Components
 
 }
 
-#endif // INPUTCOMPONENT_H
+#endif// SE_INPUT_COMPONENT_H

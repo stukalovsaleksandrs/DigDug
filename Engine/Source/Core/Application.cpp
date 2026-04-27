@@ -1,12 +1,15 @@
-﻿#include "Core/Application.h"
-#include "Input/InputManager.h"
+﻿// Engine
+#include "Core/Application.h"
+#include "InputManager.h"
 #include "Scene/SceneManager.h"
 #include "Core/ResourceManager.h"
 #include "Rendering/Renderer.h"
 #include "Utils/Timer.h"
 #include "Utils/Utils.h"
+// Third-party
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
+// Standard
 #include <sstream>
 #include <iostream>
 
@@ -33,7 +36,7 @@ void LogSDLVersion(std::string_view const message, int const major, int const mi
 
 void LoopCallback(void* arg)
 {
-    static_cast<DAE::Application*>(arg)->RunOneFrame();
+    static_cast<Engine::Application*>(arg)->RunOneFrame();
 }
 #endif
 
@@ -53,7 +56,7 @@ void PrintSDLVersion()
     LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
-DAE::Application::Application(std::filesystem::path const& dataPath, glm::ivec2 const& windowResolution)
+Engine::Application::Application(std::filesystem::path const& dataPath, glm::ivec2 const& windowResolution)
 {
     PrintSDLVersion();
 
@@ -80,7 +83,7 @@ DAE::Application::Application(std::filesystem::path const& dataPath, glm::ivec2 
 
 }
 
-DAE::Application::~Application()
+Engine::Application::~Application()
 {
     Renderer::GetInstance().Destroy();
     SDL_DestroyWindow(g_window);
@@ -89,7 +92,7 @@ DAE::Application::~Application()
 
 }
 
-void DAE::Application::Run(std::function<void()> const& load)
+void Engine::Application::Run(std::function<void()> const& load)
 {
     load();
 #ifndef __EMSCRIPTEN__
@@ -101,13 +104,13 @@ void DAE::Application::Run(std::function<void()> const& load)
 
 }
 
-void DAE::Application::RunOneFrame()
+void Engine::Application::RunOneFrame()
 {
 #if USE_STEAMWORKS
     SteamAPI_RunCallbacks();
 #endif
     Timer::GetInstance().Update();
-    m_quit = !Input::InputManager::GetInstance().ProcessInput();
+    m_quit = !InputManager::GetInstance().ProcessInput();
     SceneManager::GetInstance().Update();
     Renderer::GetInstance().Render();
 }

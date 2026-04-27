@@ -1,34 +1,37 @@
+// Game
 #include "Components/PlayerComponent.h"
+// Engine
+#include "Commands.h"
 #include "Engine/Components/MovementComponent.h"
 
-DAE::Components::PlayerComponent::PlayerComponent(GameObject& owner) noexcept
+Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner) noexcept
     : Component(owner)
-    , m_movementComponent(*owner.GetComponent<MovementComponent>())
+    , m_movementComponent(*owner.GetComponent<Engine::MovementComponent>())
 {
     BindInput();
 }
 
-DAE::Components::PlayerComponent::~PlayerComponent() noexcept
+Game::PlayerComponent::~PlayerComponent() noexcept
 {
     UnbindInput();
 }
 
-void DAE::Components::PlayerComponent::BindInput()
+void Game::PlayerComponent::BindInput()
 {
-    Input::InputManager& inputManager{ Input::InputManager::GetInstance() };
+    Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
     // Movement
     // Keyboard
-    inputManager.Bind(m_upAction, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, -1.f }));
-    inputManager.Bind(m_leftAction, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ -1.f, 0.f }));
-    inputManager.Bind(m_downAction, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, 1.f }));
-    inputManager.Bind(m_rightAction, std::make_unique<Input::MoveCommand>(m_movementComponent, glm::vec2{ 1.f, 0.f }));
-    inputManager.Bind(m_pointAction, std::make_unique<Input::PointCommand>(*this));
+    inputManager.Bind(m_upAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, -1.f }));
+    inputManager.Bind(m_leftAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ -1.f, 0.f }));
+    inputManager.Bind(m_downAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, 1.f }));
+    inputManager.Bind(m_rightAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 1.f, 0.f }));
+    inputManager.Bind(m_pointAction, std::make_unique<PointCommand>(*this));
     /// TODO: Gamepad
 }
 
-void DAE::Components::PlayerComponent::UnbindInput() const
+void Game::PlayerComponent::UnbindInput() const
 {
-    Input::InputManager& inputManager{ Input::InputManager::GetInstance() };
+    Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
     inputManager.Unbind(m_upAction);
     inputManager.Unbind(m_leftAction);
     inputManager.Unbind(m_downAction);
@@ -36,12 +39,12 @@ void DAE::Components::PlayerComponent::UnbindInput() const
     inputManager.Unbind(m_pointAction);
 }
 
-void DAE::Components::PlayerComponent::OnNotify(Event const event, Subject const&) noexcept
+void Game::PlayerComponent::OnNotify(Engine::Event const event, Engine::Subject const&) noexcept
 {
     // TODO: Find a proper way to bind functions to the events directly
     switch (event.id)
     {
-    case MakeSDBMHash("OnDied"):
+    case Engine::MakeSDBMHash("OnDied"):
         {
             m_owner.MarkForDeletion();
             break;
@@ -50,7 +53,7 @@ void DAE::Components::PlayerComponent::OnNotify(Event const event, Subject const
     }
 }
 
-void DAE::Components::PlayerComponent::AddPoints(uint32_t const points) noexcept
+void Game::PlayerComponent::AddPoints(uint32_t const points) noexcept
 {
     m_points += points;
     subject.NotifyObservers(m_onPointsIncreased);

@@ -1,8 +1,10 @@
-#ifndef TIMER_H
-#define TIMER_H
-#include "Core/Singleton.h"
+#ifndef SE_TIMER_H
+#define SE_TIMER_H
 
-namespace DAE {
+// Engine
+#include "Engine/Core/Singleton.h"
+
+namespace Engine {
     class Timer final : public Singleton<Timer> {
     public:
         [[nodiscard]] float GetFPS() const noexcept { return 1.f / m_deltaSec; };
@@ -17,4 +19,4 @@ namespace DAE {
     };
 }
 
-#endif
+#endif// SE_TIMER_H

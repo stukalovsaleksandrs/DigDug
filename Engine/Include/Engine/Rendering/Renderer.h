@@ -1,14 +1,18 @@
-#ifndef RENDERER_H
-#define RENDERER_H
-#include "Core/Singleton.h"
+#ifndef SE_RENDERER_H
+#define SE_RENDERER_H
+
+// Engine
+#include "Engine/Core/Singleton.h"
+// Third-party
 #include <SDL3/SDL.h>
 #include <glm/vec2.hpp>
+// Standard
 #include <vector>
 #include <functional>
 
 using RenderFunctionType = std::function<void()>;
 
-namespace DAE
+namespace Engine
 {
     namespace Components
     {
@@ -54,4 +58,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_RENDERER_H

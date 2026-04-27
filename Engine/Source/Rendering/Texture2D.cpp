@@ -4,24 +4,24 @@
 #include <SDL3/SDL.h>
 #include <format>
 
-DAE::Texture2D::~Texture2D()
+Engine::Texture2D::~Texture2D()
 {
     SDL_DestroyTexture(m_pTexture);
 }
 
-glm::vec2 DAE::Texture2D::GetDims() const
+glm::vec2 Engine::Texture2D::GetDims() const
 {
     glm::vec2 dims{};
     SDL_GetTextureSize(m_pTexture, &dims.x, &dims.y);
     return dims;
 }
 
-SDL_Texture* DAE::Texture2D::GetSDLTexture() const
+SDL_Texture* Engine::Texture2D::GetSDLTexture() const
 {
     return m_pTexture;
 }
 
-DAE::Texture2D::Texture2D(std::string_view const fullPath)
+Engine::Texture2D::Texture2D(std::string_view const fullPath)
 {
     SDL_Surface* pSurface{ SDL_LoadPNG(fullPath.data()) };
     if (!pSurface)
@@ -42,7 +42,7 @@ DAE::Texture2D::Texture2D(std::string_view const fullPath)
     }
 }
 
-DAE::Texture2D::Texture2D(SDL_Texture* pTexture)
+Engine::Texture2D::Texture2D(SDL_Texture* pTexture)
     : m_pTexture{ pTexture }
 {
     assert(m_pTexture);

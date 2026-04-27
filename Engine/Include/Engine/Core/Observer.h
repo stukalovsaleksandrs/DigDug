@@ -1,12 +1,14 @@
-#ifndef OBSERVER_H
-#define OBSERVER_H
+#ifndef SE_OBSERVER_H
+#define SE_OBSERVER_H
+
+// Standard
 #include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <utility>
 #include <array>
 
-namespace DAE
+namespace Engine
 {
     /*******************************************
      * Event
@@ -100,4 +102,4 @@ namespace DAE
 
 }
 
-#endif
+#endif// SE_OBSERVER_H

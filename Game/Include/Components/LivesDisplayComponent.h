@@ -1,24 +1,29 @@
 #ifndef __LIVESDISPLAYCOMPONENT_H__
 #define __LIVESDISPLAYCOMPONENT_H__
 
-#include "../../../Engine/Include/Engine/Components/ComponentBase.h"
+// ENGINE
+#include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
 
-namespace DAE::Components
+namespace Engine
+{
+    class TextComponent;
+}
+
+namespace Game
 {
     class LivesComponent;
-    class TextComponent;
 
     // Requires the owner to gave LivesComponent
-    class LivesDisplayComponent : public Component, public Observer
+    class LivesDisplayComponent : public Engine::Component, public Engine::Observer
     {
     public:
-        explicit LivesDisplayComponent(GameObject& owner, LivesComponent const&) noexcept;
-        void OnNotify(Event event, Subject const& caller) noexcept override;
+        explicit LivesDisplayComponent(Engine::GameObject& owner, LivesComponent const&) noexcept;
+        void OnNotify(Engine::Event event, Engine::Subject const& caller) noexcept override;
 
     private:
         LivesComponent const* m_pLivesComponent;
-        TextComponent* m_pTextComponent;
+        Engine::TextComponent* m_pTextComponent;
 
     };
 }

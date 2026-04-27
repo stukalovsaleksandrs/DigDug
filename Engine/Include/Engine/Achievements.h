@@ -1,11 +1,11 @@
-#ifndef ACHIEVEMENTS_H
-#define ACHIEVEMENTS_H
+#ifndef SE_ACHIEVEMENTS_H
+#define SE_ACHIEVEMENTS_H
 #ifdef USE_STEAMWORKS
 
 #define _ACH_ID( id, name ) { id, #id, name, "", 0, 0 }
 #include <isteamuserstats.h>
 
-#include "Core/Observer.h"
+#include "Engine/Core/Observer.h"
 
 namespace DAE
 {
@@ -44,4 +44,4 @@ namespace DAE
 }
 
 #endif
-#endif
+#endif// SE_ACHIEVEMENTS_H

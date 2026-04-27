@@ -1,11 +1,13 @@
-﻿#ifndef TEXTURE2D_H
-#define TEXTURE2D_H
+﻿#ifndef SE_TEXTURE2D_H
+#define SE_TEXTURE2D_H
 
+// Third-party
 #include <glm/vec2.hpp>
+// Standard
 #include <string>
 
 struct SDL_Texture;
-namespace DAE
+namespace Engine
 {
     /**
      * Simple RAII wrapper for an SDL_Texture
@@ -31,4 +33,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_TEXTURE_2D

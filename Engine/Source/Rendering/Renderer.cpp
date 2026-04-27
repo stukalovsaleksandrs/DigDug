@@ -10,7 +10,7 @@
 #include <iostream>
 #include <chrono>
 
-void DAE::Renderer::Init(SDL_Window* pWindow)
+void Engine::Renderer::Init(SDL_Window* pWindow)
 {
     m_pWindow = pWindow;
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
@@ -24,7 +24,7 @@ void DAE::Renderer::Init(SDL_Window* pWindow)
     InitializeImGui();
 }
 
-void DAE::Renderer::Render() const
+void Engine::Renderer::Render() const
 {
     // Setting up new ImGui frame
     ImGui_ImplSDLRenderer3_NewFrame();
@@ -47,7 +47,7 @@ void DAE::Renderer::Render() const
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pSDLRenderer);
 }
 
-void DAE::Renderer::Destroy()
+void Engine::Renderer::Destroy()
 {
     // Shutting down ImPlot
     ImPlot::DestroyContext();// Must preceed ImGui shutdown
@@ -65,7 +65,7 @@ void DAE::Renderer::Destroy()
     }
 }
 
-void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location) const
+void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location) const
 {
     SDL_FRect destination{};
     destination.x = location.x;
@@ -74,7 +74,7 @@ void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const loca
     SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
 }
 
-void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location, glm::vec2 const dimensions) const
+void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location, glm::vec2 const dimensions) const
 {
     SDL_FRect destination{};
     destination.x = location.x;
@@ -84,17 +84,17 @@ void DAE::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const loca
     SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
 }
 
-SDL_Renderer* DAE::Renderer::GetSDLRenderer() const
+SDL_Renderer* Engine::Renderer::GetSDLRenderer() const
 {
     return m_pSDLRenderer;
 }
 
-void DAE::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)
+void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)
 {
     m_pRenderFunctions.push_back(&renderFunctionToAdd);
 }
 
-void DAE::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionToRemove)
+void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionToRemove)
 {
     // NOTE: [[maybe_unused]] is added to avoid unused variable errors in release build
     [[maybe_unused]] auto const erasedElementCount{
@@ -103,7 +103,7 @@ void DAE::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionT
     assert(erasedElementCount > 0 && "Render component not found");
 }
 
-void DAE::Renderer::InitializeImGui()
+void Engine::Renderer::InitializeImGui()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

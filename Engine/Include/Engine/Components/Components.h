@@ -1,26 +1,24 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef SE_COMPONENTS_H
+#define SE_COMPONENTS_H
 
-#include <functional>
-
-#include "ComponentBase.h"
+// Engine
+#include "Engine/Components/ComponentBase.h"
+// Third-party
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
 #include "glm/ext/scalar_constants.hpp"
+#include "glm/vec2.hpp"
+// Standard
 #include <memory>
 #include <string_view>
 #include <string>
+#include <functional>
 
-#include "glm/vec2.hpp"
-
-namespace DAE {
+namespace Engine
+{
     class GameObject;
     class Texture2D;
     class Font;
-}
-
-namespace DAE::Components
-{
     /*******************************************
      * Render component
      *******************************************/
@@ -96,4 +94,4 @@ namespace DAE::Components
     };
 }
 
-#endif
+#endif// SE_COMPONENTS_H

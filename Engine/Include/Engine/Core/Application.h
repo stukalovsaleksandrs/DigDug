@@ -1,15 +1,13 @@
-#ifndef MINIGIN_H
-#define MINIGIN_H
+#ifndef SE_APPLICATION_H
+#define SE_APPLICATION_H
 
+// Third-party
+#include "glm/vec2.hpp"
+// Standard
 #include <functional>
 #include <filesystem>
 
-#include "Engine/Achievements.h"
-#include "glm/vec2.hpp"
-
-
-
-namespace DAE
+namespace Engine
 {
     class Application final
     {
@@ -30,4 +28,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_APPLICATION_H

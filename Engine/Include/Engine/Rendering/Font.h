@@ -1,9 +1,11 @@
-#ifndef FONT_H
-#define FONT_H
+#ifndef SE_FONT_H
+#define SE_FONT_H
+
+// Standard
 #include <string_view>
 
 struct TTF_Font;
-namespace DAE
+namespace Engine
 {
     /**
      * Simple RAII wrapper for a TTF_Font
@@ -26,4 +28,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_FONT_H

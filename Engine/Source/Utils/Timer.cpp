@@ -1,7 +1,7 @@
 #include "Utils/Timer.h"
 #include <chrono>
 
-void DAE::Timer::Update() {
+void Engine::Timer::Update() {
     // Updating delta
     using clock = std::chrono::steady_clock;
     static auto lastFrameTime{ clock::now() };

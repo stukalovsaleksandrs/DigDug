@@ -1,7 +1,7 @@
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#ifndef SE_SINGLETON_H
+#define SE_SINGLETON_H
 
-namespace DAE
+namespace Engine
 {
     template <typename T>
     class Singleton
@@ -25,4 +25,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_SINGLETON_H

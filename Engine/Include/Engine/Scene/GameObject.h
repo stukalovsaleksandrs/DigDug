@@ -1,16 +1,19 @@
-#ifndef GAME_OBJECT_H
-#define GAME_OBJECT_H
+#ifndef SE_GAME_OBJECT_H
+#define SE_GAME_OBJECT_H
+
+// Engine
+#include "Engine/Scene/HierarchyElement.h"
 #include "Engine/Components/Components.h"
+// Third-party
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
+// Standard
 #include <memory>
 #include <optional>
 #include <algorithm>
 #include <vector>
-#include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
 
-#include "HierarchyElement.h"
-
-namespace DAE
+namespace Engine
 {
     class Texture2D;
     class Scene;
@@ -22,7 +25,7 @@ namespace DAE
             // NOTE: Not just adding a deletion flag to the component class,
             // to make sure GameObject is the only one allowed to delete
             // its components
-            std::unique_ptr<Components::Component> pComponent;
+            std::unique_ptr<Component> pComponent;
             bool markedForDeletion{};
         };
 
@@ -50,7 +53,7 @@ namespace DAE
          * Adds to the owner game object a new component of the type given or returns an existing one
          * @return A raw(non-owning) pointer to the newly-added component or to the existing one
          */
-        template<Components::DerivedComponent ComponentType, typename... Args>
+        template<DerivedComponent ComponentType, typename... Args>
         ComponentType& AddComponent(Args&&... args) noexcept {
             // TODO: Add a setting controlling whether a component can be added multiple times to the same object or not
 
@@ -80,7 +83,7 @@ namespace DAE
          * @param component The component type of which is checked
          * @return Whether pComponent has the type of ComponentType
          */
-        template<Components::DerivedComponent ComponentType>
+        template<DerivedComponent ComponentType>
         static bool IsSameType(DeletableComponent const& component) noexcept {
             return dynamic_cast<ComponentType*>(component.pComponent.get());
         }
@@ -89,7 +92,7 @@ namespace DAE
          * Finds out if the owner has a component of the type given
          * @return Whether the owner has a component of the type given
          */
-        template<Components::DerivedComponent ComponentType>
+        template<DerivedComponent ComponentType>
         [[nodiscard]] bool HasComponent() const noexcept {
             return std::ranges::any_of(m_components, IsSameType<ComponentType>);
         }
@@ -98,7 +101,7 @@ namespace DAE
          * Attempts to remove the component of the input type from the owner
          * @note Nothing happens if the owner does not have a component of the type given
          */
-        template<Components::DerivedComponent ComponentType>
+        template<DerivedComponent ComponentType>
         void RemoveComponent() noexcept {
             m_componentDeletionFlagsDirty = true;
             if (auto componentIterator{ std::ranges::find_if(m_components, IsSameType<ComponentType>)};
@@ -112,7 +115,7 @@ namespace DAE
          * Attempts to find the component of the given type at the owner's disposal
          * @return Pointer to the component if such exists; if not, then std::nullopt
          */
-        template<Components::DerivedComponent ComponentType>
+        template<DerivedComponent ComponentType>
         std::optional<ComponentType*> TryGettingComponent() noexcept {
             for (auto const& [pComponent, markedForDeletion] : m_components) {
                 if (ComponentType* pDerivedComponent{ dynamic_cast<ComponentType*>(pComponent.get()) }; pDerivedComponent) {
@@ -126,7 +129,7 @@ namespace DAE
          * Finds the component of the given type at the owner's disposal
          * @note Asserts if the owner does not have a component of the type given
          */
-        template<Components::DerivedComponent ComponentType>
+        template<DerivedComponent ComponentType>
         ComponentType* GetComponent() noexcept {
             // TODO: If there can be multiple components of the same type, return a subrange. Note that
             // there will be a need to sort the components once a component is added then
@@ -171,4 +174,4 @@ namespace DAE
 
 }
 
-#endif
+#endif// SE_GAME_OBJECT_H

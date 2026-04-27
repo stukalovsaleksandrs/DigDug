@@ -1,20 +1,20 @@
 #ifndef HEALTH_COMPONENT_H
 #define HEALTH_COMPONENT_H
 
-#include "../../../Engine/Include/Engine/Components/ComponentBase.h"
-#include "../../../Engine/Include/Engine/Components/Components.h"
+// Engine
+#include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
 
-namespace DAE::Components
+namespace Game
 {
     // TODO: Just move all of this to PlayerComponent
 
-    class LivesComponent : public Component
+    class LivesComponent : public Engine::Component
     {
     public:
-        Subject subject;
+        Engine::Subject subject;
 
-        explicit LivesComponent(GameObject& owner, uint32_t lives) noexcept;
+        explicit LivesComponent(Engine::GameObject& owner, uint32_t lives) noexcept;
 
         void TakeDamage() noexcept;
 
@@ -22,8 +22,8 @@ namespace DAE::Components
 
     private:
         uint32_t m_lives{};
-        Event m_onDiedEvent{MakeSDBMHash("OnDied")},
-            m_onDamageTaken{MakeSDBMHash("OnDamageTaken")};
+        Engine::Event m_onDiedEvent{Engine::MakeSDBMHash("OnDied")},
+            m_onDamageTaken{Engine::MakeSDBMHash("OnDamageTaken")};
 
     };
 }

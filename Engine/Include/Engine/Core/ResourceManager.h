@@ -1,12 +1,14 @@
-﻿#ifndef RESOURCE_MANAGER_H
-#define RESOURCE_MANAGER_H
+﻿#ifndef SE_RESOURCE_MANAGER_H
+#define SE_RESOURCE_MANAGER_H
+// Engine
+#include "Engine/Core/Singleton.h"
+// Standard
 #include <filesystem>
 #include <string_view>
 #include <memory>
 #include <map>
-#include "Singleton.h"
 
-namespace DAE
+namespace Engine
 {
     class Texture2D;
     class Font;
@@ -18,7 +20,7 @@ namespace DAE
         [[nodiscard]] std::shared_ptr<Font> LoadFont(std::string_view file, uint8_t size);
 
     private:
-        friend class Singleton<ResourceManager>;
+        friend class Singleton;
         ResourceManager() = default;
         std::filesystem::path m_dataPath;
 
@@ -30,4 +32,4 @@ namespace DAE
     };
 }
 
-#endif
+#endif// SE_RESOURCE_MANAGER

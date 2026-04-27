@@ -2,11 +2,11 @@
 #include "Utils/Utils.h"
 #include <SDL3_ttf/SDL_ttf.h>
 
-TTF_Font* DAE::Font::GetFont() const {
+TTF_Font* Engine::Font::GetFont() const {
     return m_font;
 }
 
-DAE::Font::Font(std::string_view const fullPath, float const size)
+Engine::Font::Font(std::string_view const fullPath, float const size)
     : m_font()
 {
     m_font = TTF_OpenFont(fullPath.data(), size);
@@ -16,7 +16,7 @@ DAE::Font::Font(std::string_view const fullPath, float const size)
     }
 }
 
-DAE::Font::~Font()
+Engine::Font::~Font()
 {
     TTF_CloseFont(m_font);
 }

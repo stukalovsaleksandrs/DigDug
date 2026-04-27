@@ -1,11 +1,14 @@
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
+#ifndef SE_SCENE_MANAGER_H
+#define SE_SCENE_MANAGER_H
+
+// Engine
+#include "Engine/Scene/Scene.h"
+#include "Engine/Core/Singleton.h"
+// Standard
 #include <vector>
 #include <memory>
-#include "Scene.h"
-#include "Engine/Core/Singleton.h"
 
-namespace DAE
+namespace Engine
 {
     class Scene;
     class SceneManager final : public Singleton<SceneManager>

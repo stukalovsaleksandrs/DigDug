@@ -1,28 +1,30 @@
 #include "Components/LivesDisplayComponent.h"
 #include "Components/LivesComponent.h"
+#include "Engine/Components/Components.h"
 #include "Engine/Scene/GameObject.h"
+// Standard
 #include <format>
 
 // TODO: For displaying sprites as lives, I can spawn a game object for every live
 
-DAE::Components::LivesDisplayComponent::LivesDisplayComponent(GameObject& owner, LivesComponent const& livesComponent) noexcept
-    : Component(owner)
-    , m_pLivesComponent(&livesComponent)
-    , m_pTextComponent(m_owner.GetComponent<TextComponent>())
+Game::LivesDisplayComponent::LivesDisplayComponent(Engine::GameObject& owner, LivesComponent const& livesComponent) noexcept
+    : Component{ owner }
+    , m_pLivesComponent{ &livesComponent }
+    , m_pTextComponent{ m_owner.GetComponent<Engine::TextComponent>() }
 {
     m_pTextComponent->SetText(std::format("Lives: {}", m_pLivesComponent->GetLives()));
 }
 
-void DAE::Components::LivesDisplayComponent::OnNotify(Event const event, Subject const& caller) noexcept
+void Game::LivesDisplayComponent::OnNotify(Engine::Event const event, Engine::Subject const& caller) noexcept
 {
     switch (event.id)
     {
-        case MakeSDBMHash("OnDamageTaken"):
+        case Engine::MakeSDBMHash("OnDamageTaken"):
         {
             m_pTextComponent->SetText(std::format("Lives: {}", m_pLivesComponent->GetLives()));
             break;
         }
-        case std::to_underlying(CommonEvents::SubjectDeleted):
+        case std::to_underlying(Engine::CommonEvents::SubjectDeleted):
         {
             std::erase(m_pSubjects, &caller);
             break;

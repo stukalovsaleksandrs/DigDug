@@ -1,17 +1,23 @@
+// Game
 #include "Components/LivesComponent.h"
+// Engine
 #include "Engine/Scene/GameObject.h"
-#include "Engine/Input/InputManager.h"
+#include "Engine/InputManager.h"
+// Standard
 #include <print>
 
-DAE::Components::LivesComponent::LivesComponent(GameObject& owner, uint32_t const lives) noexcept
+#include "Commands.h"
+
+
+Game::LivesComponent::LivesComponent(Engine::GameObject& owner, uint32_t const lives) noexcept
     : Component(owner)
     , m_lives(lives)
 {
-    Input::InputManager& inputManager{ Input::InputManager::GetInstance() };
-    inputManager.Bind({SDL_SCANCODE_K, DAE::Input::InputType::released}, std::make_unique<DAE::Input::TakeDamageCommand>(*this));
+    Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
+    inputManager.Bind({SDL_SCANCODE_K, Engine::InputType::released}, std::make_unique<TakeDamageCommand>(*this));
 }
 
-void DAE::Components::LivesComponent::TakeDamage() noexcept
+void Game::LivesComponent::TakeDamage() noexcept
 {
     if (!m_lives) return;// Corpses do not care about damage
     --m_lives;
@@ -24,7 +30,7 @@ void DAE::Components::LivesComponent::TakeDamage() noexcept
     std::println("Took damage, lives: {}", m_lives);
 }
 
-uint32_t DAE::Components::LivesComponent::GetLives() const noexcept
+uint32_t Game::LivesComponent::GetLives() const noexcept
 {
     return m_lives;
 }

@@ -1,19 +1,17 @@
-#ifndef COMPONENTBASE_H
-#define COMPONENTBASE_H
+#ifndef SE_COMPONENT_BASE_H
+#define SE_COMPONENT_BASE_H
+
+// Standard
 #include <concepts>
 #include <functional>
-#include <SDL3/SDL_render.h>
 
-namespace DAE
+namespace Engine
 {
     class GameObject;
-}
-
-namespace DAE::Components
-{
     /*******************************************
      * Component base
      *******************************************/
+
     class Component {
     public:
         explicit Component(GameObject& owner) noexcept : m_owner(owner){};
@@ -37,6 +35,7 @@ namespace DAE::Components
     /*******************************************
       * Debug component
       *******************************************/
+
     // Interface for components to provide debug rendering
     class DebugComponent : public Component
     {
@@ -49,4 +48,5 @@ namespace DAE::Components
         std::function<void()> const m_debugRender{ [this]{this->DebugRender();} };
     };
 }
-#endif // COMPONENTBASE_H
+
+#endif// SE_COMPONENT_BASE_H

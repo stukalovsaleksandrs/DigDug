@@ -1,7 +1,7 @@
 #include "Scene/HierarchyElement.h"
 #include "Scene/Scene.h"
 
-DAE::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElement, GameObject* pOwnerGameObject) noexcept
+Engine::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElement, GameObject* pOwnerGameObject) noexcept
     : m_pParentHierarchyElement(pSceneHierarchyElement)
     , m_pSceneHierarchyElement(pSceneHierarchyElement)
     , m_pOwnerGameObject(pOwnerGameObject)
@@ -12,7 +12,7 @@ DAE::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElement
     }
 }
 
-void DAE::HierarchyElement::SetParent(HierarchyElement& newParent, bool const keepWorldPosition) noexcept
+void Engine::HierarchyElement::SetParent(HierarchyElement& newParent, bool const keepWorldPosition) noexcept
 {
     // 1. Validation
     // 1.1. Scene root actions
@@ -60,16 +60,16 @@ void DAE::HierarchyElement::SetParent(HierarchyElement& newParent, bool const ke
     m_pParentHierarchyElement = &newParent;
 }
 
-auto GetIsEqual(DAE::GameObject const * const pGameObject)
+auto GetIsEqual(Engine::GameObject const * const pGameObject)
 {
     assert(pGameObject);
-    return [pGameObject](std::unique_ptr<DAE::GameObject> const& child)
+    return [pGameObject](std::unique_ptr<Engine::GameObject> const& child)
     {
         return pGameObject == child.get();
     };
 }
 
-bool DAE::HierarchyElement::IsChild(GameObject const* pChild) const noexcept
+bool Engine::HierarchyElement::IsChild(GameObject const* pChild) const noexcept
 {
     if (pChild == m_pOwnerGameObject || !pChild) return false;
     // NOTE: Not using ranges, because they disallow passing custom predicates
@@ -77,7 +77,7 @@ bool DAE::HierarchyElement::IsChild(GameObject const* pChild) const noexcept
     return it != m_pChildren.end();
 }
 
-std::unique_ptr<DAE::GameObject> DAE::HierarchyElement::RemoveChild(
+std::unique_ptr<Engine::GameObject> Engine::HierarchyElement::RemoveChild(
     GameObject const* pChildToRemove) noexcept
 {
     // 1. Checking if the new child is valid
@@ -101,7 +101,7 @@ std::unique_ptr<DAE::GameObject> DAE::HierarchyElement::RemoveChild(
     return removedChild;// Works thanks to copy elision
 }
 
-DAE::GameObject* DAE::HierarchyElement::AddChild(std::unique_ptr<GameObject>&& pNewChild) noexcept
+Engine::GameObject* Engine::HierarchyElement::AddChild(std::unique_ptr<GameObject>&& pNewChild) noexcept
 {
     // 1. Checking if the new child is valid
     if (IsChild(pNewChild.get()) || !pNewChild) return nullptr;
@@ -115,17 +115,17 @@ DAE::GameObject* DAE::HierarchyElement::AddChild(std::unique_ptr<GameObject>&& p
     return m_pChildren.back().get();
 }
 
-DAE::GameObject* DAE::HierarchyElement::GetOwnerGameObject() noexcept
+Engine::GameObject* Engine::HierarchyElement::GetOwnerGameObject() noexcept
 {
     return m_pOwnerGameObject;
 }
 
-std::vector<std::unique_ptr<DAE::GameObject>>& DAE::HierarchyElement::GetChildrenGameObjects() noexcept
+std::vector<std::unique_ptr<Engine::GameObject>>& Engine::HierarchyElement::GetChildrenGameObjects() noexcept
 {
     return m_pChildren;
 }
 
-void DAE::HierarchyElement::UpdateChildren() const noexcept
+void Engine::HierarchyElement::UpdateChildren() const noexcept
 {
     for (auto& pGameObject: m_pChildren)
     {
@@ -133,7 +133,7 @@ void DAE::HierarchyElement::UpdateChildren() const noexcept
     }
 }
 
-void DAE::HierarchyElement::DeleteMarkedGameObjects() noexcept
+void Engine::HierarchyElement::DeleteMarkedGameObjects() noexcept
 {
     // Deleting the direct children
     std::erase_if(m_pChildren, [](std::unique_ptr<GameObject> const& pGameObject)

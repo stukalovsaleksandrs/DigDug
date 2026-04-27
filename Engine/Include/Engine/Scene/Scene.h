@@ -1,13 +1,15 @@
-#ifndef SCENE_H
-#define SCENE_H
-#include "GameObject.h"
-#include "HierarchyElement.h"
+#ifndef SE_SCENE_H
+#define SE_SCENE_H
+// Engine
+#include "Engine/Scene/GameObject.h"
+#include "Engine/Scene/HierarchyElement.h"
 
-namespace DAE
+namespace Engine
 {
     class Scene final
     {
     public:
+        // TODO: Wrap only the appropriate interface
         HierarchyElement hierarchyElement{nullptr, nullptr};
         void Update() const;
 
@@ -21,4 +23,4 @@ namespace DAE
 
 }
 
-#endif
+#endif// SE_SCENE_H

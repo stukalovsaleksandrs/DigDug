@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-void DAE::ResourceManager::Init(std::filesystem::path const& dataPath)
+void Engine::ResourceManager::Init(std::filesystem::path const& dataPath)
 {
     m_dataPath = dataPath;
 
@@ -17,7 +17,7 @@ void DAE::ResourceManager::Init(std::filesystem::path const& dataPath)
     }
 }
 
-std::shared_ptr<DAE::Texture2D> DAE::ResourceManager::LoadTexture(std::string_view const fileName)
+std::shared_ptr<Engine::Texture2D> Engine::ResourceManager::LoadTexture(std::string_view const fileName)
 {
     auto const fullPath = m_dataPath/fileName;
     auto const filename = fs::path(fullPath).filename().string();
@@ -26,7 +26,7 @@ std::shared_ptr<DAE::Texture2D> DAE::ResourceManager::LoadTexture(std::string_vi
     return m_loadedTextures.at(filename);
 }
 
-std::shared_ptr<DAE::Font> DAE::ResourceManager::LoadFont(std::string_view const file, uint8_t size)
+std::shared_ptr<Engine::Font> Engine::ResourceManager::LoadFont(std::string_view const file, uint8_t size)
 {
     auto const fullPath = m_dataPath/file;
     auto const filename = fs::path(fullPath).filename().string();
@@ -36,7 +36,7 @@ std::shared_ptr<DAE::Font> DAE::ResourceManager::LoadFont(std::string_view const
     return m_loadedFonts.at(key);
 }
 
-void DAE::ResourceManager::UnloadUnusedResources()
+void Engine::ResourceManager::UnloadUnusedResources()
 {
     for (auto it = m_loadedTextures.begin(); it != m_loadedTextures.end();)
     {

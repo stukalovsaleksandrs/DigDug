@@ -1,15 +1,18 @@
-#include "Input/InputManager.h"
-#include <ranges>
+// Engine
+#include "InputManager.h"
+// Third-party
 #include <SDL3/SDL.h>
 #include <backends/imgui_impl_sdl3.h>
+// Standard
+#include <ranges>
 #include <print>
 
-DAE::Input::InputManager::InputManager()
+Engine::InputManager::InputManager()
 {
     InitializeGamepad();
 }
 
-bool DAE::Input::InputManager::ProcessInput()
+bool Engine::InputManager::ProcessInput()
 {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -34,17 +37,17 @@ bool DAE::Input::InputManager::ProcessInput()
     return true;
 }
 
-void DAE::Input::InputManager::Bind(Action const& action, std::unique_ptr<Command> pCommand)
+void Engine::InputManager::Bind(Action const& action, std::unique_ptr<Command> pCommand)
 {
     m_actionToCommand[action] = std::move(pCommand);
 }
 
-void DAE::Input::InputManager::Unbind(Action const& action)
+void Engine::InputManager::Unbind(Action const& action)
 {
     m_actionToCommand.erase(action);
 }
 
-void DAE::Input::InputManager::ProcessPressing()
+void Engine::InputManager::ProcessPressing()
 {
     auto const keyboardState{ SDL_GetKeyboardState(nullptr) };
     for (const auto& key : m_actionToCommand | std::views::keys)
@@ -61,7 +64,7 @@ void DAE::Input::InputManager::ProcessPressing()
     }
 }
 
-void DAE::Input::InputManager::ExecuteIfExists(Action const& action) const
+void Engine::InputManager::ExecuteIfExists(Action const& action) const
 {
     if (m_actionToCommand.contains(action))
     {
@@ -69,7 +72,7 @@ void DAE::Input::InputManager::ExecuteIfExists(Action const& action) const
     }
 }
 
-void DAE::Input::InputManager::InitializeGamepad()
+void Engine::InputManager::InitializeGamepad()
 {
     // Early returning if no gamepad
     if (!SDL_HasGamepad())

@@ -5,12 +5,12 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/norm.hpp"
 
-DAE::Components::MovementComponent::MovementComponent(GameObject& owner, float pxPerSec) noexcept
+Engine::MovementComponent::MovementComponent(GameObject& owner, float pxPerSec) noexcept
     : Component(owner)
     , m_pxPerSec{ pxPerSec }
 {}
 
-void DAE::Components::MovementComponent::Update() noexcept
+void Engine::MovementComponent::Update() noexcept
 {
     if (glm::length2(m_direction) < glm::epsilon<float>()) return;
 
@@ -21,7 +21,7 @@ void DAE::Components::MovementComponent::Update() noexcept
     m_direction = glm::vec2{};
 }
 
-void DAE::Components::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
+void Engine::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
 {
     m_direction += direction;
 }

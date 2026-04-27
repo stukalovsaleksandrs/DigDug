@@ -1,16 +1,16 @@
 #include "Scene/Scene.h"
 
-void DAE::Scene::Update() const
+void Engine::Scene::Update() const
 {
     hierarchyElement.UpdateChildren();
 }
 
-DAE::GameObject& DAE::Scene::CreateGameObject(glm::vec2 const localPosition) noexcept
+Engine::GameObject& Engine::Scene::CreateGameObject(glm::vec2 const localPosition) noexcept
 {
     return *hierarchyElement.AddChild( std::make_unique<GameObject>(*this, localPosition));
 }
 
-DAE::GameObject& DAE::Scene::CreateGameObject(GameObject& parent, glm::vec2 const localPosition,
+Engine::GameObject& Engine::Scene::CreateGameObject(GameObject& parent, glm::vec2 const localPosition,
     bool const keepWorldPosition) noexcept
 {
     auto& gameObject{ CreateGameObject(localPosition) };

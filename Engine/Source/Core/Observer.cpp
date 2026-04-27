@@ -5,7 +5,7 @@
  * Observer
  *******************************************/
 
-DAE::Observer::~Observer() noexcept
+Engine::Observer::~Observer() noexcept
 {
     // Unsubscribing the observer from the subjects
     for (auto const pSubject: m_pSubjects)
@@ -14,7 +14,7 @@ DAE::Observer::~Observer() noexcept
     }
 }
 
-void DAE::Observer::AddSubject(Subject& subject) noexcept
+void Engine::Observer::AddSubject(Subject& subject) noexcept
 {
     if (std::ranges::binary_search(m_pSubjects, &subject)) return;
     m_pSubjects.push_back(&subject);
@@ -24,26 +24,26 @@ void DAE::Observer::AddSubject(Subject& subject) noexcept
  * Subject
  *******************************************/
 
-void DAE::Subject::BindObserver(Observer& observer) noexcept
+void Engine::Subject::BindObserver(Observer& observer) noexcept
 {
     if (std::ranges::binary_search(m_pObservers, &observer)) return;
     observer.AddSubject(*this);
     m_pObservers.push_back(&observer);
 }
 
-void DAE::Subject::RemoveObserver(Observer& observer) noexcept
+void Engine::Subject::RemoveObserver(Observer& observer) noexcept
 {
     auto& vec = m_pObservers;
     vec.erase(std::remove(vec.begin(), vec.end(), &observer), vec.end());
 }
 
-DAE::Subject::~Subject() noexcept
+Engine::Subject::~Subject() noexcept
 {
     // Notifying all the observers that the subject got deleted
     NotifyObservers(m_subjectDeletedEvent);// The observer is actually deleted by this point:/
 }
 
-void DAE::Subject::NotifyObservers(Event const event) const noexcept
+void Engine::Subject::NotifyObservers(Event const event) const noexcept
 {
     for (auto const pObserver : m_pObservers) pObserver->OnNotify(event, *this);
 }

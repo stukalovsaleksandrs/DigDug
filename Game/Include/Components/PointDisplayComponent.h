@@ -1,23 +1,27 @@
 #ifndef __POINT_DISPLAYCOMPONENT_H__
 #define __POINT_DISPLAYCOMPONENT_H__
 
-#include "../../../Engine/Include/Engine/Components/ComponentBase.h"
+#include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
 
-namespace DAE::Components
+namespace Engine
+{
+    class TextComponent;
+}
+
+namespace Game
 {
     class PlayerComponent;
-    class TextComponent;
 
-    class PointDisplayComponent : public Component, public Observer
+    class PointDisplayComponent : public Engine::Component, public Engine::Observer
     {
     public:
-        explicit PointDisplayComponent(GameObject& owner, PlayerComponent& playerComponent) noexcept;
-        void OnNotify(Event event, Subject const& caller) noexcept override;
+        explicit PointDisplayComponent(Engine::GameObject& owner, PlayerComponent& playerComponent) noexcept;
+        void OnNotify(Engine::Event event, Engine::Subject const& caller) noexcept override;
 
     private:
         PlayerComponent const& m_playerComponent;
-        TextComponent& m_textComponent;
+        Engine::TextComponent& m_textComponent;
 
     };
 }
