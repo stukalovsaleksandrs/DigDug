@@ -1,7 +1,10 @@
+// Engine
+#include "Utils/Utils.h"
 #include "Rendering/Texture2D.h"
 #include "Rendering/Renderer.h"
-#include "Utils/Utils.h"
+// Third-party
 #include <SDL3/SDL.h>
+// Standard
 #include <format>
 
 Engine::Texture2D::~Texture2D()

@@ -14,13 +14,14 @@
  *******************************************/
 
 Engine::RenderComponent::RenderComponent(GameObject &owner) noexcept
-    : Component(owner) {
-    Renderer::GetInstance().RegisterFunction(m_render);
+    : Component(owner)
+{
+    Renderer::GetInstance().RegisterFunction(m_renderFunction);
 }
 
 Engine::RenderComponent::~RenderComponent()
 {
-    Renderer::GetInstance().UnregisterFunction(m_render);
+    Renderer::GetInstance().UnregisterFunction(m_renderFunction);
 }
 
 void Engine::RenderComponent::Render() const {
@@ -47,19 +48,27 @@ glm::vec2 Engine::RenderComponent::GetTextureDims() const noexcept
  * Debug renderer
  *******************************************/
 
-Engine::DebugComponent::DebugComponent(GameObject& owner) noexcept : Component(owner)
+Engine::DebugComponent::DebugComponent(GameObject& owner, Renderer& renderer) noexcept
+    : Component{ owner }
+    , m_renderer{ renderer }
 {
-    Renderer::GetInstance().RegisterFunction(m_debugRender);
+    m_renderer.RegisterFunction(m_debugRenderFunction);
+}
+
+Engine::DebugComponent::~DebugComponent()
+{
+    m_renderer.UnregisterFunction(m_debugRenderFunction);
 }
 
 /*******************************************
  * Text component
  *******************************************/
 
-Engine::TextComponent::TextComponent(GameObject& owner, std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
+Engine::TextComponent::TextComponent(GameObject& owner,
+    std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
-    , m_pRenderComponent{owner.AddComponent<RenderComponent>()}
+    , m_renderComponent{owner.AddComponent<RenderComponent>()}
 {
     UpdateTexture();
 }
@@ -103,7 +112,7 @@ void Engine::TextComponent::UpdateTexture() const {
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
-    m_pRenderComponent.SetTexture(pSDLTexture);
+    m_renderComponent.SetTexture(pSDLTexture);
 }
 
 /*******************************************
@@ -113,7 +122,7 @@ void Engine::TextComponent::UpdateTexture() const {
 Engine::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
     : Component(owner)
 {
-    owner.AddComponent<TextComponent>("FPS", pFont, color);
+    owner.AddComponent<TextComponent>("FPS",  pFont, color);
 }
 
 void Engine::FPSComponent::Update() noexcept {

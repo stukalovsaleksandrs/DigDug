@@ -9,7 +9,8 @@ file(GLOB_RECURSE GAME_HEADERS "${HEADER_PATH}/*.h")
 if(EMSCRIPTEN)
     set(GAME_PARAM)
 else()
-    set(GAME_PARAM WIN32)
+    set(GAME_PARAM WIN32
+            Include/Application.h)
 endif()
 
 add_executable(${GAME_NAME} ${GAME_PARAM} ${GAME_SOURCES} ${GAME_HEADERS})

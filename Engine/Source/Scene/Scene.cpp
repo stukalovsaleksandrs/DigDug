@@ -1,8 +1,9 @@
 #include "Scene/Scene.h"
 
-void Engine::Scene::Update() const
+void Engine::Scene::Update()
 {
     hierarchyElement.UpdateChildren();
+    hierarchyElement.DeleteMarkedGameObjects();
 }
 
 Engine::GameObject& Engine::Scene::CreateGameObject(glm::vec2 const localPosition) noexcept

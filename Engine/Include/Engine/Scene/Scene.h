@@ -11,7 +11,7 @@ namespace Engine
     public:
         // TODO: Wrap only the appropriate interface
         HierarchyElement hierarchyElement{nullptr, nullptr};
-        void Update() const;
+        void Update();
 
         GameObject& CreateGameObject(glm::vec2 localPosition) noexcept;
 
@@ -19,6 +19,7 @@ namespace Engine
 
     private:
         friend class SceneManager;
+
     };
 
 }

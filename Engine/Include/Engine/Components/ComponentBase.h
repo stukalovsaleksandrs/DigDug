@@ -32,21 +32,6 @@ namespace Engine
     template<typename DerivedComponentType>
     concept DerivedComponent = std::derived_from<DerivedComponentType, Component>;
 
-    /*******************************************
-      * Debug component
-      *******************************************/
-
-    // Interface for components to provide debug rendering
-    class DebugComponent : public Component
-    {
-    public:
-        explicit DebugComponent(GameObject& owner) noexcept;
-
-        virtual void DebugRender() = 0;
-
-    private:
-        std::function<void()> const m_debugRender{ [this]{this->DebugRender();} };
-    };
 }
 
 #endif// SE_COMPONENT_BASE_H

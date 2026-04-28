@@ -1,18 +1,19 @@
-﻿#include "Rendering/Renderer.h"
-#include "Scene/SceneManager.h"
-#include "Rendering/Texture2D.h"
+﻿// Project
 #include "Utils/Utils.h"
+#include "Rendering/Renderer.h"
+#include "Rendering/Texture2D.h"
 #include "Components/Components.h"
+// Third-party
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlrenderer3.h>
 #include <implot.h>
+// Standard
 #include <iostream>
 #include <chrono>
 
 void Engine::Renderer::Init(SDL_Window* pWindow)
 {
-    m_pWindow = pWindow;
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
     m_pSDLRenderer = SDL_CreateRenderer(pWindow, nullptr);
     if (!m_pSDLRenderer)
@@ -21,7 +22,7 @@ void Engine::Renderer::Init(SDL_Window* pWindow)
         throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
     }
 
-    InitializeImGui();
+    InitializeImGui(pWindow);
 }
 
 void Engine::Renderer::Render() const
@@ -71,7 +72,7 @@ void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const l
     destination.x = location.x;
     destination.y = location.y;
     SDL_GetTextureSize(texture.GetSDLTexture(), &destination.w, &destination.h);
-    SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
+    SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
 }
 
 void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location, glm::vec2 const dimensions) const
@@ -81,12 +82,7 @@ void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const l
     destination.y = location.y;
     destination.w = dimensions.x;
     destination.h = dimensions.y;
-    SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &destination);
-}
-
-SDL_Renderer* Engine::Renderer::GetSDLRenderer() const
-{
-    return m_pSDLRenderer;
+    SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
 }
 
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)
@@ -103,7 +99,7 @@ void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFuncti
     assert(erasedElementCount > 0 && "Render component not found");
 }
 
-void Engine::Renderer::InitializeImGui()
+void Engine::Renderer::InitializeImGui(SDL_Window* pWindow)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -117,6 +113,6 @@ void Engine::Renderer::InitializeImGui()
     io.IniFilename = NULL;
 #endif
 
-    ImGui_ImplSDL3_InitForSDLRenderer(m_pWindow, m_pSDLRenderer);
+    ImGui_ImplSDL3_InitForSDLRenderer(pWindow, m_pSDLRenderer);
     ImGui_ImplSDLRenderer3_Init(m_pSDLRenderer);
 }

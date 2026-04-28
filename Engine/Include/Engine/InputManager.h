@@ -3,10 +3,11 @@
 
 // Engine
 #include "Engine/Commands.h"
-#include "Engine/Core/Singleton.h"
 // Standard
 #include <variant>
 #include <utility>
+
+#include "Core/Singleton.h"
 
 namespace Engine
 {
@@ -20,6 +21,7 @@ namespace Engine
 
     using Action = std::pair<std::variant<SDL_Scancode, SDL_GamepadButton>, InputType>;
 
+    // TODO: Use dependency injection instead of singleton
     class InputManager final : public Singleton<InputManager>
     {
     public:

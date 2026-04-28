@@ -51,7 +51,7 @@ namespace Engine
 
         /**
          * Adds to the owner game object a new component of the type given or returns an existing one
-         * @return A raw(non-owning) pointer to the newly-added component or to the existing one
+         * @return A reference to the newly-added component or to the existing one
          */
         template<DerivedComponent ComponentType, typename... Args>
         ComponentType& AddComponent(Args&&... args) noexcept {

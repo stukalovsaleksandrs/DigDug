@@ -21,6 +21,9 @@ void Game::PlayerComponent::BindInput()
     Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
     // Movement
     // Keyboard
+    // They get unbound after the input manager is destroyed.
+    // The player is destroyed when the scene is. It's lifetime is also static.
+    // Why the fuck my scene is static at all?
     inputManager.Bind(m_upAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, -1.f }));
     inputManager.Bind(m_leftAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ -1.f, 0.f }));
     inputManager.Bind(m_downAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, 1.f }));

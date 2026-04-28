@@ -23,10 +23,11 @@ namespace Engine
     /**
      * Simple RAII wrapper for the SDL renderer
      */
-    class Renderer final : public Singleton<Renderer>
+    class Renderer final : public Singleton<Renderer>// TODO: Add a service locator for it
     {
     public:
         void Init(SDL_Window* pWindow);
+        // explicit Renderer(SDL_Window* pWindow);
         // Calls Render() on all the registered components
         void Render() const;
 
@@ -35,7 +36,7 @@ namespace Engine
         void RenderTexture(Texture2D const& texture, glm::vec2 location) const;
         void RenderTexture(Texture2D const& texture, glm::vec2 location, glm::vec2 dimensions) const;
 
-        [[nodiscard]] SDL_Renderer* GetSDLRenderer() const;
+        [[nodiscard]] SDL_Renderer* GetSDLRenderer() const{ return m_pSDLRenderer; };
 
         [[nodiscard]] const SDL_Color& GetBackgroundColor() const { return m_clearColor; }
         void SetBackgroundColor(SDL_Color const& color) { m_clearColor = color; }
@@ -48,12 +49,11 @@ namespace Engine
 
     private:
         SDL_Renderer* m_pSDLRenderer{};
-        SDL_Window* m_pWindow{};
         SDL_Color m_clearColor{  0, 0, 0, 255 };
         std::vector<std::function<void()> const*> m_pRenderFunctions;// Non-owning
         std::vector<std::function<void()> const*> m_pDebugRenderFunctions;// Non-owning
 
-        void InitializeImGui();
+        void InitializeImGui(SDL_Window* pWindow);
 
     };
 }

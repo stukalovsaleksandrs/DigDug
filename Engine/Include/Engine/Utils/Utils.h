@@ -3,15 +3,22 @@
 
 // Third-party
 #include "SDL3/SDL_error.h"
+#include <SDL3_ttf/SDL_ttf.h>
 // Standard
 #include <string_view>
 #include <format>
+#include <ostream>
 #include <stdexcept>
+#include <print>
 
 namespace Engine::Utils {
     inline void ThrowSDLError(std::string_view const preceedingMessage) {
         throw std::runtime_error(std::format("{}: {}", preceedingMessage, SDL_GetError()));
     }
+
+    void LogSDLVersion(std::string_view const message, int const major, int const minor, int const patch);
+
+    void PrintSDLVersion();
 }
 
 #endif// SE_UTILS_H

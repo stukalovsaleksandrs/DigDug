@@ -1,30 +1,59 @@
 #ifndef SE_APPLICATION_H
 #define SE_APPLICATION_H
 
+// Engine
+#include "Engine/Rendering/Renderer.h"
 // Third-party
 #include "glm/vec2.hpp"
 // Standard
-#include <functional>
 #include <filesystem>
+
+#include "Engine/InputManager.h"
 
 namespace Engine
 {
-    class Application final
+    class Window
     {
     public:
-        explicit Application(std::filesystem::path const& dataPath, glm::ivec2 const& windowResolution);
-        ~Application();
-        Application(Application const& other) = delete;
-        Application(Application&& other) = delete;
-        Application& operator=(Application const& other) = delete;
-        Application& operator=(Application&& other) = delete;
+        explicit Window(glm::uvec2 dims, std::string_view title);
+        ~Window();
+        Window(Window const&) noexcept = delete;
+        Window(Window&&) noexcept = delete;
+        Window& operator=(Window const&) noexcept = delete;
+        Window& operator=(Window &&) noexcept = delete;
 
-        void Run(std::function<void()> const& load);
-        void RunOneFrame();
+        [[nodiscard]] SDL_Window* Get() const noexcept{ return m_pWindow; };
+
+    private:
+        SDL_Window* m_pWindow{};
+
+    };
+
+    class Application
+    {
+    public:
+        explicit Application(
+            std::filesystem::path const& resourcePath,
+            glm::uvec2 windowDims,
+            std::string_view windowTitle);
+        virtual ~Application();
+        Application(Application const&) noexcept = delete;
+        Application(Application &&) noexcept = delete;
+        Application& operator=(Application const&) noexcept = delete;
+        Application& operator=(Application&&) noexcept = delete;
+
+        void Run();
+
+    protected:
+        // Not initialized on stack, because initialization is deferred
+        std::unique_ptr<Window> m_pWindow{};
+
+        virtual void Update() = 0;
 
     private:
         bool m_quit{};
 
+        void RunOneFrame();
     };
 }
 
