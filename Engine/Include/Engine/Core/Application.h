@@ -3,7 +3,8 @@
 
 // Engine
 #include "Engine/Rendering/Renderer.h"
-#include "Engine/Sound/DefaultSoundService.h"
+#include "Engine/Sound/LoggingSoundService.h"
+
 // Third-party
 #include "glm/vec2.hpp"
 // Standard
@@ -51,8 +52,14 @@ namespace Engine
 
     private:
         bool m_quit{};
-        std::unique_ptr<DefaultSoundService> m_defaultSoundService{
+
+        // TODO: Make the service locator own the services
+        std::unique_ptr<ISoundService> m_soundService{
+#ifdef NDEBUG
             std::make_unique<DefaultSoundService>()
+#else
+            std::make_unique<LoggingSoundService>()
+#endif
         };
 
         void RunOneFrame();

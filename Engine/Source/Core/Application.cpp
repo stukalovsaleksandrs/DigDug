@@ -69,7 +69,7 @@ Engine::Application::Application(
     Renderer::GetInstance().Init(m_pWindow.get()->Get());
 
     // Sound
-    SoundServiceLocator::SetSoundService(*m_defaultSoundService.get());
+    SoundServiceLocator::SetSoundService(*m_soundService.get());
     auto& soundService{ SoundServiceLocator::GetSoundService() };
     auto const soundId{ soundService.LoadSound("Resources/GameStart.mp3") };
     soundService.SetVolume(0.2f);
@@ -78,7 +78,7 @@ Engine::Application::Application(
 
 Engine::Application::~Application()
 {
-    m_defaultSoundService.reset();
+    m_soundService.reset();
     SDL_Quit();
     ShutdownSteamWorks();
 }

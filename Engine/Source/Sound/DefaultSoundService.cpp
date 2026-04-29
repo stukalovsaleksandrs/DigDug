@@ -3,6 +3,7 @@
 #include "Sound/DefaultSoundService.h"
 // Third-party
 #include <functional>
+#include <thread>
 
 #include "SDL3/SDL.h"
 #include "SDL3_mixer/SDL_mixer.h"
@@ -26,6 +27,11 @@ public:
         // 3. Creating a sound effect track
         m_pTrack = MIX_CreateTrack(m_pMixer);
         Utils::Check(m_pTrack,"Sound effect track creation failed");
+
+        // m_soundThread = std::jthread([this]()
+        // {
+        //     while ()
+        // });
     }
 
     ~Impl()
@@ -80,6 +86,7 @@ private:
     MIX_Mixer* m_pMixer{};
     MIX_Track* m_pTrack{};
     std::vector<MIX_Audio*> m_pAudio{};
+    std::jthread m_soundThread{};
 
 };
 
