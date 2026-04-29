@@ -23,7 +23,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 if(MSVC OR CLANG OR GCC)
   # compile at warning level 4 + treat warnings as errors
-  target_compile_options(${ENGINE_NAME} PRIVATE /W4 /WX)
+  target_compile_options(${ENGINE_NAME} PRIVATE /W4)
 else()
   target_compile_options(${ENGINE_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()

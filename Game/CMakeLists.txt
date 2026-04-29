@@ -50,23 +50,7 @@ elseif(WIN32)
     # Set working directory to output folder
     set_target_properties(${GAME_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${GAME_NAME}>")
 
-    # Copy SDL dlls to output folder
-    set(SDL_RUNTIME_DLLS
-            SDL3::SDL3
-            SDL3_ttf::SDL3_ttf
-    )
-
-    foreach(dllTarget IN LISTS SDL_RUNTIME_DLLS)
-        add_custom_command(
-                TARGET ${GAME_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "$<TARGET_FILE:${dllTarget}>"
-                "$<TARGET_FILE_DIR:${GAME_NAME}>"
-                VERBATIM
-        )
-    endforeach()
-
-    if(Steamworks_FOUND)
+      if(Steamworks_FOUND)
         message("Steamworks found")
         target_link_libraries("${GAME_NAME}" PUBLIC Steamworks::Steamworks)
         target_compile_definitions(${GAME_NAME} PRIVATE USE_STEAMWORKS)

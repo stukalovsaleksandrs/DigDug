@@ -4,6 +4,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 // Standard
 #include <print>
+#include <sstream>
+#include <debugapi.h>
 
 void Engine::Utils::Check(bool const result, std::string_view const message)
 {

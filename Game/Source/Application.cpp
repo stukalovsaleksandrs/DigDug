@@ -23,7 +23,7 @@ namespace fs = std::filesystem;
         resourceFolderLocation = std::format("../{}/", resourceFolderName);
 #endif
 
-    return resourceFolderLocation;
+    return resourceFolderLocation.generic_string();
 }
 
 float constexpr g_resolutionScale{ 3 };
