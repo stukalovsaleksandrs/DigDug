@@ -5,6 +5,16 @@
 // Standard
 #include <print>
 
+void Engine::Utils::Check(bool const result, std::string_view const message)
+{
+    if (!result) ThrowSDLError(message);
+}
+
+void Engine::Utils::ThrowSDLError(std::string_view const message)
+{
+    throw std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
+}
+
 void Engine::Utils::LogSDLVersion(std::string_view const message, int const major, int const minor, int const patch)
 {
 #if WIN32

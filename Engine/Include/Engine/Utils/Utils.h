@@ -9,11 +9,11 @@
 #include <stdexcept>
 
 namespace Engine::Utils {
-    inline void ThrowSDLError(std::string_view const preceedingMessage) {
-        throw std::runtime_error(std::format("{}: {}", preceedingMessage, SDL_GetError()));
-    }
+    void Check(bool result, std::string_view message);
 
-    void LogSDLVersion(std::string_view const message, int const major, int const minor, int const patch);
+    void ThrowSDLError(std::string_view message);
+
+    void LogSDLVersion(std::string_view message, int major, int minor, int patch);
 
     void PrintSDLVersion();
 }

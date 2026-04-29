@@ -1,6 +1,7 @@
 // Project
 #include "Application.h"
 // Third-party
+#include "Engine/Sound/SoundServiceLocator.h"
 #include "Engine/Utils/Utils.h"
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #include "SDL3/SDL.h"
@@ -15,31 +16,20 @@ static MIX_Audio *audio;
 
 void PlaySound()
 {
-    //Initialize SDL_mixer
-    if (!MIX_Init())
-    {
-        Engine::Utils::ThrowSDLError("MIX_Init failed");
-    }
+    auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
+    soundService.PlaySound(1);
+
+    Engine::Utils::Check(MIX_Init(), "MIX_Init failed");
 
     mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
-    if (!mixer)
-    {
-        Engine::Utils::ThrowSDLError("Mixer creation failed");
-    }
+    Engine::Utils::Check(mixer,"Mixer creation failed");
 
     std::string const file{ "Resources/GameStart.mp3" };
-
     audio = MIX_LoadAudio(mixer, file.data(), true);
-    if (!audio)
-    {
-        Engine::Utils::ThrowSDLError(std::format("Filed to load {}", file));
-    }
+    Engine::Utils::Check(audio, std::format("Filed to load {}", file));
 
     track = MIX_CreateTrack(mixer);
-    if (!track)
-    {
-        Engine::Utils::ThrowSDLError("Failed to create track");
-    }
+    Engine::Utils::Check(track,"Failed to create track");
 
     MIX_SetTrackAudio(track, audio);
     MIX_PlayTrack(track, 0);
