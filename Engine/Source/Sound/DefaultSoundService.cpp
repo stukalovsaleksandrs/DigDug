@@ -1,0 +1,114 @@
+// Engine
+#include "Utils/Utils.h"
+#include "Sound/DefaultSoundService.h"
+// Third-party
+#include <functional>
+
+#include "SDL3/SDL.h"
+#include "SDL3_mixer/SDL_mixer.h"
+
+////////////////////////////
+/// DefaultSoundSystem::Impl
+////////////////////////////
+
+class Engine::DefaultSoundService::Impl final
+{
+public:
+    Impl()
+    {
+        // 1. Initializing SDL_mixer
+        Utils::Check(MIX_Init(), "MIX_Init failed");
+
+        // 2. Creating a mixer instance
+        m_pMixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
+        Utils::Check(m_pMixer,"Mixer creation failed");
+
+        // 3. Creating a sound effect track
+        m_pTrack = MIX_CreateTrack(m_pMixer);
+        Utils::Check(m_pTrack,"Sound effect track creation failed");
+    }
+
+    ~Impl()
+    {
+        // 1. Destroying audio
+        for (auto* pAudio: m_pAudio)
+        {
+            MIX_DestroyAudio(pAudio);
+        }
+
+        // 2. Stopping and destroying sound effect track
+        MIX_StopTrack(m_pTrack, 10);
+        MIX_DestroyTrack(m_pTrack);
+
+        // 3. Destroying mixer
+        MIX_DestroyMixer(m_pMixer);
+    }
+    Impl(Impl&&) noexcept;
+    Impl& operator=(Impl&&) noexcept;
+    Impl(Impl const&) noexcept;
+    Impl& operator=(Impl const&) noexcept;
+
+    [[nodiscard]] SoundId LoadSound(std::string_view const path)
+    {
+        MIX_Audio* const pAudio{ MIX_LoadAudio(m_pMixer, path.data(), true) };
+        Utils::Check(pAudio, std::format("Filed to load {}", path));
+        m_pAudio.push_back(pAudio);
+        return m_pAudio.size() - 1;
+    }
+
+    void PlaySound(SoundId const soundHandle) noexcept
+    {
+        MIX_SetTrackAudio(m_pTrack, m_pAudio.at(soundHandle));
+        MIX_PlayTrack(m_pTrack, 0);
+    }
+
+    void StopAllSounds() noexcept
+    {
+        MIX_StopTrack(m_pTrack, 10);
+    }
+
+    void SetVolume(float const volume) const noexcept
+    {
+        MIX_SetMixerGain(m_pMixer, volume);
+    }
+
+private:
+    MIX_Mixer* m_pMixer{};
+    MIX_Track* m_pTrack{};
+    std::vector<MIX_Audio*> m_pAudio{};
+
+};
+
+////////////////////////////
+/// DefaultSoundSystem
+////////////////////////////
+
+Engine::DefaultSoundService::DefaultSoundService() noexcept
+    : m_pImpl{ std::make_unique<Impl>() }
+{}
+
+// Destructor requires the implementation class to be defined, see:
+// https://stackoverflow.com/questions/34072862/why-is-error-invalid-application-of-sizeof-to-an-incomplete-type-using-uniqu/34073093
+// https://cpppatterns.com/patterns/pimpl.html
+Engine::DefaultSoundService::~DefaultSoundService() noexcept = default;
+
+Engine::SoundId Engine::DefaultSoundService::LoadSound(std::string_view const path)
+{
+    return m_pImpl->LoadSound(path);
+}
+
+void Engine::DefaultSoundService::PlaySound(uint32_t const soundId) noexcept
+{
+    m_pImpl->PlaySound(soundId);
+}
+
+void Engine::DefaultSoundService::StopAllSounds() noexcept
+{
+    m_pImpl->StopAllSounds();
+}
+
+void Engine::DefaultSoundService::SetVolume([[maybe_unused]] uint32_t volume) noexcept
+{
+    m_pImpl->SetVolume(volume);
+}
+
