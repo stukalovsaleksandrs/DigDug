@@ -54,12 +54,12 @@ namespace Engine
         bool m_quit{};
 
         // TODO: Make the service locator own the services
-        std::unique_ptr<ISoundService> m_soundService{
-#ifdef NDEBUG
+        std::unique_ptr<DefaultSoundService> m_defaultSoundService{
             std::make_unique<DefaultSoundService>()
-#else
-            std::make_unique<LoggingSoundService>()
-#endif
+        };
+
+        std::unique_ptr<LoggingSoundService> m_loggingSoundService{
+            std::make_unique<LoggingSoundService>(*m_defaultSoundService.get())
         };
 
         void RunOneFrame();

@@ -3,6 +3,10 @@
 // Standard
 #include <print>
 
+Engine::LoggingSoundService::LoggingSoundService(DefaultSoundService& defaultSoundService)
+    : m_defaultSoundService{ defaultSoundService }
+{}
+
 Engine::SoundId Engine::LoggingSoundService::LoadSound(std::string_view const path)
 {
     std::println("Loading sound: {}", path);
@@ -26,3 +30,4 @@ void Engine::LoggingSoundService::SetVolume(float const volume) noexcept
     std::println("Volume: {}", volume);
     m_defaultSoundService.SetVolume(volume);
 }
+
