@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-    inline void InitializeSteamWorks()
+    inline void InitializeSteamworks()
     {
 #if USE_STEAMWORKS
         if (!SteamAPI_Init())

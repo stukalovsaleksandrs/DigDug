@@ -3,12 +3,11 @@
 
 // Engine
 #include "Engine/Rendering/Renderer.h"
+#include "Engine/Sound/DefaultSoundService.h"
 // Third-party
 #include "glm/vec2.hpp"
 // Standard
 #include <filesystem>
-
-#include "Engine/InputManager.h"
 
 namespace Engine
 {
@@ -52,6 +51,9 @@ namespace Engine
 
     private:
         bool m_quit{};
+        std::unique_ptr<DefaultSoundService> m_defaultSoundService{
+            std::make_unique<DefaultSoundService>()
+        };
 
         void RunOneFrame();
     };

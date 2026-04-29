@@ -12,7 +12,7 @@ namespace Engine
         [[nodiscard]] SoundId LoadSound(std::string_view) noexcept override{ return 0; };
         void PlaySound([[maybe_unused]] uint32_t soundId) noexcept override{}
         void StopAllSounds() noexcept override{};
-        void SetVolume([[maybe_unused]] uint32_t volume) noexcept override{}
+        void SetVolume([[maybe_unused]] float volume) noexcept override{}
     };
 
     static NullSoundService g_nullSoundService;
@@ -29,7 +29,7 @@ Engine::ISoundService& Engine::SoundServiceLocator::GetSoundService() noexcept
     return *currentSoundService;
 }
 
-void Engine::SoundServiceLocator::RegisterSoundService(ISoundService& service) noexcept
+void Engine::SoundServiceLocator::SetSoundService(ISoundService& service) noexcept
 {
     currentSoundService = &service;
 }

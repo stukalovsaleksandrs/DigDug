@@ -9,6 +9,8 @@
 // Third-party
 #include <SDL3/SDL.h>
 
+#include "Sound/SoundServiceLocator.h"
+
 #if WIN32
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
@@ -46,24 +48,37 @@ Engine::Application::Application(
     glm::uvec2 const windowDims,
     std::string_view windowTitle)
 {
-    InitializeSteamWorks();
-    Utils::PrintSDLVersion();
+    // Steam
+    InitializeSteamworks();
 
+    // SDL instance
+    Utils::PrintSDLVersion();
     if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
     {
         SDL_Log("Renderer error: %s", SDL_GetError());
         Utils::ThrowSDLError("SDL_Init Error");
     }
 
+    // Window
     m_pWindow = std::make_unique<Window>(windowDims, windowTitle);
 
+    // Resource manager
     ResourceManager::GetInstance().Init(resourcePath);
 
+    // Renderer
     Renderer::GetInstance().Init(m_pWindow.get()->Get());
+
+    // Sound
+    SoundServiceLocator::SetSoundService(*m_defaultSoundService.get());
+    auto& soundService{ SoundServiceLocator::GetSoundService() };
+    auto const soundId{ soundService.LoadSound("Resources/GameStart.mp3") };
+    soundService.SetVolume(0.2f);
+    soundService.PlaySound(soundId);
 }
 
 Engine::Application::~Application()
 {
+    m_defaultSoundService.reset();
     SDL_Quit();
     ShutdownSteamWorks();
 }

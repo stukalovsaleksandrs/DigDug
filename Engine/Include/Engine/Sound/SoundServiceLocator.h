@@ -11,7 +11,7 @@ namespace Engine
     namespace SoundServiceLocator
     {
         ISoundService& GetSoundService() noexcept;
-        void RegisterSoundService(ISoundService&) noexcept;
+        void SetSoundService(ISoundService&) noexcept;
     }
 }
 

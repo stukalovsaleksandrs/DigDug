@@ -21,7 +21,7 @@ namespace Engine
         [[nodiscard]] SoundId LoadSound(std::string_view path) override;
         void PlaySound(SoundId soundId) noexcept override;
         void StopAllSounds() noexcept override;
-        void SetVolume(SoundId volume) noexcept override;
+        void SetVolume(float volume) noexcept override;
 
     private:
         class Impl;

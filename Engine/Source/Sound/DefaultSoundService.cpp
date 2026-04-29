@@ -30,18 +30,22 @@ public:
 
     ~Impl()
     {
-        // 1. Destroying audio
-        for (auto* pAudio: m_pAudio)
+        // Destroy audio objects
+        for (auto* pAudio : m_pAudio)
         {
             MIX_DestroyAudio(pAudio);
         }
 
-        // 2. Stopping and destroying sound effect track
-        MIX_StopTrack(m_pTrack, 10);
+        // Stop playback globally (not just one track if possible)
+        MIX_StopTrack(m_pTrack, 0);
+
+        // Destroy track first
         MIX_DestroyTrack(m_pTrack);
 
-        // 3. Destroying mixer
+        // Now destroy mixer (nothing should reference it anymore)
         MIX_DestroyMixer(m_pMixer);
+
+        MIX_Quit();
     }
     Impl(Impl&&) noexcept;
     Impl& operator=(Impl&&) noexcept;
@@ -56,13 +60,13 @@ public:
         return m_pAudio.size() - 1;
     }
 
-    void PlaySound(SoundId const soundHandle) noexcept
+    void PlaySound(SoundId const soundHandle) const noexcept
     {
         MIX_SetTrackAudio(m_pTrack, m_pAudio.at(soundHandle));
         MIX_PlayTrack(m_pTrack, 0);
     }
 
-    void StopAllSounds() noexcept
+    void StopAllSounds() const noexcept
     {
         MIX_StopTrack(m_pTrack, 10);
     }
@@ -107,7 +111,7 @@ void Engine::DefaultSoundService::StopAllSounds() noexcept
     m_pImpl->StopAllSounds();
 }
 
-void Engine::DefaultSoundService::SetVolume([[maybe_unused]] uint32_t volume) noexcept
+void Engine::DefaultSoundService::SetVolume(float const volume) noexcept
 {
     m_pImpl->SetVolume(volume);
 }

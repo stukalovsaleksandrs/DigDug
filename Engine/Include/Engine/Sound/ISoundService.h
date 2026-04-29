@@ -18,7 +18,7 @@ namespace Engine
         [[nodiscard]] virtual SoundId LoadSound(std::string_view path) = 0;
         virtual void PlaySound(SoundId soundId) noexcept = 0;
         virtual void StopAllSounds() noexcept = 0;
-        virtual void SetVolume(SoundId volume) noexcept = 0;
+        virtual void SetVolume(float volume) noexcept = 0;
 
     };
 }
