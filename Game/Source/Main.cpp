@@ -20,9 +20,19 @@ int main(int, char*[]) {
             MIX_DestroyMixer(pMixer);
         } };
         std::unique_ptr<MIX_Mixer, decltype(mixerDeleter)> pMixer{ nullptr, mixerDeleter};
-        // MIX_Mixer *pMixer;
-        MIX_Audio *audio;
-        MIX_Track *track;
+
+        auto trackDeleter{ [](MIX_Track* pTrack)
+        {
+            MIX_StopTrack(pTrack, 10);
+            MIX_DestroyTrack(pTrack);
+        } };
+        std::unique_ptr<MIX_Track, decltype(trackDeleter)> pTrack{ nullptr, trackDeleter};
+
+        auto audioDeleter{ [](MIX_Audio* pAudio)
+        {
+            MIX_DestroyAudio(pAudio);
+        } };
+        std::unique_ptr<MIX_Audio, decltype(audioDeleter)> pAudio{ nullptr, audioDeleter };
 
         auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
         soundService.PlaySound(1);
@@ -30,30 +40,19 @@ int main(int, char*[]) {
         Engine::Utils::Check(MIX_Init(), "MIX_Init failed");
 
         pMixer.reset(MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL));
-        // pMixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
         Engine::Utils::Check(pMixer.get(),"Mixer creation failed");
-        // Engine::Utils::Check(pMixer,"Mixer creation failed");
 
         std::string const file{ "Resources/GameStart.mp3" };
-        audio = MIX_LoadAudio(pMixer.get(), file.data(), true);
-        // audio = MIX_LoadAudio(pMixer, file.data(), true);
-        Engine::Utils::Check(audio, std::format("Filed to load {}", file));
+        pAudio.reset(MIX_LoadAudio(pMixer.get(), file.data(), true));
+        Engine::Utils::Check(pAudio.get(), std::format("Filed to load {}", file));
 
-        track = MIX_CreateTrack(pMixer.get());
-        // track = MIX_CreateTrack(pMixer);
-        Engine::Utils::Check(track,"Failed to create track");
+        pTrack.reset(MIX_CreateTrack(pMixer.get()));
+        Engine::Utils::Check(pTrack.get(),"Failed to create track");
 
-        MIX_SetTrackAudio(track, audio);
-        MIX_PlayTrack(track, 0);
+        MIX_SetTrackAudio(pTrack.get(), pAudio.get());
+        MIX_PlayTrack(pTrack.get(), 0);
 
         game.Run();
-
-        // MIX_StopTrack(track, 0);
-        MIX_DestroyAudio(audio);
-        // Will get destroyed automatically together with the mixer
-        MIX_DestroyTrack(track);
-        // pMixer.reset();
-        // MIX_DestroyMixer(pMixer);
     }
     MIX_Quit();
     return SDL_APP_SUCCESS;
