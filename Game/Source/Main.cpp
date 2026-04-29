@@ -1,8 +1,9 @@
 // Project
 #include "Application.h"
-// Third-party
+// Engine
 #include "Engine/Sound/SoundServiceLocator.h"
 #include "Engine/Utils/Utils.h"
+// Third-party
 #include "SDL3/SDL_main.h"// Required for the windows build not to give errors
 #include "SDL3/SDL.h"
 #if _DEBUG && __has_include(<vld.h>)
@@ -10,10 +11,10 @@
 #endif
 
 #include "SDL3_mixer/SDL_mixer.h"
+
 static MIX_Mixer *mixer;
 static MIX_Track *track;
 static MIX_Audio *audio;
-
 void PlaySound()
 {
     auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
@@ -33,6 +34,7 @@ void PlaySound()
 
     MIX_SetTrackAudio(track, audio);
     MIX_PlayTrack(track, 0);
+
 }
 
 int main(int, char*[]) {
@@ -41,6 +43,9 @@ int main(int, char*[]) {
     PlaySound();
     game.Run();
 
+    MIX_DestroyTrack(track);
+    MIX_DestroyAudio(audio);
+    MIX_DestroyMixer(mixer);
+    MIX_Quit();
     return SDL_APP_SUCCESS;
-    MIX_Quit();// <- Don't forget that
 }

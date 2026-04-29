@@ -49,7 +49,7 @@ Engine::Application::Application(
     InitializeSteamWorks();
     Utils::PrintSDLVersion();
 
-    if (!SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
     {
         SDL_Log("Renderer error: %s", SDL_GetError());
         Utils::ThrowSDLError("SDL_Init Error");
