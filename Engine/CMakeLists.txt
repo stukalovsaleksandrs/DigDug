@@ -159,6 +159,18 @@ if(NOT SDL3_ttf_FOUND)
 endif()
 
 #################################
+# SDL3_mixer
+#################################
+FetchContent_Declare(
+    SDL3_mixer
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer
+    GIT_TAG release-3.2.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(SDL3_mixer)
+
+#################################
 # VLD
 #################################
 if (WIN32)
@@ -191,6 +203,7 @@ target_link_libraries("${ENGINE_NAME}"
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
   PUBLIC
+  SDL3_mixer::SDL3_mixer
   glm::glm
   imgui
   implot

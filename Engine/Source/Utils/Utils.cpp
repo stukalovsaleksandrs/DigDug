@@ -1,4 +1,9 @@
+// Engine
 #include "Engine/Utils/Utils.h"
+// Third-party
+#include <SDL3_ttf/SDL_ttf.h>
+// Standard
+#include <print>
 
 void Engine::Utils::LogSDLVersion(std::string_view const message, int const major, int const minor, int const patch)
 {
