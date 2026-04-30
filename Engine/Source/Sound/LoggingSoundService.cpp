@@ -7,6 +7,8 @@ Engine::LoggingSoundService::LoggingSoundService(DefaultSoundService& defaultSou
     : m_defaultSoundService{ defaultSoundService }
 {}
 
+Engine::LoggingSoundService::~LoggingSoundService() = default;
+
 Engine::SoundId Engine::LoggingSoundService::LoadSound(std::string_view const path)
 {
     std::println("Loading sound: {}", path);
@@ -30,4 +32,3 @@ void Engine::LoggingSoundService::SetVolume(float const volume) noexcept
     std::println("Volume: {}", volume);
     m_defaultSoundService.SetVolume(volume);
 }
-

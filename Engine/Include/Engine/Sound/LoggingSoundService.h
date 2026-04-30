@@ -9,7 +9,8 @@ namespace Engine
     class LoggingSoundService final : public ISoundService
     {
     public:
-        LoggingSoundService(DefaultSoundService&);
+        explicit LoggingSoundService(DefaultSoundService&);
+        ~LoggingSoundService() override;
         [[nodiscard]] SoundId LoadSound(std::string_view path) override;
         void PlaySound(SoundId soundId) noexcept override;
         void StopAllSounds() noexcept override;

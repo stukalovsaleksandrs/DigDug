@@ -4,7 +4,6 @@
 // Engine
 #include "Engine/Rendering/Renderer.h"
 #include "Engine/Sound/LoggingSoundService.h"
-
 // Third-party
 #include "glm/vec2.hpp"
 // Standard

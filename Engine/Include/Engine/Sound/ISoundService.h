@@ -1,6 +1,7 @@
 #ifndef ENGINE_ISOUND_SERVICE_H
 #define ENGINE_ISOUND_SERVICE_H
 
+#include "glm/fwd.hpp"
 // Standard
 #include <cstdint>
 #include <string_view>
@@ -8,7 +9,7 @@
 namespace Engine
 {
     // Opaque handle for clients to be able to refer to a specific loaded sound
-    using SoundId = uint32_t;
+    using SoundId = glm::uint32_t;
 
     // Interface for an object providing ability to manipulate sounds
     class ISoundService

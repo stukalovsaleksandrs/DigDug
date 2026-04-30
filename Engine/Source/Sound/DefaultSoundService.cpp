@@ -61,9 +61,9 @@ public:
     [[nodiscard]] SoundId LoadSound(std::string_view const path)
     {
         MIX_Audio* const pAudio{ MIX_LoadAudio(m_pMixer, path.data(), true) };
-        Utils::Check(pAudio, std::format("Filed to load {}", path));
+        Utils::Check(pAudio, std::format("Failed to load {}", path));
         m_pAudio.push_back(pAudio);
-        return m_pAudio.size() - 1;
+        return static_cast<SoundId>(m_pAudio.size() - 1);
     }
 
     void PlaySound(SoundId const soundHandle) const noexcept
@@ -95,8 +95,7 @@ private:
 ////////////////////////////
 
 Engine::DefaultSoundService::DefaultSoundService() noexcept
-    : m_pImpl{ std::make_unique<Impl>() }
-{}
+    : m_pImpl{ std::make_unique<Impl>() }{}
 
 // Destructor requires the implementation class to be defined, see:
 // https://stackoverflow.com/questions/34072862/why-is-error-invalid-application-of-sizeof-to-an-incomplete-type-using-uniqu/34073093
@@ -108,7 +107,7 @@ Engine::SoundId Engine::DefaultSoundService::LoadSound(std::string_view const pa
     return m_pImpl->LoadSound(path);
 }
 
-void Engine::DefaultSoundService::PlaySound(uint32_t const soundId) noexcept
+void Engine::DefaultSoundService::PlaySound(glm::uint32_t const soundId) noexcept
 {
     m_pImpl->PlaySound(soundId);
 }

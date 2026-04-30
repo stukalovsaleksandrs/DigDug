@@ -5,6 +5,7 @@
 #include "ISoundService.h"
 // Standard
 #include <memory>
+#include <string_view>
 
 namespace Engine
 {
