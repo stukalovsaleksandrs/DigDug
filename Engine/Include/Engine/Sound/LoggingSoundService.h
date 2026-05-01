@@ -2,14 +2,14 @@
 #define ENGINE_LOGGING_SOUND_SERVICE_H
 
 // Engine
-#include "DefaultSoundService.h"
+#include "ISoundService.h"
 
 namespace Engine
 {
     class LoggingSoundService final : public ISoundService
     {
     public:
-        explicit LoggingSoundService(DefaultSoundService&);
+        explicit LoggingSoundService(ISoundService&);
         ~LoggingSoundService() override;
         [[nodiscard]] SoundId LoadSound(std::string_view path) override;
         void PlaySound(SoundId soundId) noexcept override;
@@ -17,7 +17,7 @@ namespace Engine
         void SetVolume(float volume) noexcept override;
 
     private:
-        DefaultSoundService& m_defaultSoundService;
+        ISoundService& m_realSoundService;
 
     };
 }

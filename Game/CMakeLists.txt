@@ -1,11 +1,12 @@
-###########################################################################
+###########################
 # Executable creation
-###########################################################################
+###########################
 set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 set(HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Include")
 file(GLOB_RECURSE GAME_SOURCES "${SOURCE_PATH}/*.cpp")
 file(GLOB_RECURSE GAME_HEADERS "${HEADER_PATH}/*.h")
 
+# Parameters
 if(EMSCRIPTEN)
     set(GAME_PARAM)
 else()
@@ -17,13 +18,11 @@ add_executable(${GAME_NAME} ${GAME_PARAM} ${GAME_SOURCES} ${GAME_HEADERS})
 
 set(RESOURCE_DIR_NAME "Resources")
 
-target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME})
-
 target_include_directories(${GAME_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Include")
 
-###########################################################################
+##########################
 # Emscripten
-###########################################################################
+##########################
 if(EMSCRIPTEN)
     set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
     set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_DIR_NAME}@/\"")
@@ -64,9 +63,11 @@ elseif(WIN32)
         message("Steamworks not found")
     endif()
 
+    # Copying resources to the binary folder
     add_custom_command(TARGET ${GAME_NAME} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_DIR_NAME}" "$<TARGET_FILE_DIR:${GAME_NAME}>/${RESOURCE_DIR_NAME}"
     )
+
 elseif(APPLE)
     set_target_properties(${GAME_NAME} PROPERTIES
             MACOSX_BUNDLE TRUE
@@ -97,6 +98,7 @@ elseif(APPLE)
     add_custom_command(TARGET ${GAME_NAME} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_DIR_NAME}" "$<TARGET_FILE_DIR:${GAME_NAME}>/${RESOURCE_DIR_NAME}"
     )
+
 else()
     if(Steamworks_FOUND)
         target_link_libraries("${GAME_NAME}" PUBLIC Steamworks::Steamworks)
@@ -114,4 +116,21 @@ else()
     add_custom_command(TARGET ${GAME_NAME} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_DIR_NAME}" "$<TARGET_FILE_DIR:${GAME_NAME}>/${RESOURCE_DIR_NAME}"
     )
+
 endif()
+
+target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME})
+target_link_directories(${GAME_NAME} PRIVATE ${BINARY_DIR})
+
+# Copying SDL to game dir
+foreach (DLL_TARGET IN LISTS SDL_RUNTIME_DLLS)
+add_custom_command(
+	TARGET ${GAME_NAME}
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	"$<TARGET_FILE:${DLL_TARGET}>"
+	${CMAKE_CURRENT_BINARY_DIR}
+	VERBATIM
+)
+endforeach ()
+

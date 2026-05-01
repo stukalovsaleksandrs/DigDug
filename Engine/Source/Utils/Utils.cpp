@@ -5,7 +5,6 @@
 // Standard
 #include <print>
 #include <sstream>
-#include <debugapi.h>
 
 void Engine::Utils::Check(bool const result, std::string_view const message)
 {
@@ -19,13 +18,13 @@ void Engine::Utils::ThrowSDLError(std::string_view const message)
 
 void Engine::Utils::LogSDLVersion(std::string_view const message, int const major, int const minor, int const patch)
 {
-#if WIN32
-    std::stringstream ss;
-    ss << message << major << "." << minor << "." << patch << "\n";
-    OutputDebugString(ss.str().c_str());
-#else
+// #if WIN32
+//     std::stringstream ss;
+//     ss << message << major << "." << minor << "." << patch << "\n";
+//     OutputDebugString(ss.str().c_str());
+// #else
     std::println("{} {}.{}.{}", message, major, minor, patch);
-#endif
+// #endif
 }
 
 void Engine::Utils::PrintSDLVersion()

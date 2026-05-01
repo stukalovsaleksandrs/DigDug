@@ -10,8 +10,6 @@
 #include <vld.h>
 #endif
 
-#include "SDL3_mixer/SDL_mixer.h"
-
 int main(int, char*[]) {
     Game::Application game{};
     game.Run();

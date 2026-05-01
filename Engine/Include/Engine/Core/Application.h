@@ -9,6 +9,8 @@
 // Standard
 #include <filesystem>
 
+#include "Engine/Sound/DefaultSoundService.h"
+
 namespace Engine
 {
     class Window
