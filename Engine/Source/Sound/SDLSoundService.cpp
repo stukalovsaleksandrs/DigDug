@@ -1,6 +1,6 @@
 // Engine
 #include "Utils/Utils.h"
-#include "Sound/DefaultSoundService.h"
+#include "Sound/SDLSoundService.h"
 // Third-party
 #include "SDL3/SDL.h"
 #include "SDL3_mixer/SDL_mixer.h"
@@ -12,7 +12,7 @@
 /// DefaultSoundSystem::Impl
 ////////////////////////////
 
-class Engine::DefaultSoundService::Impl final
+class Engine::SDLSoundService::Impl final
 {
 public:
     Impl()
@@ -94,30 +94,30 @@ private:
 /// DefaultSoundSystem
 ////////////////////////////
 
-Engine::DefaultSoundService::DefaultSoundService() noexcept
+Engine::SDLSoundService::SDLSoundService() noexcept
     : m_pImpl{ std::make_unique<Impl>() }{}
 
 // Destructor requires the implementation class to be defined, see:
 // https://stackoverflow.com/questions/34072862/why-is-error-invalid-application-of-sizeof-to-an-incomplete-type-using-uniqu/34073093
 // https://cpppatterns.com/patterns/pimpl.html
-Engine::DefaultSoundService::~DefaultSoundService() noexcept = default;
+Engine::SDLSoundService::~SDLSoundService() noexcept = default;
 
-Engine::SoundId Engine::DefaultSoundService::LoadSound(std::string_view const path)
+Engine::SoundId Engine::SDLSoundService::LoadSound(std::string_view const path)
 {
     return m_pImpl->LoadSound(path);
 }
 
-void Engine::DefaultSoundService::PlaySound(glm::uint32_t const soundId) noexcept
+void Engine::SDLSoundService::PlaySound(glm::uint32_t const soundId) noexcept
 {
     m_pImpl->PlaySound(soundId);
 }
 
-void Engine::DefaultSoundService::StopAllSounds() noexcept
+void Engine::SDLSoundService::StopAllSounds() noexcept
 {
     m_pImpl->StopAllSounds();
 }
 
-void Engine::DefaultSoundService::SetVolume(float const volume) noexcept
+void Engine::SDLSoundService::SetVolume(float const volume) noexcept
 {
     m_pImpl->SetVolume(volume);
 }

@@ -9,15 +9,15 @@
 
 namespace Engine
 {
-    class DefaultSoundService final : public ISoundService
+    class SDLSoundService final : public ISoundService
     {
     public:
-        DefaultSoundService() noexcept;
-        ~DefaultSoundService() noexcept override;
-        DefaultSoundService(DefaultSoundService const&) noexcept = delete;
-        DefaultSoundService(DefaultSoundService&&) noexcept = delete;
-        DefaultSoundService operator=(DefaultSoundService&&) noexcept = delete;
-        DefaultSoundService operator=(DefaultSoundService const&) noexcept = delete;
+        SDLSoundService() noexcept;
+        ~SDLSoundService() noexcept override;
+        SDLSoundService(SDLSoundService const&) noexcept = delete;
+        SDLSoundService(SDLSoundService&&) noexcept = delete;
+        SDLSoundService operator=(SDLSoundService&&) noexcept = delete;
+        SDLSoundService operator=(SDLSoundService const&) noexcept = delete;
 
         [[nodiscard]] SoundId LoadSound(std::string_view path) override;
         void PlaySound(SoundId soundId) noexcept override;

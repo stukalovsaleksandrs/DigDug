@@ -56,7 +56,7 @@ jobs:
       - name: Prepare Artifact
         run: |
           mkdir -p dist
-          cp build-web/DigDug_web.* dist/
+          cp build-web/Game/DigDug_web.* dist/
           cp web/*.html dist/
 
       - name: Upload Pages Artifact

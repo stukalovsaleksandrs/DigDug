@@ -9,7 +9,7 @@
 // Standard
 #include <filesystem>
 
-#include "Engine/Sound/DefaultSoundService.h"
+#include "Engine/Sound/SDLSoundService.h"
 
 namespace Engine
 {
@@ -58,8 +58,8 @@ namespace Engine
         bool m_quit{};
 
         // TODO: Make the service locator own the services
-        std::unique_ptr<DefaultSoundService> m_defaultSoundService{
-            std::make_unique<DefaultSoundService>()
+        std::unique_ptr<SDLSoundService> m_defaultSoundService{
+            std::make_unique<SDLSoundService>()
         };
 
         std::unique_ptr<LoggingSoundService> m_loggingSoundService{
