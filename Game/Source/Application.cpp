@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 [[nodiscard]] std::string GetResourceFolderPath()
 {
 #if __EMSCRIPTEN__
-    fs::path data_location = "";
+    fs::path resourceFolderLocation  = "";
 #else
     auto resourceFolderName{ "Resources" };
     fs::path resourceFolderLocation = std::format("./{}/", resourceFolderName);

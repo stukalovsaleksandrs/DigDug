@@ -44,6 +44,9 @@ namespace Engine
         Application& operator=(Application&&) noexcept = delete;
 
         void Run();
+        
+        // Must be public for Emscripten version to work
+        void RunOneFrame();
 
     protected:
         // Not initialized on stack, because initialization is deferred
@@ -62,8 +65,6 @@ namespace Engine
         std::unique_ptr<LoggingSoundService> m_loggingSoundService{
             std::make_unique<LoggingSoundService>(*m_defaultSoundService.get())
         };
-
-        void RunOneFrame();
     };
 }
 

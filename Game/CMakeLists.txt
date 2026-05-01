@@ -25,7 +25,7 @@ target_include_directories(${GAME_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Inc
 ##########################
 if(EMSCRIPTEN)
     set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
-    set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_DIR_NAME}@/\"")
+    set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_DIR_NAME}@/\"")
 
     # Use the Emscripten toolchain
     set(CMAKE_TOOLCHAIN_FILE ../cmake/EmscriptenToolchain.cmake)
@@ -37,7 +37,7 @@ if(EMSCRIPTEN)
     )
 
     add_custom_command(TARGET ${GAME_NAME} POST_BUILD
-            COMMAND "${CMAKE_COMMAND}" -E copy_directory "../web" "$<TARGET_FILE_DIR:${GAME_NAME}>/"
+            COMMAND "${CMAKE_COMMAND}" -E copy_directory "../../web" "$<TARGET_FILE_DIR:${GAME_NAME}>/"
     )
 
     # Have emscripten generate a html page too.
