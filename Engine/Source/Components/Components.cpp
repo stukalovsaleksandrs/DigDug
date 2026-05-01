@@ -20,7 +20,7 @@ Engine::RenderComponent::RenderComponent(GameObject &owner, Texture2D* pTexture)
     : Component(owner)
 {
     Renderer::GetInstance().RegisterFunction(m_renderFunction);
-    SetTexture(pTexture);
+    SetTexture({pTexture});
 }
 
 Engine::RenderComponent::~RenderComponent()
@@ -48,11 +48,13 @@ void Engine::RenderComponent::Render() const noexcept {
     }
 }
 
-void Engine::RenderComponent::SetTexture(Texture2D* pTexture, std::optional<SDL_FRect> const bounds) noexcept
+void Engine::RenderComponent::SetTexture(Texture2D::Data const& data) noexcept
 {
-    m_pTexture = pTexture;
-    if (bounds.has_value())
-        m_srcRect = bounds.value();
+    if (data.pTexture)
+        m_pTexture = data.pTexture;
+
+    if (data.srcRect.has_value())
+        m_srcRect = data.srcRect.value();
 }
 
 glm::vec2 Engine::RenderComponent::GetTextureDims() const noexcept
@@ -141,7 +143,7 @@ Engine::Texture2D* Engine::TextComponent::GetUpdatedTexture()
 }
 
 void Engine::TextComponent::UpdateTexture() {
-    m_renderComponent.SetTexture(GetUpdatedTexture());
+    m_renderComponent.SetTexture({GetUpdatedTexture()});
 }
 #pragma endregion TextComponent
 

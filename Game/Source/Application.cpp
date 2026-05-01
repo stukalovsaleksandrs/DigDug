@@ -48,10 +48,9 @@ Game::Application::Application()
     {
         auto& character{scene.CreateGameObject(glm::vec2{})};
 
-        // TODO: Provide sprite sheet only once
         auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(m_pSpriteSheet.get())};
-        characterRenderComponent.SetTexture(m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
-            static_cast<float>(spriteDims.x), static_cast<float>(spriteDims.y)});
+        characterRenderComponent.SetTexture({m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
+            static_cast<float>(spriteDims.x), static_cast<float>(spriteDims.y)}});
 
         character.AddComponent<Engine::MovementComponent>(75.f);
         auto& playerComponent{character.AddComponent<PlayerComponent>()};

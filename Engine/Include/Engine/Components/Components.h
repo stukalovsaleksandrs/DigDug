@@ -1,12 +1,12 @@
-#ifndef SE_COMPONENTS_H
-#define SE_COMPONENTS_H
+#ifndef ENGINE_COMPONENTS
+#define ENGINE_COMPONENTS
 
 // Engine
 #include "Engine/Components/ComponentBase.h"
 #include "Engine/Rendering/Renderer.h"
+#include "Engine/Rendering/Texture2D.h"
 // Third-party
 #include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_render.h>
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/vec2.hpp"
 // Standard
@@ -36,7 +36,7 @@ namespace Engine
         RenderComponent& operator= (RenderComponent&&) = delete;
 
         void Render() const noexcept;
-        void SetTexture(Texture2D* pTexture, std::optional<SDL_FRect> bounds = std::nullopt) noexcept;
+        void SetTexture(Texture2D::Data const& data) noexcept;
         [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
 
     private:
@@ -124,4 +124,4 @@ namespace Engine
 
 }
 
-#endif// SE_COMPONENTS_H
+#endif// ENGINE_COMPONENTS

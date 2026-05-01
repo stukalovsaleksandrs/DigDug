@@ -1,9 +1,11 @@
-﻿#ifndef SE_TEXTURE2D_H
-#define SE_TEXTURE2D_H
+﻿#ifndef ENGINE_TEXTURE2D_H
+#define ENGINE_TEXTURE2D_H
 
 // Third-party
 #include <glm/vec2.hpp>
+#include <SDL3/SDL_rect.h>
 // Standard
+#include <optional>
 #include <string>
 
 struct SDL_Texture;
@@ -15,6 +17,12 @@ namespace Engine
     class Texture2D final
     {
     public:
+        struct Data final
+        {
+            Texture2D* pTexture{};
+            std::optional<SDL_FRect> const srcRect{};
+        };
+
         [[nodiscard]] SDL_Texture* GetSDLTexture() const;
         explicit Texture2D(SDL_Texture* pTexture);
         explicit Texture2D(std::string_view fullPath);
@@ -33,4 +41,4 @@ namespace Engine
     };
 }
 
-#endif// SE_TEXTURE_2D
+#endif// ENGINE_TEXTURE2D_H
