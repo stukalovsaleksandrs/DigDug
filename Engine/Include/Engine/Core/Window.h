@@ -12,6 +12,12 @@ namespace Engine
     class Window
     {
     public:
+        struct Data final
+        {
+            glm::uvec2 const dims{}, logicalDims{};
+
+            Data(glm::vec2 logicalDims, float scale) noexcept;
+        };
         explicit Window(glm::uvec2 dims, std::string_view title);
         ~Window();
         Window(Window const&) noexcept = delete;

@@ -14,6 +14,7 @@
 #include <string_view>
 #include <string>
 #include <functional>
+#include <optional>
 
 namespace Engine
 {
@@ -36,12 +37,13 @@ namespace Engine
 
         void Render() const;
         void SetTexture(std::string_view filename);
-        void SetTexture(SDL_Texture* pSDLTexture);
+        void SetTexture(SDL_Texture* pTexture);
         [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
+        SDL_Rect m_bounds{};
 
     };
 

@@ -1,3 +1,4 @@
+// Engine
 #include "Components/Components.h"
 #include "Core/ResourceManager.h"
 #include "Rendering/Renderer.h"
@@ -6,6 +7,7 @@
 #include "Rendering/Texture2D.h"
 #include "Utils/Utils.h"
 #include "Utils/Timer.h"
+// Third-party
 #include <SDL3_ttf/SDL_ttf.h>
 #include <glm/glm.hpp>
 
@@ -13,6 +15,7 @@
  * Render component
  *******************************************/
 
+#pragma region RenderComponent
 Engine::RenderComponent::RenderComponent(GameObject &owner) noexcept
     : Component(owner)
 {
@@ -35,19 +38,22 @@ void Engine::RenderComponent::SetTexture(std::string_view const filename) {
     m_pTexture = ResourceManager::GetInstance().LoadTexture(filename);
 }
 
-void Engine::RenderComponent::SetTexture(SDL_Texture* pSDLTexture) {
-    m_pTexture = std::make_shared<Texture2D>(pSDLTexture);
+void Engine::RenderComponent::SetTexture(SDL_Texture* pTexture)
+{
+    m_pTexture = std::make_shared<Texture2D>(pTexture);
 }
 
 glm::vec2 Engine::RenderComponent::GetTextureDims() const noexcept
 {
     return m_pTexture->GetDims();
 }
+#pragma endregion RenderComponent
 
 /*******************************************
  * Debug renderer
  *******************************************/
 
+#pragma region DebugRenderer
 Engine::DebugComponent::DebugComponent(GameObject& owner, Renderer& renderer) noexcept
     : Component{ owner }
     , m_renderer{ renderer }
@@ -59,11 +65,13 @@ Engine::DebugComponent::~DebugComponent()
 {
     m_renderer.UnregisterFunction(m_debugRenderFunction);
 }
+#pragma endregion DebugRenderer
 
 /*******************************************
  * Text component
  *******************************************/
 
+#pragma region
 Engine::TextComponent::TextComponent(GameObject& owner,
     std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
     : Component(owner)
@@ -114,11 +122,13 @@ void Engine::TextComponent::UpdateTexture() const {
     SDL_DestroySurface(pSurface);
     m_renderComponent.SetTexture(pSDLTexture);
 }
+#pragma endregion TextComponent
 
 /*******************************************
  * FPS component
  *******************************************/
 
+#pragma region FPSComponent
 Engine::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
     : Component(owner)
 {
@@ -130,11 +140,13 @@ void Engine::FPSComponent::Update() noexcept {
     // TODO: Make a check if the FPS is not the same as last time. Maybe we can omit creating a texture.
     m_owner.GetComponent<TextComponent>()->SetText(std::format("FPS: {:.0f}", Timer::GetInstance().GetFPS()));
 }
+#pragma endregion FPSComponent
 
 /*******************************************
  * Orbit component
  *******************************************/
 
+#pragma region OrbitComponent
 Engine::OrbitComponent::OrbitComponent(GameObject& owner, float const radiansSec) noexcept
     : Component(owner)
     , m_radiansSec{ radiansSec }
@@ -157,3 +169,4 @@ void Engine::OrbitComponent::Update() noexcept
     // 4. Calculating the new distance vector and adding the distance vector to the center
     m_owner.SetLocalPosition(glm::vec2(glm::cos(radians), std::sin(radians)) * distance);
 }
+#pragma endregion OrbitComponent

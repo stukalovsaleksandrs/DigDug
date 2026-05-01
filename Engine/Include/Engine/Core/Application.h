@@ -4,21 +4,18 @@
 // Engine
 #include "Engine/Sound/SDLSoundService.h"
 #include "Engine/Sound/LoggingSoundService.h"
-// Third-party
-#include "glm/vec2.hpp"
+#include "Window.h"
 // Standard
 #include <filesystem>
 
 namespace Engine
 {
-    class Window;
-
     class Application
     {
     public:
         explicit Application(
             std::filesystem::path const& resourcePath,
-            glm::uvec2 windowDims, glm::uvec2 windowLogicalDims,
+            Window::Data const& data,
             std::string_view windowTitle);
         virtual ~Application();
         Application(Application const&) noexcept = delete;

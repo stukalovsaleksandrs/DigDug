@@ -26,7 +26,7 @@ void LoopCallback(void* arg)
 
 Engine::Application::Application(
     std::filesystem::path const& resourcePath,
-    glm::uvec2 const windowDims, glm::uvec2 const windowLogicalDims,
+    Window::Data const& data,
     std::string_view windowTitle)
 {
     // Steam
@@ -41,13 +41,13 @@ Engine::Application::Application(
     }
 
     // Window
-    m_pWindow = std::make_unique<Window>(windowDims, windowTitle);
+    m_pWindow = std::make_unique<Window>(data.dims, windowTitle);
 
     // Resource manager
     ResourceManager::GetInstance().Init(resourcePath);
 
     // Renderer
-    Renderer::GetInstance().Init(m_pWindow->Get(), windowLogicalDims);
+    Renderer::GetInstance().Init(m_pWindow->Get(), data.logicalDims);
 
     // Sound
 #ifndef NDEBUG

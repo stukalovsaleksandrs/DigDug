@@ -1,4 +1,5 @@
 // Project
+#include "Constants.h"
 #include "Application.h"
 #include "Components/PlayerComponent.h"
 #include "Components/LivesComponent.h"
@@ -26,12 +27,8 @@ namespace fs = std::filesystem;
     return resourceFolderLocation.generic_string();
 }
 
-float constexpr g_resolutionScale{ 3 };
-glm::vec2 constexpr g_logicalWindowDims{ 224.f, 288.f },
-    g_windowDims{ g_logicalWindowDims * g_resolutionScale };
-
 Game::Application::Application()
-    : Engine::Application(GetResourceFolderPath(), g_windowDims, g_logicalWindowDims, "Dig Dug")
+    : Engine::Application(GetResourceFolderPath(), windowData, "Dig Dug")
 {
     // Background
     {
@@ -41,14 +38,14 @@ Game::Application::Application()
     }
 
     // Sprite sheet
-    auto spriteSheet{ Engine::ResourceManager::GetInstance().LoadTexture("DigDugSpriteSheet.png") };
+    auto const pSpriteSheet{ Engine::ResourceManager::GetInstance().LoadTexture("DigDugSpriteSheet.png") };
 
     // Character
     {
         auto& character{ scene.CreateGameObject(glm::vec2{}) };
 
-        auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
-        characterRenderComponent.SetTexture("DigDugCharacter.png");
+        // auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
+        // characterRenderComponent.SetTexture(pSpriteSheet, {{}, spriteDims});
 
         character.AddComponent<Engine::MovementComponent>(500.f);
         auto& playerComponent{ character.AddComponent<Game::PlayerComponent>()};
@@ -57,14 +54,14 @@ Game::Application::Application()
         livesComponent.subject.BindObserver(playerComponent);
 
         // Lives display
-        auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, g_windowDims.y - 50.f}) };
+        auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 50.f}) };
         auto const& pFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
         livesDisplay.AddComponent<Engine::TextComponent>(" ", pFont);// NOTE: Text must not be empty
         auto& livesDisplayComponent{ livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent) };
         livesComponent.subject.BindObserver(livesDisplayComponent);
 
         // Point display
-        auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, g_windowDims.y - 100.f}) };
+        auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 100.f}) };
         pointDisplay.AddComponent<Engine::TextComponent>("Points ", pFont);
         auto& pointDisplayComponent{ pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent) };
         playerComponent.subject.BindObserver(pointDisplayComponent);

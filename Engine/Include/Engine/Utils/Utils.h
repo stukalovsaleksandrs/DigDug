@@ -2,13 +2,16 @@
 #define SE_UTILS_H
 
 // Third-party
-#include "SDL3/SDL_error.h"
+#include "glm/vec2.hpp"
 // Standard
 #include <string_view>
-#include <format>
-#include <stdexcept>
 
 namespace Engine::Utils {
+    struct Bounds final
+    {
+        glm::vec2 topLeft, dims;
+    };
+
     void Check(bool result, std::string_view message);
 
     void ThrowSDLError(std::string_view message);
