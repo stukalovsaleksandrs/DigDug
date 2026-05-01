@@ -15,12 +15,12 @@ namespace Engine
     class Texture2D final
     {
     public:
-        SDL_Texture* GetSDLTexture() const;
+        [[nodiscard]] SDL_Texture* GetSDLTexture() const;
         explicit Texture2D(SDL_Texture* pTexture);
         explicit Texture2D(std::string_view fullPath);
         ~Texture2D();
 
-        glm::vec2 GetDims() const;
+        [[nodiscard]] glm::ivec2 GetDims() const;
 
         Texture2D(const Texture2D &) = delete;
         Texture2D(Texture2D &&) = delete;

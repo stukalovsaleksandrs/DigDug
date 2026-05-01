@@ -2,40 +2,23 @@
 #define SE_APPLICATION_H
 
 // Engine
-#include "Engine/Rendering/Renderer.h"
+#include "Engine/Sound/SDLSoundService.h"
 #include "Engine/Sound/LoggingSoundService.h"
 // Third-party
 #include "glm/vec2.hpp"
 // Standard
 #include <filesystem>
 
-#include "Engine/Sound/SDLSoundService.h"
-
 namespace Engine
 {
-    class Window
-    {
-    public:
-        explicit Window(glm::uvec2 dims, std::string_view title);
-        ~Window();
-        Window(Window const&) noexcept = delete;
-        Window(Window&&) noexcept = delete;
-        Window& operator=(Window const&) noexcept = delete;
-        Window& operator=(Window &&) noexcept = delete;
-
-        [[nodiscard]] SDL_Window* Get() const noexcept{ return m_pWindow; };
-
-    private:
-        SDL_Window* m_pWindow{};
-
-    };
+    class Window;
 
     class Application
     {
     public:
         explicit Application(
             std::filesystem::path const& resourcePath,
-            glm::uvec2 windowDims,
+            glm::uvec2 windowDims, glm::uvec2 windowLogicalDims,
             std::string_view windowTitle);
         virtual ~Application();
         Application(Application const&) noexcept = delete;

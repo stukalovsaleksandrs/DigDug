@@ -26,7 +26,7 @@ namespace Engine
     class Renderer final : public Singleton<Renderer>// TODO: Add a service locator for it
     {
     public:
-        void Init(SDL_Window* pWindow);
+        void Init(SDL_Window*, glm::uvec2 logicalDims);
         // explicit Renderer(SDL_Window* pWindow);
         // Calls Render() on all the registered components
         void Render() const;

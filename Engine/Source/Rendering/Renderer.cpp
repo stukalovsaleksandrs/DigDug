@@ -12,8 +12,9 @@
 #include <iostream>
 #include <chrono>
 
-void Engine::Renderer::Init(SDL_Window* pWindow)
+void Engine::Renderer::Init(SDL_Window* pWindow, glm::uvec2 const logicalDims)
 {
+    // Creating renderer
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
     m_pSDLRenderer = SDL_CreateRenderer(pWindow, nullptr);
     if (!m_pSDLRenderer)
@@ -22,6 +23,17 @@ void Engine::Renderer::Init(SDL_Window* pWindow)
         throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
     }
 
+    // Setting logical representation
+    Utils::Check(
+        SDL_SetRenderLogicalPresentation(
+            m_pSDLRenderer,
+            static_cast<int>(logicalDims.x),
+            static_cast<int>(logicalDims.y),
+            SDL_LOGICAL_PRESENTATION_LETTERBOX
+        ), "Failed creating logical representation of the window"
+    );
+
+    // Initializing ImGui
     InitializeImGui(pWindow);
 }
 

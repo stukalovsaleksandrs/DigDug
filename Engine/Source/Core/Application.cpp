@@ -1,16 +1,15 @@
 ﻿// Engine
+#include "Utils/Timer.h"
+#include "Utils/Utils.h"
 #include "Core/Application.h"
 #include "InputManager.h"
 #include "Core/ResourceManager.h"
 #include "Rendering/Renderer.h"
-#include "Utils/Timer.h"
-#include "Utils/Utils.h"
 #include "Achievements/Steamworks.h"
+#include "Sound/SoundServiceLocator.h"
+#include "Engine/Core/Window.h"
 // Third-party
 #include <SDL3/SDL.h>
-
-#include "Sound/SoundServiceLocator.h"
-
 #if WIN32
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
@@ -24,28 +23,10 @@ void LoopCallback(void* arg)
     static_cast<Engine::Application*>(arg)->RunOneFrame();
 }
 #endif
-Engine::Window::Window(glm::uvec2 const dims, std::string_view const title)
-    : m_pWindow{
-        SDL_CreateWindow(
-            title.data(),
-            static_cast<int>(dims.x),
-            static_cast<int>(dims.y),
-            SDL_WINDOW_VULKAN
-        )
-    }
-{
-    if (!m_pWindow)
-        Utils::ThrowSDLError("SDL_CreateWindow error");
-}
-
-Engine::Window::~Window()
-{
-    SDL_DestroyWindow(m_pWindow);
-}
 
 Engine::Application::Application(
     std::filesystem::path const& resourcePath,
-    glm::uvec2 const windowDims,
+    glm::uvec2 const windowDims, glm::uvec2 const windowLogicalDims,
     std::string_view windowTitle)
 {
     // Steam
@@ -66,11 +47,11 @@ Engine::Application::Application(
     ResourceManager::GetInstance().Init(resourcePath);
 
     // Renderer
-    Renderer::GetInstance().Init(m_pWindow.get()->Get());
+    Renderer::GetInstance().Init(m_pWindow->Get(), windowLogicalDims);
 
     // Sound
 #ifndef NDEBUG
-    SoundServiceLocator::SetSoundService(*m_loggingSoundService.get());
+    SoundServiceLocator::SetSoundService(*m_loggingSoundService);
 #else
     SoundServiceLocator::SetSoundService(*m_defaultSoundService.get());
 #endif

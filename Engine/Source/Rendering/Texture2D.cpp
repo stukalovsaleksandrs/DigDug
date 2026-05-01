@@ -12,11 +12,11 @@ Engine::Texture2D::~Texture2D()
     SDL_DestroyTexture(m_pTexture);
 }
 
-glm::vec2 Engine::Texture2D::GetDims() const
+glm::ivec2 Engine::Texture2D::GetDims() const
 {
     glm::vec2 dims{};
     SDL_GetTextureSize(m_pTexture, &dims.x, &dims.y);
-    return dims;
+    return {static_cast<int>(dims.x), static_cast<int>(dims.y)};
 }
 
 SDL_Texture* Engine::Texture2D::GetSDLTexture() const

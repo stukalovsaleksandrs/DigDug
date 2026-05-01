@@ -27,41 +27,48 @@ namespace fs = std::filesystem;
 }
 
 float constexpr g_resolutionScale{ 3 };
-glm::vec2 constexpr g_originalGameResolution{ 224.f, 288.f },
-    g_windowDims{ g_originalGameResolution * g_resolutionScale };
+glm::vec2 constexpr g_logicalWindowDims{ 224.f, 288.f },
+    g_windowDims{ g_logicalWindowDims * g_resolutionScale };
 
 Game::Application::Application()
-    : Engine::Application(GetResourceFolderPath(), g_windowDims, "Dig Dug")
+    : Engine::Application(GetResourceFolderPath(), g_windowDims, g_logicalWindowDims, "Dig Dug")
 {
+    // Background
+    {
+        auto& background{ scene.CreateGameObject({}) };
+        auto& backgroundRenderComponent{ background.AddComponent<Engine::RenderComponent>() };
+        backgroundRenderComponent.SetTexture("DigDugBackground.png");
+    }
+
+    // Sprite sheet
+    auto spriteSheet{ Engine::ResourceManager::GetInstance().LoadTexture("DigDugSpriteSheet.png") };
+
     // Character
-    auto& character{ scene.CreateGameObject(glm::vec2{ 500.f, 250.f }) };
+    {
+        auto& character{ scene.CreateGameObject(glm::vec2{}) };
 
-    auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
-    characterRenderComponent.SetTexture("DigDugCharacter.png");
+        auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
+        characterRenderComponent.SetTexture("DigDugCharacter.png");
 
-    character.AddComponent<Engine::MovementComponent>(500.f);
-    auto& playerComponent{ character.AddComponent<Game::PlayerComponent>()};
+        character.AddComponent<Engine::MovementComponent>(500.f);
+        auto& playerComponent{ character.AddComponent<Game::PlayerComponent>()};
 
-    auto& livesComponent{ character.AddComponent<Game::LivesComponent>(2) };
-    livesComponent.subject.BindObserver(playerComponent);
+        auto& livesComponent{ character.AddComponent<Game::LivesComponent>(2) };
+        livesComponent.subject.BindObserver(playerComponent);
 
-    // Lives display
-    auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, g_windowDims.y - 50.f}) };
-    auto const& pFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
-    livesDisplay.AddComponent<Engine::TextComponent>(" ", pFont);// NOTE: Text must not be empty
-    auto& livesDisplayComponent{ livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent) };
-    livesComponent.subject.BindObserver(livesDisplayComponent);
+        // Lives display
+        auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, g_windowDims.y - 50.f}) };
+        auto const& pFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
+        livesDisplay.AddComponent<Engine::TextComponent>(" ", pFont);// NOTE: Text must not be empty
+        auto& livesDisplayComponent{ livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent) };
+        livesComponent.subject.BindObserver(livesDisplayComponent);
 
-    // Tutorial
-    auto& tutorial{ scene.CreateGameObject(glm::vec2{10.f, 0.1f * g_windowDims.y }) };
-    auto const& pTutorialFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20)};
-    tutorial.AddComponent<Engine::TextComponent>("Use WASD to move Dig Dug, K to inflict damage, P to add points", pTutorialFont);
-
-    // Point display
-    auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, g_windowDims.y - 100.f}) };
-    pointDisplay.AddComponent<Engine::TextComponent>("Points ", pFont);
-    auto& pointDisplayComponent{ pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent) };
-    playerComponent.subject.BindObserver(pointDisplayComponent);
+        // Point display
+        auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, g_windowDims.y - 100.f}) };
+        pointDisplay.AddComponent<Engine::TextComponent>("Points ", pFont);
+        auto& pointDisplayComponent{ pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent) };
+        playerComponent.subject.BindObserver(pointDisplayComponent);
+    }
 }
 
 void Game::Application::Update()
