@@ -1,4 +1,5 @@
 // Engine
+#include "Utils/Timer.h"
 #include "Engine/Components/AnimationComponent.h"
 #include "Engine/Scene/GameObject.h"
 // Standard
@@ -32,6 +33,8 @@ void Engine::AnimationComponent::Update() noexcept
             m_currentSec -= m_data.secPerFrame;
         }
     }
+
+    m_currentSec += Timer::GetInstance().GetDeltaSec();
 }
 
 void Engine::AnimationComponent::InitializeFrameSpriteViews()
