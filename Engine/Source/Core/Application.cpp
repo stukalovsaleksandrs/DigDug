@@ -3,13 +3,13 @@
 #include "Utils/Utils.h"
 #include "Core/Application.h"
 #include "InputManager.h"
-#include "Core/ResourceManager.h"
 #include "Rendering/Renderer.h"
 #include "Achievements/Steamworks.h"
 #include "Sound/SoundServiceLocator.h"
 #include "Engine/Core/Window.h"
 // Third-party
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #if WIN32
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
@@ -43,11 +43,14 @@ Engine::Application::Application(
     // Window
     m_pWindow = std::make_unique<Window>(data.dims, windowTitle);
 
-    // Resource manager
-    ResourceManager::GetInstance().Init(resourcePath);
-
     // Renderer
     Renderer::GetInstance().Init(m_pWindow->Get(), data.logicalDims);
+
+    // TTF
+    Utils::Check(
+        TTF_Init(),
+        "Failed to load SDL_ttf"
+    );
 
     // Sound
 #ifndef NDEBUG
@@ -56,7 +59,7 @@ Engine::Application::Application(
     SoundServiceLocator::SetSoundService(*m_defaultSoundService.get());
 #endif
     auto& soundService{ SoundServiceLocator::GetSoundService() };
-    auto const soundId{ soundService.LoadSound("Resources/GameStart.mp3") };
+    auto const soundId{ soundService.LoadSound(resourcePath.string() + "/GameStart.mp3") };
     soundService.SetVolume(0.2f);
     soundService.PlaySound(soundId);
 }

@@ -37,11 +37,11 @@ namespace Engine
 
         void Render() const;
         void SetTexture(std::string_view filename);
-        void SetTexture(SDL_Texture* pTexture, std::optional<SDL_FRect> bounds = std::nullopt);
+        void SetTexture(std::unique_ptr<Texture2D> pTexture, std::optional<SDL_FRect> bounds = std::nullopt);
         [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
 
     private:
-        std::shared_ptr<Texture2D> m_pTexture{};
+        std::unique_ptr<Texture2D> m_pTexture{};
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
         std::optional<SDL_FRect> m_bounds{};
 
@@ -74,15 +74,15 @@ namespace Engine
     class TextComponent final : public Component {
     public:
         explicit TextComponent(GameObject &owner,
-                               std::string_view text, std::shared_ptr<Font> const& pFont,
+                               std::string_view text, Font* pFont,
                                SDL_Color const&color = {255, 255, 255, 255}) noexcept;
-        void SetFont(std::shared_ptr<Font> const& pFont);
+        void SetFont(Font* pFont);
         void SetText(std::string_view text);
         void SetColor(SDL_Color const& color);
 
     private:
         std::string m_text;
-        std::shared_ptr<Font> m_pFont;
+        Font* m_pFont;
         SDL_Color m_color{ 255, 255, 255, 255 };
         RenderComponent& m_renderComponent;
 
@@ -94,7 +94,7 @@ namespace Engine
      *******************************************/
     class FPSComponent final : public Component {
     public:
-        explicit FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont,
+        explicit FPSComponent(GameObject &owner, Font* pFont,
                                SDL_Color const& color = {255, 255, 255, 255}) noexcept;
         void Update() noexcept override;
     };

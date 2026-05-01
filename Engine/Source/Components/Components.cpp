@@ -1,6 +1,5 @@
 // Engine
 #include "Components/Components.h"
-#include "Core/ResourceManager.h"
 #include "Rendering/Renderer.h"
 #include "Scene/GameObject.h"
 #include "Rendering/Font.h"
@@ -8,6 +7,7 @@
 #include "Utils/Utils.h"
 #include "Utils/Timer.h"
 // Third-party
+#include <format>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <glm/glm.hpp>
 
@@ -48,12 +48,12 @@ void Engine::RenderComponent::Render() const {
 }
 
 void Engine::RenderComponent::SetTexture(std::string_view const filename) {
-    m_pTexture = ResourceManager::GetInstance().LoadTexture(filename);
+    m_pTexture = std::make_unique<Texture2D>(filename);
 }
 
-void Engine::RenderComponent::SetTexture(SDL_Texture* pTexture, std::optional<SDL_FRect> const bounds)
+void Engine::RenderComponent::SetTexture(std::unique_ptr<Texture2D> pTexture, std::optional<SDL_FRect> const bounds)
 {
-    m_pTexture = std::make_shared<Texture2D>(pTexture);
+    m_pTexture = std::move(pTexture);
     if (bounds.has_value())
         m_bounds = bounds.value();
 }
@@ -88,7 +88,7 @@ Engine::DebugComponent::~DebugComponent()
 
 #pragma region
 Engine::TextComponent::TextComponent(GameObject& owner,
-    std::string_view const text, std::shared_ptr<Font> const &pFont, SDL_Color const& color) noexcept
+    std::string_view const text, Font* pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
     , m_renderComponent{owner.AddComponent<RenderComponent>()}
@@ -96,10 +96,8 @@ Engine::TextComponent::TextComponent(GameObject& owner,
     UpdateTexture();
 }
 
-void Engine::TextComponent::SetFont(std::shared_ptr<Font> const &pFont) {
-    // NOTE: I am not aware of any way to compare whether fonts are the same, but
-    // I can compare whether the 2 pointers point to the same object
-    if (m_pFont.get() == pFont.get()) return;
+void Engine::TextComponent::SetFont(Font* pFont) {
+    if (m_pFont == pFont) return;
     m_pFont = pFont;
     UpdateTexture();
 }
@@ -129,13 +127,13 @@ void Engine::TextComponent::UpdateTexture() const {
     {
         Utils::ThrowSDLError("Render text failed");
     }
-    auto const pSDLTexture{ SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), pSurface) };
+    SDL_Texture* pSDLTexture{ SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), pSurface) };
     if (!pSDLTexture)
     {
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
-    m_renderComponent.SetTexture(pSDLTexture);
+    m_renderComponent.SetTexture(std::make_unique<Texture2D>(pSDLTexture));
 }
 #pragma endregion TextComponent
 
@@ -144,7 +142,7 @@ void Engine::TextComponent::UpdateTexture() const {
  *******************************************/
 
 #pragma region FPSComponent
-Engine::FPSComponent::FPSComponent(GameObject &owner, std::shared_ptr<Font> const& pFont, SDL_Color const& color) noexcept
+Engine::FPSComponent::FPSComponent(GameObject &owner, Font* pFont, SDL_Color const& color) noexcept
     : Component(owner)
 {
     owner.AddComponent<TextComponent>("FPS",  pFont, color);

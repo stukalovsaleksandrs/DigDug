@@ -6,11 +6,13 @@
 #include "Components/LivesDisplayComponent.h"
 #include "Components/PointDisplayComponent.h"
 // Engine
-#include "Engine/Core/ResourceManager.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Components/MovementComponent.h"
 // Standard
 #include <filesystem>
+
+#include "Engine/Rendering/Font.h"
+#include "Engine/Rendering/Texture2D.h"
 namespace fs = std::filesystem;
 
 [[nodiscard]] std::string GetResourceFolderPath()
@@ -30,6 +32,9 @@ namespace fs = std::filesystem;
 Game::Application::Application()
     : Engine::Application(GetResourceFolderPath(), windowData, "Dig Dug")
 {
+    // cd into the resource directory
+    fs::current_path(GetResourceFolderPath());
+
     // Background
     {
         auto& background{ scene.CreateGameObject({}) };
@@ -38,31 +43,32 @@ Game::Application::Application()
     }
 
     // Sprite sheet
-    auto const pSpriteSheet{ Engine::ResourceManager::GetInstance().LoadTexture("DigDugSpriteSheet.png") };
+    auto const pSpriteSheet{ Engine::Texture2D("DigDugSpriteSheet.png") };
 
     // Character
     {
         auto& character{ scene.CreateGameObject(glm::vec2{}) };
 
+        // TODO: Make render component take a texture right away
         // auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
-        // characterRenderComponent.SetTexture(pSpriteSheet, {{}, spriteDims});
+        // characterRenderComponent.SetTexture("", {{}, spriteDims});
 
         character.AddComponent<Engine::MovementComponent>(500.f);
-        auto& playerComponent{ character.AddComponent<Game::PlayerComponent>()};
+        auto& playerComponent{ character.AddComponent<PlayerComponent>()};
 
-        auto& livesComponent{ character.AddComponent<Game::LivesComponent>(2) };
+        auto& livesComponent{ character.AddComponent<LivesComponent>(2) };
         livesComponent.subject.BindObserver(playerComponent);
 
         // Lives display
         auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 50.f}) };
-        auto const& pFont{ Engine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36)};
-        livesDisplay.AddComponent<Engine::TextComponent>(" ", pFont);// NOTE: Text must not be empty
+        m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
+        livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get());// NOTE: Text must not be empty
         auto& livesDisplayComponent{ livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent) };
         livesComponent.subject.BindObserver(livesDisplayComponent);
 
         // Point display
         auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 100.f}) };
-        pointDisplay.AddComponent<Engine::TextComponent>("Points ", pFont);
+        pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
         auto& pointDisplayComponent{ pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent) };
         playerComponent.subject.BindObserver(pointDisplayComponent);
     }
