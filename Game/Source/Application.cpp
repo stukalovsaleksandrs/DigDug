@@ -52,7 +52,6 @@ Game::Application::Application()
     {
         auto& character{scene.CreateGameObject(glm::vec2{})};
 
-        // TODO: Make render component take a texture right away
         auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(m_pCharacterTexture.get())};
         characterRenderComponent.SetTexture(m_pCharacterTexture.get(), SDL_FRect{0.f, 0.f,
             static_cast<float>(spriteDims.x), static_cast<float>(spriteDims.y)});

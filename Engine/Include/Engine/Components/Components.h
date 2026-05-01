@@ -28,7 +28,6 @@ namespace Engine
 
     class RenderComponent final : public Component {
     public:
-        explicit RenderComponent(GameObject& owner) noexcept;
         explicit RenderComponent(GameObject& owner, Texture2D* pTexture) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
@@ -87,6 +86,8 @@ namespace Engine
         SDL_Color m_color{ 255, 255, 255, 255 };
         RenderComponent& m_renderComponent;
 
+        // Separate from UpdateTexture(), to initialize RenderComponent
+        [[nodiscard]] Texture2D* GetUpdatedTexture();
         void UpdateTexture();
     };
 

@@ -16,15 +16,10 @@
  *******************************************/
 
 #pragma region RenderComponent
-Engine::RenderComponent::RenderComponent(GameObject& owner) noexcept
+Engine::RenderComponent::RenderComponent(GameObject &owner, Texture2D* pTexture) noexcept
     : Component(owner)
 {
     Renderer::GetInstance().RegisterFunction(m_renderFunction);
-}
-
-Engine::RenderComponent::RenderComponent(GameObject &owner, Texture2D* pTexture) noexcept
-    : RenderComponent(owner)
-{
     SetTexture(pTexture);
 }
 
@@ -93,10 +88,8 @@ Engine::TextComponent::TextComponent(GameObject& owner,
     std::string_view const text, Font* pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
-    , m_renderComponent{owner.AddComponent<RenderComponent>()}
-{
-    UpdateTexture();
-}
+    , m_renderComponent{ owner.AddComponent<RenderComponent>(GetUpdatedTexture()) }
+{}
 
 void Engine::TextComponent::SetFont(Font* pFont) {
     if (m_pFont == pFont) return;
@@ -123,7 +116,8 @@ void Engine::TextComponent::SetColor(SDL_Color const &color)
     UpdateTexture();
 }
 
-void Engine::TextComponent::UpdateTexture() {
+Engine::Texture2D* Engine::TextComponent::GetUpdatedTexture()
+{
     SDL_Surface* const pSurface{ TTF_RenderText_Blended(m_pFont->GetFont(), m_text.c_str(), m_text.length(), m_color) };
     if (!pSurface)
     {
@@ -136,7 +130,11 @@ void Engine::TextComponent::UpdateTexture() {
     }
     SDL_DestroySurface(pSurface);
     m_pTexture = std::make_unique<Texture2D>(pSDLTexture);
-    m_renderComponent.SetTexture(m_pTexture.get());
+    return m_pTexture.get();
+}
+
+void Engine::TextComponent::UpdateTexture() {
+    m_renderComponent.SetTexture(GetUpdatedTexture());
 }
 #pragma endregion TextComponent
 
