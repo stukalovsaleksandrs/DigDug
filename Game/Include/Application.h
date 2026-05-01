@@ -21,7 +21,6 @@ namespace Game
         Engine::Scene scene;
         std::unique_ptr<Engine::Font> m_pFont{};
 
-        std::unique_ptr<Engine::Texture2D> m_pCharacterTexture{};
         std::unique_ptr<Engine::Texture2D> m_pBackgroundTexture{};
         std::unique_ptr<Engine::Texture2D> m_pSpriteSheet{};
     };

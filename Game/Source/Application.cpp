@@ -35,9 +35,8 @@ Game::Application::Application()
     // cd into the resource directory
     fs::current_path(GetResourceFolderPath());
     m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
-    m_pCharacterTexture = std::make_unique<Engine::Texture2D>("DigDugCharacter.png");
-    m_pSpriteSheet = std::make_unique<Engine::Texture2D>("DigDugSpriteSheet.png");
-    m_pBackgroundTexture = std::make_unique<Engine::Texture2D>("DigDugBackground.png");
+    m_pSpriteSheet = std::make_unique<Engine::Texture2D>("Sprites/DigDugSpriteSheet.png");
+    m_pBackgroundTexture = std::make_unique<Engine::Texture2D>("Sprites/DigDugBackground.png");
 
     // Background
     {
@@ -45,18 +44,16 @@ Game::Application::Application()
         background.AddComponent<Engine::RenderComponent>(m_pBackgroundTexture.get());
     }
 
-    // Sprite sheet
-    auto const pSpriteSheet{Engine::Texture2D("DigDugSpriteSheet.png")};
-
     // Character
     {
         auto& character{scene.CreateGameObject(glm::vec2{})};
 
-        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(m_pCharacterTexture.get())};
-        characterRenderComponent.SetTexture(m_pCharacterTexture.get(), SDL_FRect{0.f, 0.f,
+        // TODO: Provide sprite sheet only once
+        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(m_pSpriteSheet.get())};
+        characterRenderComponent.SetTexture(m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
             static_cast<float>(spriteDims.x), static_cast<float>(spriteDims.y)});
 
-        character.AddComponent<Engine::MovementComponent>(500.f);
+        character.AddComponent<Engine::MovementComponent>(75.f);
         auto& playerComponent{character.AddComponent<PlayerComponent>()};
 
         auto& livesComponent{character.AddComponent<LivesComponent>(2)};

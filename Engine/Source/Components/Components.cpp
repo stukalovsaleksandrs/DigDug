@@ -31,12 +31,12 @@ Engine::RenderComponent::~RenderComponent()
 void Engine::RenderComponent::Render() const noexcept {
     assert(m_pTexture && "Texture is not set");
     auto const& topLeft{ m_owner.GetWorldPosition() };
-    if (m_bounds != std::nullopt)
+    if (m_srcRect != std::nullopt)
     {
         Renderer::GetInstance().RenderTexture(
             *m_pTexture,
-            {topLeft.x, topLeft.y, m_bounds->w, m_bounds->h},
-            m_bounds.value()
+            m_srcRect.value(),
+            {topLeft.x, topLeft.y, m_srcRect->w, m_srcRect->h}
         );
     }
     else
@@ -52,7 +52,7 @@ void Engine::RenderComponent::SetTexture(Texture2D* pTexture, std::optional<SDL_
 {
     m_pTexture = pTexture;
     if (bounds.has_value())
-        m_bounds = bounds.value();
+        m_srcRect = bounds.value();
 }
 
 glm::vec2 Engine::RenderComponent::GetTextureDims() const noexcept
@@ -119,6 +119,13 @@ void Engine::TextComponent::SetColor(SDL_Color const &color)
 Engine::Texture2D* Engine::TextComponent::GetUpdatedTexture()
 {
     SDL_Surface* const pSurface{ TTF_RenderText_Blended(m_pFont->GetFont(), m_text.c_str(), m_text.length(), m_color) };
+
+    // Transparency support
+    Utils::Check(
+        SDL_SetSurfaceBlendMode(pSurface, SDL_BLENDMODE_BLEND),
+        "Failed to set surface blend mode"
+    );
+
     if (!pSurface)
     {
         Utils::ThrowSDLError("Render text failed");

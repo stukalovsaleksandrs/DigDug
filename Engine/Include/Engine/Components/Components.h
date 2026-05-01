@@ -42,7 +42,7 @@ namespace Engine
     private:
         Texture2D* m_pTexture{};
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
-        std::optional<SDL_FRect> m_bounds{};
+        std::optional<SDL_FRect> m_srcRect{};
 
     };
 
