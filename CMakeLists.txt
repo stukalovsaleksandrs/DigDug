@@ -13,7 +13,7 @@ include(FetchContent)
 #################################
 find_package(glm CONFIG QUIET)
 if(NOT glm_FOUND)
-  # Forcing glm to create a static library
+    # Forcing glm to c
   set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)  
   FetchContent_Declare(
     glm
@@ -123,7 +123,7 @@ if(NOT SDL3_ttf_FOUND)
     )
     set(SDL3TTF_INSTALL OFF)
     if(EMSCRIPTEN)
-      list(APPEND CMAKE_MODULE_PATH "../cmake/emscripten")
+      list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/emscripten")
       set(SDL3TTF_USE_SYSTEM_FREETYPE ON)
       set(SDL3TTF_VENDORED OFF)
       set(SDLTTF_PLUTOSVG OFF)
