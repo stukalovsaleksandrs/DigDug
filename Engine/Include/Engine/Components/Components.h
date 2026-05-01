@@ -29,6 +29,7 @@ namespace Engine
     class RenderComponent final : public Component {
     public:
         explicit RenderComponent(GameObject& owner) noexcept;
+        explicit RenderComponent(GameObject& owner, std::string_view filename) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;

@@ -38,8 +38,7 @@ Game::Application::Application()
     // Background
     {
         auto& background{ scene.CreateGameObject({}) };
-        auto& backgroundRenderComponent{ background.AddComponent<Engine::RenderComponent>() };
-        backgroundRenderComponent.SetTexture("DigDugBackground.png");
+        background.AddComponent<Engine::RenderComponent>("DigDugBackground.png");
     }
 
     // Sprite sheet

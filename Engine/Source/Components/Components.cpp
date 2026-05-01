@@ -16,10 +16,16 @@
  *******************************************/
 
 #pragma region RenderComponent
-Engine::RenderComponent::RenderComponent(GameObject &owner) noexcept
+Engine::RenderComponent::RenderComponent(GameObject& owner) noexcept
     : Component(owner)
 {
     Renderer::GetInstance().RegisterFunction(m_renderFunction);
+}
+
+Engine::RenderComponent::RenderComponent(GameObject &owner, std::string_view const filename) noexcept
+    : RenderComponent(owner)
+{
+    SetTexture(filename);
 }
 
 Engine::RenderComponent::~RenderComponent()
