@@ -37,13 +37,13 @@ namespace Engine
 
         void Render() const;
         void SetTexture(std::string_view filename);
-        void SetTexture(SDL_Texture* pTexture);
+        void SetTexture(SDL_Texture* pTexture, std::optional<SDL_FRect> bounds = std::nullopt);
         [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
 
     private:
         std::shared_ptr<Texture2D> m_pTexture{};
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
-        SDL_Rect m_bounds{};
+        std::optional<SDL_FRect> m_bounds{};
 
     };
 

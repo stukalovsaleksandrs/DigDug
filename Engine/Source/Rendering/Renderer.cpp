@@ -87,14 +87,9 @@ void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const l
     SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
 }
 
-void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location, glm::vec2 const dimensions) const
+void Engine::Renderer::RenderTexture(Texture2D const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const
 {
-    SDL_FRect destination{};
-    destination.x = location.x;
-    destination.y = location.y;
-    destination.w = dimensions.x;
-    destination.h = dimensions.y;
-    SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
+    SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), &srcRect, &dstRect);
 }
 
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)

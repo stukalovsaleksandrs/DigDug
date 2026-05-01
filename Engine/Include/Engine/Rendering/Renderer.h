@@ -27,14 +27,13 @@ namespace Engine
     {
     public:
         void Init(SDL_Window*, glm::uvec2 logicalDims);
-        // explicit Renderer(SDL_Window* pWindow);
         // Calls Render() on all the registered components
         void Render() const;
 
         void Destroy();
 
-        void RenderTexture(Texture2D const& texture, glm::vec2 location) const;
-        void RenderTexture(Texture2D const& texture, glm::vec2 location, glm::vec2 dimensions) const;
+        void RenderTexture(Texture2D const&, glm::vec2 location) const;
+        void RenderTexture(Texture2D const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const;
 
         [[nodiscard]] SDL_Renderer* GetSDLRenderer() const{ return m_pSDLRenderer; };
 

@@ -72,8 +72,3 @@ void Game::Application::Update()
 {
     scene.Update();
 }
-
-// My character does not move and does not get destroyed. Why?
-// The movement action gets executed.
-// But it never gets updated. I have to update the scene.
-

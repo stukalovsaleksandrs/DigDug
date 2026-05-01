@@ -29,18 +29,33 @@ Engine::RenderComponent::~RenderComponent()
 
 void Engine::RenderComponent::Render() const {
     assert(m_pTexture && "Texture is not set");
-    Renderer::GetInstance().RenderTexture(
-        *m_pTexture,
-        m_owner.GetWorldPosition());
+    auto const& topLeft{ m_owner.GetWorldPosition() };
+    if (m_bounds != std::nullopt)
+    {
+        Renderer::GetInstance().RenderTexture(
+            *m_pTexture,
+            {topLeft.x, topLeft.y, m_bounds->w, m_bounds->h},
+            m_bounds.value()
+        );
+    }
+    else
+    {
+        Renderer::GetInstance().RenderTexture(
+            *m_pTexture,
+            topLeft
+        );
+    }
 }
 
 void Engine::RenderComponent::SetTexture(std::string_view const filename) {
     m_pTexture = ResourceManager::GetInstance().LoadTexture(filename);
 }
 
-void Engine::RenderComponent::SetTexture(SDL_Texture* pTexture)
+void Engine::RenderComponent::SetTexture(SDL_Texture* pTexture, std::optional<SDL_FRect> const bounds)
 {
     m_pTexture = std::make_shared<Texture2D>(pTexture);
+    if (bounds.has_value())
+        m_bounds = bounds.value();
 }
 
 glm::vec2 Engine::RenderComponent::GetTextureDims() const noexcept
