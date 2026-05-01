@@ -22,10 +22,10 @@ Engine::RenderComponent::RenderComponent(GameObject& owner) noexcept
     Renderer::GetInstance().RegisterFunction(m_renderFunction);
 }
 
-Engine::RenderComponent::RenderComponent(GameObject &owner, std::string_view const filename) noexcept
+Engine::RenderComponent::RenderComponent(GameObject &owner, Texture2D* pTexture) noexcept
     : RenderComponent(owner)
 {
-    SetTexture(filename);
+    SetTexture(pTexture);
 }
 
 Engine::RenderComponent::~RenderComponent()
@@ -33,7 +33,7 @@ Engine::RenderComponent::~RenderComponent()
     Renderer::GetInstance().UnregisterFunction(m_renderFunction);
 }
 
-void Engine::RenderComponent::Render() const {
+void Engine::RenderComponent::Render() const noexcept {
     assert(m_pTexture && "Texture is not set");
     auto const& topLeft{ m_owner.GetWorldPosition() };
     if (m_bounds != std::nullopt)
@@ -53,13 +53,9 @@ void Engine::RenderComponent::Render() const {
     }
 }
 
-void Engine::RenderComponent::SetTexture(std::string_view const filename) {
-    m_pTexture = std::make_unique<Texture2D>(filename);
-}
-
-void Engine::RenderComponent::SetTexture(std::unique_ptr<Texture2D> pTexture, std::optional<SDL_FRect> const bounds)
+void Engine::RenderComponent::SetTexture(Texture2D* pTexture, std::optional<SDL_FRect> const bounds) noexcept
 {
-    m_pTexture = std::move(pTexture);
+    m_pTexture = pTexture;
     if (bounds.has_value())
         m_bounds = bounds.value();
 }
@@ -127,7 +123,7 @@ void Engine::TextComponent::SetColor(SDL_Color const &color)
     UpdateTexture();
 }
 
-void Engine::TextComponent::UpdateTexture() const {
+void Engine::TextComponent::UpdateTexture() {
     SDL_Surface* const pSurface{ TTF_RenderText_Blended(m_pFont->GetFont(), m_text.c_str(), m_text.length(), m_color) };
     if (!pSurface)
     {
@@ -139,7 +135,8 @@ void Engine::TextComponent::UpdateTexture() const {
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
-    m_renderComponent.SetTexture(std::make_unique<Texture2D>(pSDLTexture));
+    m_pTexture = std::make_unique<Texture2D>(pSDLTexture);
+    m_renderComponent.SetTexture(m_pTexture.get());
 }
 #pragma endregion TextComponent
 

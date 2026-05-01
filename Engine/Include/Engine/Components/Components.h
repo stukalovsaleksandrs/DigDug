@@ -29,20 +29,19 @@ namespace Engine
     class RenderComponent final : public Component {
     public:
         explicit RenderComponent(GameObject& owner) noexcept;
-        explicit RenderComponent(GameObject& owner, std::string_view filename) noexcept;
+        explicit RenderComponent(GameObject& owner, Texture2D* pTexture) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;
         RenderComponent& operator= (RenderComponent const&) = delete;
         RenderComponent& operator= (RenderComponent&&) = delete;
 
-        void Render() const;
-        void SetTexture(std::string_view filename);
-        void SetTexture(std::unique_ptr<Texture2D> pTexture, std::optional<SDL_FRect> bounds = std::nullopt);
+        void Render() const noexcept;
+        void SetTexture(Texture2D* pTexture, std::optional<SDL_FRect> bounds = std::nullopt) noexcept;
         [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
 
     private:
-        std::unique_ptr<Texture2D> m_pTexture{};
+        Texture2D* m_pTexture{};
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
         std::optional<SDL_FRect> m_bounds{};
 
@@ -84,10 +83,11 @@ namespace Engine
     private:
         std::string m_text;
         Font* m_pFont;
+        std::unique_ptr<Texture2D> m_pTexture{};
         SDL_Color m_color{ 255, 255, 255, 255 };
         RenderComponent& m_renderComponent;
 
-        void UpdateTexture() const;
+        void UpdateTexture();
     };
 
     /*******************************************

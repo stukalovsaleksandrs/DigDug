@@ -8,21 +8,21 @@
 // Engine
 #include "Engine/Scene/Scene.h"
 #include "Engine/Components/MovementComponent.h"
+#include "Engine/Rendering/Font.h"
+#include "Engine/Rendering/Texture2D.h"
 // Standard
 #include <filesystem>
 
-#include "Engine/Rendering/Font.h"
-#include "Engine/Rendering/Texture2D.h"
 namespace fs = std::filesystem;
 
 [[nodiscard]] std::string GetResourceFolderPath()
 {
 #if __EMSCRIPTEN__
-    fs::path resourceFolderLocation  = "";
+    fs::path resourceFolderLocation = "";
 #else
-    auto resourceFolderName{ "Resources" };
+    auto resourceFolderName{"Resources"};
     fs::path resourceFolderLocation = std::format("./{}/", resourceFolderName);
-    if(!fs::exists(resourceFolderLocation))
+    if (!fs::exists(resourceFolderLocation))
         resourceFolderLocation = std::format("../{}/", resourceFolderName);
 #endif
 
@@ -34,41 +34,45 @@ Game::Application::Application()
 {
     // cd into the resource directory
     fs::current_path(GetResourceFolderPath());
+    m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
+    m_pCharacterTexture = std::make_unique<Engine::Texture2D>("DigDugCharacter.png");
+    m_pSpriteSheet = std::make_unique<Engine::Texture2D>("DigDugSpriteSheet.png");
+    m_pBackgroundTexture = std::make_unique<Engine::Texture2D>("DigDugBackground.png");
 
     // Background
     {
-        auto& background{ scene.CreateGameObject({}) };
-        background.AddComponent<Engine::RenderComponent>("DigDugBackground.png");
+        auto& background{scene.CreateGameObject({})};
+        background.AddComponent<Engine::RenderComponent>(m_pBackgroundTexture.get());
     }
 
     // Sprite sheet
-    auto const pSpriteSheet{ Engine::Texture2D("DigDugSpriteSheet.png") };
+    auto const pSpriteSheet{Engine::Texture2D("DigDugSpriteSheet.png")};
 
     // Character
     {
-        auto& character{ scene.CreateGameObject(glm::vec2{}) };
+        auto& character{scene.CreateGameObject(glm::vec2{})};
 
         // TODO: Make render component take a texture right away
-        // auto& characterRenderComponent{ character.AddComponent<Engine::RenderComponent>() };
-        // characterRenderComponent.SetTexture("", {{}, spriteDims});
+        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(m_pCharacterTexture.get())};
+        characterRenderComponent.SetTexture(m_pCharacterTexture.get(), SDL_FRect{0.f, 0.f,
+            static_cast<float>(spriteDims.x), static_cast<float>(spriteDims.y)});
 
         character.AddComponent<Engine::MovementComponent>(500.f);
-        auto& playerComponent{ character.AddComponent<PlayerComponent>()};
+        auto& playerComponent{character.AddComponent<PlayerComponent>()};
 
-        auto& livesComponent{ character.AddComponent<LivesComponent>(2) };
+        auto& livesComponent{character.AddComponent<LivesComponent>(2)};
         livesComponent.subject.BindObserver(playerComponent);
 
         // Lives display
-        auto& livesDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 50.f}) };
-        m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
-        livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get());// NOTE: Text must not be empty
-        auto& livesDisplayComponent{ livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent) };
+        auto& livesDisplay{scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 50.f})};
+        livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get()); // NOTE: Text must not be empty
+        auto& livesDisplayComponent{livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent)};
         livesComponent.subject.BindObserver(livesDisplayComponent);
 
         // Point display
-        auto& pointDisplay{ scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 100.f}) };
+        auto& pointDisplay{scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 100.f})};
         pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
-        auto& pointDisplayComponent{ pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent) };
+        auto& pointDisplayComponent{pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent)};
         playerComponent.subject.BindObserver(pointDisplayComponent);
     }
 }
