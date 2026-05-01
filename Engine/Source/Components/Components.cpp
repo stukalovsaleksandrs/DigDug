@@ -3,7 +3,7 @@
 #include "Rendering/Renderer.h"
 #include "Scene/GameObject.h"
 #include "Rendering/Font.h"
-#include "Rendering/Texture2D.h"
+#include "Rendering/Sprite.h"
 #include "Utils/Utils.h"
 #include "Utils/Timer.h"
 // Third-party
@@ -16,11 +16,11 @@
  *******************************************/
 
 #pragma region RenderComponent
-Engine::RenderComponent::RenderComponent(GameObject &owner, Texture2D* pTexture) noexcept
+Engine::RenderComponent::RenderComponent(GameObject &owner, Sprite::View const& spriteView) noexcept
     : Component(owner)
 {
     Renderer::GetInstance().RegisterFunction(m_renderFunction);
-    SetTexture({pTexture});
+    SetSpriteView({spriteView});
 }
 
 Engine::RenderComponent::~RenderComponent()
@@ -29,37 +29,44 @@ Engine::RenderComponent::~RenderComponent()
 }
 
 void Engine::RenderComponent::Render() const noexcept {
-    assert(m_pTexture && "Texture is not set");
+    assert(m_spriteView.pSprite && "Texture is not set");
     auto const& topLeft{ m_owner.GetWorldPosition() };
-    if (m_srcRect != std::nullopt)
+    if (m_spriteView.srcRect != std::nullopt)
     {
         Renderer::GetInstance().RenderTexture(
-            *m_pTexture,
-            m_srcRect.value(),
-            {topLeft.x, topLeft.y, m_srcRect->w, m_srcRect->h}
+            *m_spriteView.pSprite,
+            m_spriteView.srcRect.value(),
+            {
+                topLeft.x, topLeft.y,
+                m_spriteView.srcRect->w,
+                m_spriteView.srcRect->h
+            }
         );
     }
     else
     {
         Renderer::GetInstance().RenderTexture(
-            *m_pTexture,
+            *m_spriteView.pSprite,
             topLeft
         );
     }
 }
 
-void Engine::RenderComponent::SetTexture(Texture2D::Data const& data) noexcept
+void Engine::RenderComponent::SetSpriteView(Sprite::View const& spriteView) noexcept
 {
-    if (data.pTexture)
-        m_pTexture = data.pTexture;
-
-    if (data.srcRect.has_value())
-        m_srcRect = data.srcRect.value();
+    m_spriteView = spriteView;
 }
 
-glm::vec2 Engine::RenderComponent::GetTextureDims() const noexcept
+glm::vec2 Engine::RenderComponent::GetSpriteViewDims() const noexcept
 {
-    return m_pTexture->GetDims();
+    // View is on a part of the sprite
+    if (m_spriteView.srcRect.has_value())
+    {
+        auto const& srcRect{ m_spriteView.srcRect.value() };
+        return {srcRect.w, srcRect.h};
+    }
+    // View is on the entire sprite
+    return m_spriteView.pSprite->GetDims();
 }
 #pragma endregion RenderComponent
 
@@ -85,12 +92,17 @@ Engine::DebugComponent::~DebugComponent()
  * Text component
  *******************************************/
 
-#pragma region
+#pragma region TextComponent
+
 Engine::TextComponent::TextComponent(GameObject& owner,
     std::string_view const text, Font* pFont, SDL_Color const& color) noexcept
     : Component(owner)
     , m_text{ text }, m_pFont{ pFont }, m_color{ color }
-    , m_renderComponent{ owner.AddComponent<RenderComponent>(GetUpdatedTexture()) }
+    , m_renderComponent{
+        owner.AddComponent<RenderComponent>(
+            Sprite::View{GetUpdatedTexture()}
+        )
+    }
 {}
 
 void Engine::TextComponent::SetFont(Font* pFont) {
@@ -118,7 +130,7 @@ void Engine::TextComponent::SetColor(SDL_Color const &color)
     UpdateTexture();
 }
 
-Engine::Texture2D* Engine::TextComponent::GetUpdatedTexture()
+Engine::Sprite* Engine::TextComponent::GetUpdatedTexture()
 {
     SDL_Surface* const pSurface{ TTF_RenderText_Blended(m_pFont->GetFont(), m_text.c_str(), m_text.length(), m_color) };
 
@@ -138,12 +150,12 @@ Engine::Texture2D* Engine::TextComponent::GetUpdatedTexture()
         Utils::ThrowSDLError("Create text texture from surface failed");
     }
     SDL_DestroySurface(pSurface);
-    m_pTexture = std::make_unique<Texture2D>(pSDLTexture);
+    m_pTexture = std::make_unique<Sprite>(pSDLTexture);
     return m_pTexture.get();
 }
 
 void Engine::TextComponent::UpdateTexture() {
-    m_renderComponent.SetTexture({GetUpdatedTexture()});
+    m_renderComponent.SetSpriteView({GetUpdatedTexture()});
 }
 #pragma endregion TextComponent
 

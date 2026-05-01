@@ -15,7 +15,7 @@
 
 namespace Engine
 {
-    class Texture2D;
+    class Sprite;
     class Scene;
 
     class GameObject final

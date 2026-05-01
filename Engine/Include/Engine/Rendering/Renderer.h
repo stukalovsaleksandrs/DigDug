@@ -19,7 +19,7 @@ namespace Engine
         class DebugComponent;
     }
 
-    class Texture2D;
+    class Sprite;
     /**
      * Simple RAII wrapper for the SDL renderer
      */
@@ -32,8 +32,8 @@ namespace Engine
 
         void Destroy();
 
-        void RenderTexture(Texture2D const&, glm::vec2 location) const;
-        void RenderTexture(Texture2D const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const;
+        void RenderTexture(Sprite const&, glm::vec2 location) const;
+        void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const;
 
         [[nodiscard]] SDL_Renderer* GetSDLRenderer() const{ return m_pSDLRenderer; };
 

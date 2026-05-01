@@ -4,7 +4,7 @@
 // Engine
 #include "Engine/Components/ComponentBase.h"
 #include "Engine/Rendering/Renderer.h"
-#include "Engine/Rendering/Texture2D.h"
+#include "Engine/Rendering/Sprite.h"
 // Third-party
 #include <SDL3/SDL_pixels.h>
 #include "glm/ext/scalar_constants.hpp"
@@ -19,7 +19,7 @@
 namespace Engine
 {
     class GameObject;
-    class Texture2D;
+    class Sprite;
     class Font;
 
     /*******************************************
@@ -28,7 +28,7 @@ namespace Engine
 
     class RenderComponent final : public Component {
     public:
-        explicit RenderComponent(GameObject& owner, Texture2D* pTexture) noexcept;
+        explicit RenderComponent(GameObject& owner, Sprite::View const&) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;
@@ -36,13 +36,12 @@ namespace Engine
         RenderComponent& operator= (RenderComponent&&) = delete;
 
         void Render() const noexcept;
-        void SetTexture(Texture2D::Data const& data) noexcept;
-        [[nodiscard]] glm::vec2 GetTextureDims() const noexcept;
+        void SetSpriteView(Sprite::View const&) noexcept;
+        [[nodiscard]] glm::vec2 GetSpriteViewDims() const noexcept;
 
     private:
-        Texture2D* m_pTexture{};
+        Sprite::View m_spriteView;
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
-        std::optional<SDL_FRect> m_srcRect{};
 
     };
 
@@ -82,12 +81,12 @@ namespace Engine
     private:
         std::string m_text;
         Font* m_pFont;
-        std::unique_ptr<Texture2D> m_pTexture{};
+        std::unique_ptr<Sprite> m_pTexture{};
         SDL_Color m_color{ 255, 255, 255, 255 };
         RenderComponent& m_renderComponent;
 
         // Separate from UpdateTexture(), to initialize RenderComponent
-        [[nodiscard]] Texture2D* GetUpdatedTexture();
+        [[nodiscard]] Sprite* GetUpdatedTexture();
         void UpdateTexture();
     };
 

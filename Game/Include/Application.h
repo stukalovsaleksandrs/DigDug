@@ -5,7 +5,7 @@
 #include "Engine/Core/Application.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Rendering/Font.h"
-#include "Engine/Rendering/Texture2D.h"
+#include "Engine/Rendering/Sprite.h"
 
 namespace Game
 {
@@ -21,8 +21,8 @@ namespace Game
         Engine::Scene scene;
         std::unique_ptr<Engine::Font> m_pFont{};
 
-        std::unique_ptr<Engine::Texture2D> m_pBackgroundTexture{};
-        std::unique_ptr<Engine::Texture2D> m_pSpriteSheet{};
+        std::unique_ptr<Engine::Sprite> m_pBackgroundTexture{};
+        std::unique_ptr<Engine::Sprite> m_pSpriteSheet{};
     };
 }
 #endif// GAME_APPLICATION_H

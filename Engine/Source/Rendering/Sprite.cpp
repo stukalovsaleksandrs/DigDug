@@ -1,30 +1,30 @@
 // Engine
 #include "Utils/Utils.h"
-#include "Rendering/Texture2D.h"
+#include "Rendering/Sprite.h"
 #include "Rendering/Renderer.h"
 // Third-party
 #include <SDL3/SDL.h>
 // Standard
 #include <format>
 
-Engine::Texture2D::~Texture2D()
+Engine::Sprite::~Sprite()
 {
     SDL_DestroyTexture(m_pTexture);
 }
 
-glm::ivec2 Engine::Texture2D::GetDims() const
+glm::ivec2 Engine::Sprite::GetDims() const
 {
     glm::vec2 dims{};
     SDL_GetTextureSize(m_pTexture, &dims.x, &dims.y);
     return {static_cast<int>(dims.x), static_cast<int>(dims.y)};
 }
 
-SDL_Texture* Engine::Texture2D::GetSDLTexture() const
+SDL_Texture* Engine::Sprite::GetSDLTexture() const
 {
     return m_pTexture;
 }
 
-Engine::Texture2D::Texture2D(std::string_view const fullPath)
+Engine::Sprite::Sprite(std::string_view const fullPath)
 {
     SDL_Surface* pSurface{ SDL_LoadPNG(fullPath.data()) };
     if (!pSurface)
@@ -45,7 +45,7 @@ Engine::Texture2D::Texture2D(std::string_view const fullPath)
     }
 }
 
-Engine::Texture2D::Texture2D(SDL_Texture* pTexture)
+Engine::Sprite::Sprite(SDL_Texture* pTexture)
     : m_pTexture{ pTexture }
 {
     assert(m_pTexture);

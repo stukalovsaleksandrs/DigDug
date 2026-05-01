@@ -1,7 +1,7 @@
 ﻿// Project
 #include "Utils/Utils.h"
 #include "Rendering/Renderer.h"
-#include "Rendering/Texture2D.h"
+#include "Rendering/Sprite.h"
 #include "Components/Components.h"
 // Third-party
 #include <imgui.h>
@@ -78,7 +78,7 @@ void Engine::Renderer::Destroy()
     }
 }
 
-void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const location) const
+void Engine::Renderer::RenderTexture(Sprite const& texture, glm::vec2 const location) const
 {
     SDL_FRect destination{};
     destination.x = location.x;
@@ -87,7 +87,7 @@ void Engine::Renderer::RenderTexture(Texture2D const& texture, glm::vec2 const l
     SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
 }
 
-void Engine::Renderer::RenderTexture(Texture2D const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const
+void Engine::Renderer::RenderTexture(Sprite const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const
 {
     SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), &srcRect, &dstRect);
 }

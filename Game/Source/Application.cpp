@@ -8,8 +8,9 @@
 // Engine
 #include "Engine/Scene/Scene.h"
 #include "Engine/Components/MovementComponent.h"
+#include "Engine/Components/AnimationComponent.h"
 #include "Engine/Rendering/Font.h"
-#include "Engine/Rendering/Texture2D.h"
+#include "Engine/Rendering/Sprite.h"
 // Standard
 #include <filesystem>
 
@@ -35,40 +36,57 @@ Game::Application::Application()
     // cd into the resource directory
     fs::current_path(GetResourceFolderPath());
     m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
-    m_pSpriteSheet = std::make_unique<Engine::Texture2D>("Sprites/DigDugSpriteSheet.png");
-    m_pBackgroundTexture = std::make_unique<Engine::Texture2D>("Sprites/DigDugBackground.png");
+    m_pSpriteSheet = std::make_unique<Engine::Sprite>("Sprites/DigDugSpriteSheet.png");
+    m_pBackgroundTexture = std::make_unique<Engine::Sprite>("Sprites/DigDugBackground.png");
 
     // Background
     {
         auto& background{scene.CreateGameObject({})};
-        background.AddComponent<Engine::RenderComponent>(m_pBackgroundTexture.get());
+        background.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pBackgroundTexture.get()});
     }
 
     // Character
     {
-        auto& character{scene.CreateGameObject(glm::vec2{})};
+        auto& character{scene.CreateGameObject({})};
 
-        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(m_pSpriteSheet.get())};
-        characterRenderComponent.SetTexture({m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
-            static_cast<float>(spriteDims.x), static_cast<float>(spriteDims.y)}});
+        // Render component
+        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
+            Engine::Sprite::View{m_pSpriteSheet.get()}
+        )};
+        characterRenderComponent.SetSpriteView({m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
+            static_cast<float>(characterDims.x), static_cast<float>(characterDims.y)}});
 
+        // Movement component
         character.AddComponent<Engine::MovementComponent>(75.f);
+
+        // Player component
         auto& playerComponent{character.AddComponent<PlayerComponent>()};
 
+        // Lives component
         auto& livesComponent{character.AddComponent<LivesComponent>(2)};
         livesComponent.subject.BindObserver(playerComponent);
 
         // Lives display
         auto& livesDisplay{scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 50.f})};
         livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get()); // NOTE: Text must not be empty
-        auto& livesDisplayComponent{livesDisplay.AddComponent<Game::LivesDisplayComponent>(livesComponent)};
+        auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
         livesComponent.subject.BindObserver(livesDisplayComponent);
 
         // Point display
         auto& pointDisplay{scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 100.f})};
         pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
-        auto& pointDisplayComponent{pointDisplay.AddComponent<Game::PointDisplayComponent>(playerComponent)};
+        auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
         playerComponent.subject.BindObserver(pointDisplayComponent);
+
+        // Animation component
+        character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
+            .firstSpriteView = Engine::Sprite::View{m_pSpriteSheet.get(),
+                SDL_FRect{0.f, 0.f,
+                    static_cast<float>(characterDims.x),
+                    static_cast<float>(characterDims.y)}},
+            .frameCount = 2,
+            .secPerFrame = 0.1f
+        });
     }
 }
 
