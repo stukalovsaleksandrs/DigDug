@@ -16,8 +16,10 @@
  *******************************************/
 
 #pragma region RenderComponent
-Engine::RenderComponent::RenderComponent(GameObject &owner, Sprite::View const& spriteView) noexcept
-    : Component(owner)
+Engine::RenderComponent::RenderComponent(GameObject &owner,
+    Sprite::View const& spriteView) noexcept
+    : Component{owner}
+    , m_spriteView{ spriteView }
 {
     Renderer::GetInstance().RegisterFunction(m_renderFunction);
     SetSpriteView({spriteView});
@@ -31,15 +33,15 @@ Engine::RenderComponent::~RenderComponent()
 void Engine::RenderComponent::Render() const noexcept {
     assert(m_spriteView.pSprite && "Texture is not set");
     auto const& topLeft{ m_owner.GetWorldPosition() };
-    if (m_spriteView.srcRect != std::nullopt)
+    if (m_spriteView.srcRect.w > 0.f && m_spriteView.srcRect.h > 0.f)
     {
         Renderer::GetInstance().RenderTexture(
             *m_spriteView.pSprite,
-            m_spriteView.srcRect.value(),
+            m_spriteView.srcRect,
             {
                 topLeft.x, topLeft.y,
-                m_spriteView.srcRect->w,
-                m_spriteView.srcRect->h
+                m_spriteView.srcRect.w,
+                m_spriteView.srcRect.h
             }
         );
     }
@@ -59,14 +61,8 @@ void Engine::RenderComponent::SetSpriteView(Sprite::View const& spriteView) noex
 
 glm::vec2 Engine::RenderComponent::GetSpriteViewDims() const noexcept
 {
-    // View is on a part of the sprite
-    if (m_spriteView.srcRect.has_value())
-    {
-        auto const& srcRect{ m_spriteView.srcRect.value() };
-        return {srcRect.w, srcRect.h};
-    }
-    // View is on the entire sprite
-    return m_spriteView.pSprite->GetDims();
+    auto const& srcRect{ m_spriteView.srcRect };
+    return {srcRect.w, srcRect.h};
 }
 #pragma endregion RenderComponent
 
@@ -155,7 +151,7 @@ Engine::Sprite* Engine::TextComponent::GetUpdatedTexture()
 }
 
 void Engine::TextComponent::UpdateTexture() {
-    m_renderComponent.SetSpriteView({GetUpdatedTexture()});
+    m_renderComponent.SetSpriteView(Sprite::View{GetUpdatedTexture()});
 }
 #pragma endregion TextComponent
 

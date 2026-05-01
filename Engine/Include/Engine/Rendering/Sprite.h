@@ -22,20 +22,32 @@ namespace Engine
         struct View final
         {
             Sprite* pSprite;// Because copy assignment is needed
-            std::optional<SDL_FRect> srcRect{};// TODO: Remove std::optional
+            SDL_FRect srcRect;
+
+            // Makes the view span the entire sprite
+            explicit View(Sprite* pSprite)
+                : pSprite{ pSprite }
+                , srcRect{ pSprite->GetFullBounds() }
+            {}
+
+            View(Sprite* pSprite, SDL_FRect const& srcRect)
+                : pSprite{ pSprite }
+                , srcRect{ srcRect }
+            {}
+
         };
 
-        [[nodiscard]] SDL_Texture* GetSDLTexture() const;
         explicit Sprite(SDL_Texture* pTexture);
         explicit Sprite(std::string_view fullPath);
         ~Sprite();
-
-        [[nodiscard]] glm::ivec2 GetDims() const;
-
         Sprite(const Sprite &) = delete;
         Sprite(Sprite &&) = delete;
         Sprite & operator= (Sprite const&) = delete;
         Sprite & operator= (Sprite const&&) = delete;
+
+        [[nodiscard]] SDL_Texture* GetSDLTexture() const;
+        [[nodiscard]] glm::ivec2 GetDims() const;
+        [[nodiscard]] SDL_FRect GetFullBounds() const;
 
     private:
         SDL_Texture* m_pTexture;

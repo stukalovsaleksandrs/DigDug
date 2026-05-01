@@ -1,9 +1,8 @@
 // Engine
-#include "../../Include/Engine/Components/AnimationComponent.h"
+#include "Engine/Components/AnimationComponent.h"
+#include "Engine/Scene/GameObject.h"
 // Standard
 #include <ranges>
-
-#include "Engine/Scene/GameObject.h"
 
 Engine::AnimationComponent::AnimationComponent(GameObject& owner, Data const& data) noexcept
     : Component{owner}
@@ -40,8 +39,8 @@ void Engine::AnimationComponent::InitializeFrameSpriteViews()
     m_frames.reserve(m_data.frameCount);
     for (auto const frameSpriteIdx : std::views::iota(0u, m_data.frameCount))
     {
-        SDL_FRect const firstSpriteRect{ m_data.firstSpriteView.srcRect.value()  };
-        SDL_FRect srcRect{ m_data.firstSpriteView.srcRect.value() };
+        SDL_FRect const firstSpriteRect{ m_data.firstSpriteView.srcRect };
+        SDL_FRect srcRect{ m_data.firstSpriteView.srcRect };
         srcRect.x = firstSpriteRect.x + firstSpriteRect.w * frameSpriteIdx;
 
         m_frames.emplace_back(

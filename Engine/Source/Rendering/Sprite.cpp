@@ -19,6 +19,15 @@ glm::ivec2 Engine::Sprite::GetDims() const
     return {static_cast<int>(dims.x), static_cast<int>(dims.y)};
 }
 
+SDL_FRect Engine::Sprite::GetFullBounds() const
+{
+    return {
+        .x = 0.f, .y = 0.f,
+        .w = static_cast<float>(m_pTexture->w),
+        .h = static_cast<float>(m_pTexture->h)
+    };
+}
+
 SDL_Texture* Engine::Sprite::GetSDLTexture() const
 {
     return m_pTexture;
