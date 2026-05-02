@@ -1,5 +1,5 @@
-#ifndef SE_COMMANDS_H
-#define SE_COMMANDS_H
+#ifndef ENGINE_COMMANDS_H
+#define ENGINE_COMMANDS_H
 
 // Engine
 #include "Engine/Scene/GameObject.h"
@@ -44,7 +44,6 @@ namespace Engine
 
     };
 
-
 }
 
-#endif// SE_COMMANDS_H
+#endif// ENGINE_COMMANDS_H

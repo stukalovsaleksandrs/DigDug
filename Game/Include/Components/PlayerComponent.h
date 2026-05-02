@@ -5,6 +5,11 @@
 #include "Engine/Core/Observer.h"
 #include "Engine/InputManager.h"
 
+namespace Engine
+{
+    class AnimationComponent;
+}
+
 namespace Game
 {
     class MovementComponent;
@@ -31,6 +36,7 @@ namespace Game
     private:
         uint32_t m_points{};
         Engine::MovementComponent& m_movementComponent;
+        Engine::RenderComponent& m_renderComponent;
 
         Engine::Action m_upAction{SDL_SCANCODE_W, Engine::InputType::held};
         Engine::Action m_leftAction{SDL_SCANCODE_A, Engine::InputType::held};

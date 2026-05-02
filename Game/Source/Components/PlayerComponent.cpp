@@ -3,12 +3,17 @@
 // Engine
 #include "Commands.h"
 #include "Engine/Components/MovementComponent.h"
+#include "Engine/Utils/Constants.h"
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner) noexcept
     : Component(owner)
     , m_movementComponent(*owner.GetComponent<Engine::MovementComponent>())
+    , m_renderComponent(*owner.GetComponent<Engine::RenderComponent>())
 {
     BindInput();
+
+    // Binding ourselves to movement component
+    m_movementComponent.BindObserver(*this);
 }
 
 Game::PlayerComponent::~PlayerComponent() noexcept
@@ -20,16 +25,19 @@ void Game::PlayerComponent::BindInput()
 {
     Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
     // Movement
-    // Keyboard
-    // They get unbound after the input manager is destroyed.
-    // The player is destroyed when the scene is. It's lifetime is also static.
-    // Why the fuck my scene is static at all?
-    inputManager.Bind(m_upAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, -1.f }));
-    inputManager.Bind(m_leftAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ -1.f, 0.f }));
-    inputManager.Bind(m_downAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 0.f, 1.f }));
-    inputManager.Bind(m_rightAction, std::make_unique<Engine::MoveCommand>(m_movementComponent, glm::vec2{ 1.f, 0.f }));
+
+    //// Keyboard
+    auto makeMoveCommand{ [this](glm::vec2 direction)
+        {
+            return std::make_unique<Engine::MoveCommand>(m_movementComponent, direction);
+        }
+    };
+    inputManager.Bind(m_upAction, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
+    inputManager.Bind(m_leftAction, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
+    inputManager.Bind(m_downAction, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
+    inputManager.Bind(m_rightAction, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
     inputManager.Bind(m_pointAction, std::make_unique<PointCommand>(*this));
-    /// TODO: Gamepad
+    //// TODO: Gamepad
 }
 
 void Game::PlayerComponent::UnbindInput() const
@@ -52,6 +60,15 @@ void Game::PlayerComponent::OnNotify(Engine::Event const event, Engine::Subject 
             m_owner.MarkForDeletion();
             break;
         }
+    case std::to_underlying(Engine::EventType::OnDirectionChanged):
+        {
+            glm::vec2 const direction{ m_movementComponent.GetDirection() };
+            SDL_FlipMode flipMode{};
+            if (direction.x < 0.f) flipMode = SDL_FLIP_HORIZONTAL;
+            m_renderComponent.SetFlipMode(flipMode);
+            break;
+        }
+
     default: ;
     }
 }

@@ -43,7 +43,7 @@ namespace Engine
         };
 
         std::unique_ptr<LoggingSoundService> m_loggingSoundService{
-            std::make_unique<LoggingSoundService>(*m_defaultSoundService.get())
+            std::make_unique<LoggingSoundService>(*m_defaultSoundService)
         };
     };
 }

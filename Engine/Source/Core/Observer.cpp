@@ -34,7 +34,7 @@ void Engine::Subject::BindObserver(Observer& observer) noexcept
 void Engine::Subject::RemoveObserver(Observer& observer) noexcept
 {
     auto& vec = m_pObservers;
-    vec.erase(std::remove(vec.begin(), vec.end(), &observer), vec.end());
+    std::erase(vec, &observer);
 }
 
 Engine::Subject::~Subject() noexcept

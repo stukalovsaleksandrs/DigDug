@@ -42,7 +42,8 @@ void Engine::RenderComponent::Render() const noexcept {
                 topLeft.x, topLeft.y,
                 m_spriteView.srcRect.w,
                 m_spriteView.srcRect.h
-            }
+            },
+            m_flipMode
         );
     }
     else

@@ -19,6 +19,9 @@ namespace Engine::Utils {
     void LogSDLVersion(std::string_view message, int major, int minor, int patch);
 
     void PrintSDLVersion();
+
+    bool NearlyEqual(glm::vec2 lhs, glm::vec2 rhs);
+
 }
 
 #endif// SE_UTILS_H

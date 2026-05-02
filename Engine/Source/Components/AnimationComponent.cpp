@@ -1,9 +1,12 @@
 // Engine
 #include "Utils/Timer.h"
+#include "Utils/Constants.h"
 #include "Engine/Components/AnimationComponent.h"
 #include "Engine/Scene/GameObject.h"
 // Standard
 #include <ranges>
+
+#include "Components/MovementComponent.h"
 
 Engine::AnimationComponent::AnimationComponent(GameObject& owner, Data const& data) noexcept
     : Component{owner}
@@ -44,12 +47,11 @@ void Engine::AnimationComponent::InitializeFrameSpriteViews()
     {
         SDL_FRect const firstSpriteRect{ m_data.firstSpriteView.srcRect };
         SDL_FRect srcRect{ m_data.firstSpriteView.srcRect };
-        srcRect.x = firstSpriteRect.x + firstSpriteRect.w * frameSpriteIdx;
+        srcRect.x = firstSpriteRect.x + firstSpriteRect.w * static_cast<float>(frameSpriteIdx);
 
         m_frames.emplace_back(
             m_data.firstSpriteView.pSprite,
             srcRect
         );
     }
-
 }

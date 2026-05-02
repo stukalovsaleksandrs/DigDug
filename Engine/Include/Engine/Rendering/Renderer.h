@@ -33,7 +33,7 @@ namespace Engine
         void Destroy();
 
         void RenderTexture(Sprite const&, glm::vec2 location) const;
-        void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect) const;
+        void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect, SDL_FlipMode flipMode = SDL_FLIP_NONE) const;
 
         [[nodiscard]] SDL_Renderer* GetSDLRenderer() const{ return m_pSDLRenderer; };
 

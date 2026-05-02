@@ -35,6 +35,8 @@ Game::Application::Application()
 {
     // cd into the resource directory
     fs::current_path(GetResourceFolderPath());
+
+    // Loading assets
     m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
     m_pSpriteSheet = std::make_unique<Engine::Sprite>("Sprites/DigDugSpriteSheet.png");
     m_pBackgroundTexture = std::make_unique<Engine::Sprite>("Sprites/DigDugBackground.png");
@@ -67,13 +69,13 @@ Game::Application::Application()
         livesComponent.subject.BindObserver(playerComponent);
 
         // Lives display
-        auto& livesDisplay{scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 50.f})};
+        auto& livesDisplay{scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.dims.y) - 10.f})};
         livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get()); // NOTE: Text must not be empty
         auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
         livesComponent.subject.BindObserver(livesDisplayComponent);
 
         // Point display
-        auto& pointDisplay{scene.CreateGameObject(glm::vec2{10.f, windowData.dims.y - 100.f})};
+        auto& pointDisplay{scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.dims.y) - 20.f})};
         pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
         auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
         playerComponent.subject.BindObserver(pointDisplayComponent);

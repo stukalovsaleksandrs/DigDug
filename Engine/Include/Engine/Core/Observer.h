@@ -34,21 +34,18 @@ namespace Engine
         return SDBMHash<N - 1>::Calculate(text);
     }
 
-    struct EventArgument{};
 
     using EventId = uint32_t;
 
     struct Event
     {
         EventId const id;
-        static constexpr uint8_t maxArgumentCount{ 8 };
-        uint8_t argumentCount;
-        // TODO: Use memory pool. Actually remove, I use the pull model
-        std::array<EventArgument, maxArgumentCount> arguments{};
+        // static constexpr uint8_t maxArgumentCount{ 8 };
+        // uint8_t argumentCount;
 
-        explicit Event(EventId const in_id, uint8_t const in_argumentCount = 0)
+        explicit Event(EventId const in_id)
             : id{in_id}
-            , argumentCount{in_argumentCount}
+            // , argumentCount{in_argumentCount}
         {}
     };
 

@@ -2,9 +2,13 @@
 #include "Engine/Utils/Utils.h"
 // Third-party
 #include <SDL3_ttf/SDL_ttf.h>
+#include <glm/glm.hpp>
+#include "glm/ext/scalar_constants.hpp"
+#include "glm/gtx/norm.inl"
 // Standard
 #include <print>
 #include <sstream>
+
 
 void Engine::Utils::Check(bool const result, std::string_view const message)
 {
@@ -41,4 +45,9 @@ void Engine::Utils::PrintSDLVersion()
     LogSDLVersion("Compiled with SDL_ttf ",	SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION,SDL_TTF_MICRO_VERSION);
     version = TTF_Version();
     LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
+}
+
+bool Engine::Utils::NearlyEqual(glm::vec2 const lhs, glm::vec2 const rhs)
+{
+    return glm::distance2(lhs, rhs) < glm::epsilon<float>();
 }
