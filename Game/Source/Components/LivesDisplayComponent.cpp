@@ -19,7 +19,7 @@ void Game::LivesDisplayComponent::OnNotify(Engine::Event const event, Engine::Su
 {
     switch (event.id)
     {
-        case Engine::MakeSDBMHash("OnDamageTaken"):
+    case std::to_underlying(EventType::OnDamageTaken):
         {
             m_pTextComponent->SetText(std::format("Lives: {}", m_pLivesComponent->GetLives()));
             break;

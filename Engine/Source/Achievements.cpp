@@ -1,6 +1,9 @@
 #ifdef USE_STEAMWORKS
+// Game
+#include "Constants.h"
 #include "Achievements.h"
-
+// Standard
+#include <utility>
 #include <isteamuser.h>
 #include <isteamutils.h>
 #include <print>
@@ -21,9 +24,8 @@ void DAE::CSteamAchievements::OnNotify(Event const event, Subject const&) noexce
 {
     switch (event.id)
     {
-        case MakeSDBMHash("OnCollected5Points"):
+    case std::to_underlying(Game::EventType::OnCollected5Points):
         {
-
             break;
         }
     default: ;

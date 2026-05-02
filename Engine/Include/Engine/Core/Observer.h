@@ -6,36 +6,14 @@
 #include <cstdint>
 #include <functional>
 #include <utility>
-#include <array>
+
+#include "Engine/Utils/Constants.h"
 
 namespace Engine
 {
     /*******************************************
      * Event
      *******************************************/
-
-    template <int length> struct SDBMHash
-    {
-        consteval static unsigned int _Calculate(const char* const text, unsigned int& value) {
-            const unsigned int character = SDBMHash<length - 1>::_Calculate(text, value);
-            value = character + (value << 6) + (value << 16) - value;
-            return text[length - 1];
-        }
-        consteval static unsigned int Calculate(const char* const text) {
-            unsigned int value = 0;
-            const auto character = _Calculate(text, value);
-            return character + (value << 6) + (value << 16) - value;
-        }
-    };
-    template <> struct SDBMHash<1> {
-        consteval static int _Calculate(const char* const text, unsigned int& ) { return text[0]; }
-    };
-    template <size_t N> consteval unsigned int MakeSDBMHash(const char (&text)[N]) {
-        return SDBMHash<N - 1>::Calculate(text);
-    }
-
-
-    using EventId = uint32_t;
 
     struct Event
     {
@@ -51,7 +29,7 @@ namespace Engine
 
     enum class CommonEvents : EventId
     {
-        SubjectDeleted = MakeSDBMHash("SubjectDeleted")
+        SubjectDeleted = std::to_underlying(EventType::SubjectDeleted),
     };
 
     /*******************************************

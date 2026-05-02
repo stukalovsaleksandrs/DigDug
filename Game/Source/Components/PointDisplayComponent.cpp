@@ -18,7 +18,7 @@ void Game::PointDisplayComponent::OnNotify(Engine::Event const event, Engine::Su
 {
     switch (event.id)
     {
-    case Engine::MakeSDBMHash("OnPointsIncreased"):
+    case std::to_underlying(EventType::OnPointsIncreased):
         m_textComponent.SetText(std::format("Points: {}", m_playerComponent.GetPoints()));
         break;
     case std::to_underlying(Engine::CommonEvents::SubjectDeleted):

@@ -1,5 +1,8 @@
 #ifndef PLAYER_CONTROLLER_H
 #define PLAYER_CONTROLLER_H
+
+// Game
+#include "Constants.h"
 // Engine
 #include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
@@ -44,8 +47,8 @@ namespace Game
         Engine::Action m_rightAction{SDL_SCANCODE_D, Engine::InputType::held};
         Engine::Action m_pointAction{SDL_SCANCODE_P, Engine::InputType::released};
 
-        Engine::Event m_onPointsIncreased{ Engine::MakeSDBMHash("OnPointsIncreased") };
-        Engine::Event m_onCollected5Points{ Engine::MakeSDBMHash("OnCollected5Points") };
+        Engine::Event m_onPointsIncreased{ std::to_underlying(EventType::OnPointsIncreased) };
+        Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
     };
 }
 

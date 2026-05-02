@@ -13,9 +13,14 @@ namespace Game
 
     Engine::Window::Data const windowData( { 224, 288 }, 3.f );
 
+    namespace EU = Engine::Utils;
+
     enum class EventType : Engine::EventId
     {
-        // Place to put event types XD
+        OnPointsIncreased = EU::MakeSDBMHash("OnPointsIncreased"),
+        OnCollected5Points = EU::MakeSDBMHash("OnCollected5Points"),
+        OnDied = EU::MakeSDBMHash("OnDied"),
+        OnDamageTaken = EU::MakeSDBMHash("OnDamageTaken"),
     };
 }
 

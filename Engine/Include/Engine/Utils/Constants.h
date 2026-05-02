@@ -2,15 +2,17 @@
 #define ENGINE_CONSTANTS
 
 // Engine
-#include "Engine/Core/Observer.h"
+#include "Utils.h"
 // Standard
 #include <cstdint>
 
 namespace Engine
 {
+    using EventId = uint32_t;
     enum class EventType : EventId
     {
-        OnDirectionChanged = MakeSDBMHash("OnDirectionChanged")
+        SubjectDeleted = Utils::MakeSDBMHash("SubjectDeleted"),
+        OnDirectionChanged = Utils::MakeSDBMHash("OnDirectionChanged"),
     };
 }
 

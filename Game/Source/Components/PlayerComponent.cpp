@@ -55,7 +55,7 @@ void Game::PlayerComponent::OnNotify(Engine::Event const event, Engine::Subject 
     // TODO: Find a proper way to bind functions to the events directly
     switch (event.id)
     {
-    case Engine::MakeSDBMHash("OnDied"):
+    case std::to_underlying(EventType::OnDied):
         {
             m_owner.MarkForDeletion();
             break;

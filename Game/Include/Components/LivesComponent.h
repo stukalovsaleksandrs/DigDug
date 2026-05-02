@@ -1,6 +1,8 @@
 #ifndef HEALTH_COMPONENT_H
 #define HEALTH_COMPONENT_H
 
+// Game
+#include "Constants.h"
 // Engine
 #include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
@@ -22,8 +24,8 @@ namespace Game
 
     private:
         uint32_t m_lives{};
-        Engine::Event m_onDiedEvent{Engine::MakeSDBMHash("OnDied")},
-            m_onDamageTaken{Engine::MakeSDBMHash("OnDamageTaken")};
+        Engine::Event m_onDiedEvent{std::to_underlying(EventType::OnDied)},
+            m_onDamageTaken{std::to_underlying(EventType::OnDamageTaken)};
 
     };
 }
