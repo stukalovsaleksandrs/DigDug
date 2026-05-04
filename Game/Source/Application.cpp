@@ -49,7 +49,7 @@ Game::Application::Application()
 
     // Character
     {
-        auto& character{scene.CreateGameObject({0.f, characterDims.y})};
+        auto& character{scene.CreateGameObject({1.f, characterDims.y + 1})};
 
         // Render component
         auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(

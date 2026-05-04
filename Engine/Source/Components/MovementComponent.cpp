@@ -59,7 +59,8 @@ void Engine::MovementComponent::Update() noexcept
 }
 void Engine::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
 {
-    m_direction += direction;
+    if (m_canMoveDiagonally) m_direction += direction;
+    else m_direction = direction;
 }
 
 bool Engine::MovementComponent::IsMoving() const noexcept
