@@ -73,9 +73,17 @@ void Game::PlayerComponent::OnNotify(Engine::Event const event, Engine::Subject 
     case std::to_underlying(Engine::EventType::OnDirectionChanged):
         {
             glm::vec2 const direction{ m_movementComponent.GetDirection() };
+
+            // Flipping
             SDL_FlipMode flipMode{};
             if (direction.x < 0.f) flipMode = SDL_FLIP_HORIZONTAL;
             m_renderComponent.SetFlipMode(flipMode);
+
+            // Rotation
+            if (direction.y < 0.f) m_renderComponent.SetRotation(-90.f);
+            else if (direction.y > 0.f) m_renderComponent.SetRotation(90.f);
+            else m_renderComponent.SetRotation(0.f);
+
             break;
         }
 

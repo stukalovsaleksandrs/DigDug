@@ -39,11 +39,13 @@ namespace Engine
         void SetSpriteView(Sprite::View const&) noexcept;
         [[nodiscard]] glm::vec2 GetSpriteViewDims() const noexcept;
         void SetFlipMode(SDL_FlipMode const flipMode){ m_flipMode = flipMode; };
+        void SetRotation(float const degrees){ m_degrees = degrees; };
 
     private:
         Sprite::View m_spriteView;
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
         SDL_FlipMode m_flipMode{};
+        float m_degrees{};
     };
 
     /*******************************************

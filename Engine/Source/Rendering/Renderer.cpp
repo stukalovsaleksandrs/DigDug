@@ -87,9 +87,9 @@ void Engine::Renderer::RenderTexture(Sprite const& texture, glm::vec2 const loca
     SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
 }
 
-void Engine::Renderer::RenderTexture(Sprite const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect, SDL_FlipMode const flipMode) const
+void Engine::Renderer::RenderTexture(Sprite const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float const degrees, SDL_FlipMode const flipMode) const
 {
-    SDL_RenderTextureRotated(m_pSDLRenderer, texture.GetSDLTexture(), &srcRect, &dstRect, 0.f, nullptr, flipMode);
+    SDL_RenderTextureRotated(m_pSDLRenderer, texture.GetSDLTexture(), &srcRect, &dstRect, degrees, nullptr, flipMode);
 }
 
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)

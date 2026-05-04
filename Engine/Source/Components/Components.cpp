@@ -43,6 +43,7 @@ void Engine::RenderComponent::Render() const noexcept {
                 m_spriteView.srcRect.w,
                 m_spriteView.srcRect.h
             },
+            m_degrees,
             m_flipMode
         );
     }
