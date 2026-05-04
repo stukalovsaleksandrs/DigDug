@@ -25,11 +25,6 @@ namespace Game
 
     Engine::pState Player::State::Idle::Update() noexcept
     {
-       if (m_dependencies.movementComponent.IsMoving())
-       {
-           std::println("Character is moving, switching to walking");
-       }
-
         return m_dependencies.movementComponent.IsMoving()
         ?  std::make_unique<Walking>(m_dependencies)
         : nullptr;

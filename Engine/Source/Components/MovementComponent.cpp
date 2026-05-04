@@ -6,15 +6,26 @@
 #include "Scene/GameObject.h"
 // Third-party
 #define GLM_ENABLE_EXPERIMENTAL
+#include "Core/Window.h"
 #include "glm/gtx/norm.hpp"
 
-Engine::MovementComponent::MovementComponent(GameObject& owner, float const pxPerSec) noexcept
+Engine::MovementComponent::MovementComponent(GameObject& owner, Dependencies const& dependencies, float const pxPerSec) noexcept
     : Component{owner}
+    , m_dependencies{ dependencies }
     , m_pxPerSec{ pxPerSec }
 {}
 
+bool Engine::MovementComponent::IsWithinScreen(glm::vec2 const topLeft) const
+{
+
+    // std::println("X: {}/{} Y: {}/{}", topLeft.x + dims.x, Game::windowData.logicalDims.x, topLeft.y + dims.y, Game::windowData.logicalDims.y);
+    return topLeft.x > 0.f && topLeft.x + m_dependencies.characterDims.x < static_cast<int>(m_dependencies.windowData.logicalDims.x) &&
+        topLeft.y > 0.f && topLeft.y + m_dependencies.characterDims.y < static_cast<int>(m_dependencies.windowData.logicalDims.y);
+}
+
 void Engine::MovementComponent::Update() noexcept
 {
+    // Updating the moving variable
     if (glm::length2(m_direction) < glm::epsilon<float>())
     {
         m_moving = false;
@@ -22,23 +33,29 @@ void Engine::MovementComponent::Update() noexcept
     }
     m_moving = true;
 
-    m_owner.SetLocalPosition(
-        m_owner.GetLocalPosition() + glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec()
-    );
-
-    // Firing event if direction changed
-    if (!Utils::NearlyEqual(m_prevDirection, m_direction) )
+    // Limiting player only to the screen borders
+    if (auto const deltaPosition{ glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec() };
+        IsWithinScreen(m_owner.GetWorldPosition() + deltaPosition))
     {
-        NotifyObservers(
-            Event{
-                std::to_underlying(EventType::OnDirectionChanged)
-            }
+        // Updating location
+        m_owner.SetLocalPosition(
+            m_owner.GetLocalPosition() + deltaPosition
         );
+
+        // Firing event if direction changed
+        if (!Utils::NearlyEqual(m_prevDirection, m_direction) )
+        {
+            NotifyObservers(
+                Event{
+                    std::to_underlying(EventType::OnDirectionChanged)
+                }
+            );
+        }
     }
 
+    // Saving the direction
     m_prevDirection = std::exchange(m_direction, {});
 }
-
 void Engine::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
 {
     m_direction += direction;

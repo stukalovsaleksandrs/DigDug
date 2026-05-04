@@ -49,7 +49,7 @@ Game::Application::Application()
 
     // Character
     {
-        auto& character{scene.CreateGameObject({})};
+        auto& character{scene.CreateGameObject({0.f, characterDims.y})};
 
         // Render component
         auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
@@ -59,7 +59,10 @@ Game::Application::Application()
             static_cast<float>(characterDims.x), static_cast<float>(characterDims.y)}});
 
         // Movement component
-        character.AddComponent<Engine::MovementComponent>(75.f);
+        character.AddComponent<Engine::MovementComponent>(
+            Engine::MovementComponent::Dependencies{windowData, characterDims},
+            75.f
+        );
 
         // Animation component
         character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{

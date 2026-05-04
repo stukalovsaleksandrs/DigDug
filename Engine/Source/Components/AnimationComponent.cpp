@@ -27,12 +27,6 @@ void Engine::AnimationComponent::Update() noexcept
         // Switching to the next frame
         ++m_currentFrameIdx %= m_data.frameCount;
 
-        // Debug output
-        std::cout << "Frame: " << m_currentFrameIdx
-                  << ", Rect: x=" << m_frames.at(m_currentFrameIdx).srcRect.x
-                  << ", y=" << m_frames.at(m_currentFrameIdx).srcRect.y
-                  << ", w=" << m_frames.at(m_currentFrameIdx).srcRect.w
-                  << ", h=" << m_frames.at(m_currentFrameIdx).srcRect.h << std::endl << std::endl;
         // Switching the sprite view in the render component
         m_ownerRenderComponent.SetSpriteView(m_frames.at(m_currentFrameIdx));
 
