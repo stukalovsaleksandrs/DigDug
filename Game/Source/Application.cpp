@@ -1,4 +1,4 @@
-// Project
+// Game
 #include "Constants.h"
 #include "Application.h"
 #include "Components/PlayerComponent.h"
@@ -9,6 +9,7 @@
 #include "Engine/Scene/Scene.h"
 #include "Engine/Components/MovementComponent.h"
 #include "Engine/Components/AnimationComponent.h"
+#include "Engine/Sound/SoundServiceLocator.h"
 #include "Engine/Rendering/Font.h"
 #include "Engine/Rendering/Sprite.h"
 // Standard
@@ -31,10 +32,16 @@ namespace fs = std::filesystem;
 }
 
 Game::Application::Application()
-    : Engine::Application(GetResourceFolderPath(), windowData, "Dig Dug")
+    : Engine::Application(windowData, "Dig Dug")
 {
     // cd into the resource directory
     fs::current_path(GetResourceFolderPath());
+
+    // Playing sound
+    auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
+    auto const soundId{ soundService.LoadSound("GameStart.mp3") };
+    soundService.SetVolume(0.0f);
+    soundService.PlaySound(soundId);
 
     // Loading assets
     m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
@@ -46,6 +53,9 @@ Game::Application::Application()
         auto& background{scene.CreateGameObject({})};
         background.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pBackgroundTexture.get()});
     }
+
+    // Grid
+    m_grid = std::make_unique<Grid>(characterDims.x, windowData.logicalDims);
 
     // Character
     {

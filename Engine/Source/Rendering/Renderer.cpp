@@ -78,7 +78,7 @@ void Engine::Renderer::Destroy()
     }
 }
 
-void Engine::Renderer::RenderTexture(Sprite const& texture, glm::vec2 const location) const
+void Engine::Renderer::RenderTexture(Sprite const& texture, glm::vec2 const location) const noexcept
 {
     SDL_FRect destination{};
     destination.x = location.x;
@@ -87,17 +87,23 @@ void Engine::Renderer::RenderTexture(Sprite const& texture, glm::vec2 const loca
     SDL_RenderTexture(m_pSDLRenderer, texture.GetSDLTexture(), nullptr, &destination);
 }
 
-void Engine::Renderer::RenderTexture(Sprite const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float const degrees, SDL_FlipMode const flipMode) const
+void Engine::Renderer::RenderTexture(Sprite const& texture, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float const degrees, SDL_FlipMode const flipMode) const noexcept
 {
     SDL_RenderTextureRotated(m_pSDLRenderer, texture.GetSDLTexture(), &srcRect, &dstRect, degrees, nullptr, flipMode);
 }
 
-void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd)
+void Engine::Renderer::RenderLine(glm::vec2 const p1, glm::vec2 const p2) const noexcept
+{
+    SDL_SetRenderDrawColor(m_pSDLRenderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderLine(m_pSDLRenderer, p1.x, p1.y, p2.x, p2.y);
+}
+
+void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd) noexcept
 {
     m_pRenderFunctions.push_back(&renderFunctionToAdd);
 }
 
-void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionToRemove)
+void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionToRemove) noexcept
 {
     // NOTE: [[maybe_unused]] is added to avoid unused variable errors in release build
     [[maybe_unused]] auto const erasedElementCount{
@@ -106,7 +112,7 @@ void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFuncti
     assert(erasedElementCount > 0 && "Render component not found");
 }
 
-void Engine::Renderer::InitializeImGui(SDL_Window* pWindow)
+void Engine::Renderer::InitializeImGui(SDL_Window* pWindow) noexcept
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

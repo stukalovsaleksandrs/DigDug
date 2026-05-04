@@ -14,7 +14,6 @@ namespace Engine
     {
     public:
         explicit Application(
-            std::filesystem::path const& resourcePath,
             Window::Data const& data,
             std::string_view windowTitle);
         virtual ~Application();

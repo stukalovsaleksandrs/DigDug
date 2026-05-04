@@ -11,7 +11,7 @@ namespace Game
 {
     glm::uvec2 constexpr characterDims{ 16, 16 };
 
-    Engine::Window::Data const windowData( { 224, 283 }, 3.f );
+    Engine::Window::Data const windowData( { 224, 288 }, 3.f );
 
     namespace EU = Engine::Utils;
 

@@ -25,7 +25,6 @@ void LoopCallback(void* arg)
 #endif
 
 Engine::Application::Application(
-    std::filesystem::path const& resourcePath,
     Window::Data const& data,
     std::string_view windowTitle)
 {
@@ -58,10 +57,6 @@ Engine::Application::Application(
 #else
     SoundServiceLocator::SetSoundService(*m_defaultSoundService.get());
 #endif
-    auto& soundService{ SoundServiceLocator::GetSoundService() };
-    auto const soundId{ soundService.LoadSound(resourcePath.string() + "/GameStart.mp3") };
-    soundService.SetVolume(0.2f);
-    soundService.PlaySound(soundId);
 }
 
 Engine::Application::~Application()

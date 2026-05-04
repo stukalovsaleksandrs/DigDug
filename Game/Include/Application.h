@@ -1,6 +1,8 @@
 #ifndef GAME_APPLICATION_H
 #define GAME_APPLICATION_H
 
+// Game
+#include "Grid.h"
 // Engine
 #include "Engine/Core/Application.h"
 #include "Engine/Scene/Scene.h"
@@ -23,6 +25,8 @@ namespace Game
 
         std::unique_ptr<Engine::Sprite> m_pBackgroundTexture{};
         std::unique_ptr<Engine::Sprite> m_pSpriteSheet{};
+
+        std::unique_ptr<Grid> m_grid;
     };
 }
 #endif// GAME_APPLICATION_H

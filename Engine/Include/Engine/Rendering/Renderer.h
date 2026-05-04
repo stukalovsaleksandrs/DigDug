@@ -32,19 +32,20 @@ namespace Engine
 
         void Destroy();
 
-        void RenderTexture(Sprite const&, glm::vec2 location) const;
-        void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float degrees, SDL_FlipMode flipMode = SDL_FLIP_NONE) const;
+        void RenderTexture(Sprite const&, glm::vec2 location) const noexcept;
+        void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float degrees, SDL_FlipMode flipMode = SDL_FLIP_NONE) const noexcept;
+        void RenderLine(glm::vec2 p1, glm::vec2 p2) const noexcept ;
 
-        [[nodiscard]] SDL_Renderer* GetSDLRenderer() const{ return m_pSDLRenderer; };
+        [[nodiscard]] SDL_Renderer* GetSDLRenderer() const noexcept { return m_pSDLRenderer; };
 
-        [[nodiscard]] const SDL_Color& GetBackgroundColor() const { return m_clearColor; }
-        void SetBackgroundColor(SDL_Color const& color) { m_clearColor = color; }
+        [[nodiscard]] const SDL_Color& GetBackgroundColor() const noexcept { return m_clearColor; }
+        void SetBackgroundColor(SDL_Color const& color) noexcept { m_clearColor = color; }
 
         // Adds the function for tracking, so the renderer now calls it
-        void RegisterFunction(RenderFunctionType const& renderFunctionToAdd);
+        void RegisterFunction(RenderFunctionType const& renderFunctionToAdd) noexcept;
 
         // Removes the function from tracking, so the renderer will not attempt to call it
-        void UnregisterFunction(RenderFunctionType const& renderFunctionToRemove);
+        void UnregisterFunction(RenderFunctionType const& renderFunctionToRemove) noexcept;
 
     private:
         SDL_Renderer* m_pSDLRenderer{};
@@ -52,7 +53,7 @@ namespace Engine
         std::vector<std::function<void()> const*> m_pRenderFunctions;// Non-owning
         std::vector<std::function<void()> const*> m_pDebugRenderFunctions;// Non-owning
 
-        void InitializeImGui(SDL_Window* pWindow);
+        void InitializeImGui(SDL_Window* pWindow) noexcept;
 
     };
 }
