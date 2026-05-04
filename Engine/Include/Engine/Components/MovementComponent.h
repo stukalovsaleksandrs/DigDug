@@ -19,7 +19,7 @@ namespace Engine
             Window::Data const& windowData;
             glm::uvec2 characterDims;
         };
-        explicit MovementComponent(GameObject& owner, Dependencies const&, float pxPerSec) noexcept;
+        explicit MovementComponent(GameObject& owner, Dependencies const&, uint32_t verticalPadding, float pxPerSec) noexcept;
         void Update() noexcept override;
         void AddDirection(glm::vec2 direction) noexcept;
         [[nodiscard]] glm::vec2 GetDirection() const noexcept{ return m_direction; };
@@ -31,6 +31,7 @@ namespace Engine
         glm::vec2 m_direction{}, m_prevDirection{};
         // It will not get more complex, I do not need a state machine for this, pinky promise
         bool m_moving{};
+        uint32_t m_verticalPadding{};
 
         bool IsWithinScreen(glm::vec2 topLeft) const;
     };

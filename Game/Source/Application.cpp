@@ -61,6 +61,7 @@ Game::Application::Application()
         // Movement component
         character.AddComponent<Engine::MovementComponent>(
             Engine::MovementComponent::Dependencies{windowData, characterDims},
+            characterDims.x,
             75.f
         );
 

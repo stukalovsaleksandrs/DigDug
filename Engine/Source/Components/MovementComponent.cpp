@@ -9,18 +9,19 @@
 #include "Core/Window.h"
 #include "glm/gtx/norm.hpp"
 
-Engine::MovementComponent::MovementComponent(GameObject& owner, Dependencies const& dependencies, float const pxPerSec) noexcept
+Engine::MovementComponent::MovementComponent(GameObject& owner, Dependencies const& dependencies, uint32_t const verticalPadding,
+    float const pxPerSec) noexcept
     : Component{owner}
     , m_dependencies{ dependencies }
     , m_pxPerSec{ pxPerSec }
+    , m_verticalPadding{ verticalPadding }
 {}
 
 bool Engine::MovementComponent::IsWithinScreen(glm::vec2 const topLeft) const
 {
-
     // std::println("X: {}/{} Y: {}/{}", topLeft.x + dims.x, Game::windowData.logicalDims.x, topLeft.y + dims.y, Game::windowData.logicalDims.y);
     return topLeft.x > 0.f && topLeft.x + m_dependencies.characterDims.x < static_cast<int>(m_dependencies.windowData.logicalDims.x) &&
-        topLeft.y > 0.f && topLeft.y + m_dependencies.characterDims.y < static_cast<int>(m_dependencies.windowData.logicalDims.y);
+        topLeft.y > m_verticalPadding && topLeft.y + m_dependencies.characterDims.y < static_cast<int>(m_dependencies.windowData.logicalDims.y) - m_verticalPadding;
 }
 
 void Engine::MovementComponent::Update() noexcept
