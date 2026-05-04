@@ -47,7 +47,22 @@ void Engine::Utils::PrintSDLVersion()
     LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
+
+/************************
+ * Nearly(Equal/Zero)
+ ************************/
+
 bool Engine::Utils::NearlyEqual(glm::vec2 const lhs, glm::vec2 const rhs)
 {
     return glm::distance2(lhs, rhs) < glm::epsilon<float>();
+}
+
+bool Engine::Utils::NearlyEqual(float const lhs, float const rhs)
+{
+    return std::fabs(lhs - rhs) < glm::epsilon<float>();
+}
+
+bool Engine::Utils::NearlyZero(float const value)
+{
+    return std::fabs(value) < glm::epsilon<float>();
 }

@@ -17,11 +17,13 @@ namespace Engine
         void Update() noexcept override;
         void AddDirection(glm::vec2 direction) noexcept;
         [[nodiscard]] glm::vec2 GetDirection() const noexcept{ return m_direction; };
+        [[nodiscard]] bool IsMoving() const noexcept;
 
     private:
         float m_pxPerSec{};
         glm::vec2 m_direction{}, m_prevDirection{};
-
+        // It will not get more complex, I do not need a state machine for this, pinky promise
+        bool m_moving{};
     };
 
 }

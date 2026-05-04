@@ -61,6 +61,17 @@ Game::Application::Application()
         // Movement component
         character.AddComponent<Engine::MovementComponent>(75.f);
 
+        // Animation component
+        character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
+            .firstSpriteView = Engine::Sprite::View{m_pSpriteSheet.get(),
+                SDL_FRect{0.f, 0.f,
+                static_cast<float>(characterDims.x),
+                static_cast<float>(characterDims.y)}
+                },
+            .frameCount = 2,
+            .secPerFrame = 0.1f
+        });
+
         // Player component
         auto& playerComponent{character.AddComponent<PlayerComponent>()};
 
@@ -79,16 +90,6 @@ Game::Application::Application()
         pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
         auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
         playerComponent.subject.BindObserver(pointDisplayComponent);
-
-        // Animation component
-        character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
-            .firstSpriteView = Engine::Sprite::View{m_pSpriteSheet.get(),
-                SDL_FRect{0.f, 0.f,
-                    static_cast<float>(characterDims.x),
-                    static_cast<float>(characterDims.y)}},
-            .frameCount = 2,
-            .secPerFrame = 0.1f
-        });
     }
 }
 

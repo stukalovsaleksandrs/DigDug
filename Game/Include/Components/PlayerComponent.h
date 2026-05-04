@@ -3,6 +3,7 @@
 
 // Game
 #include "Constants.h"
+#include "PlayerStateMachine.h"
 // Engine
 #include "Engine/Components/ComponentBase.h"
 #include "Engine/Core/Observer.h"
@@ -28,8 +29,10 @@ namespace Game
         PlayerComponent& operator=(PlayerComponent const&) noexcept = delete;
         PlayerComponent& operator=(PlayerComponent&&) noexcept = delete;
 
-        void BindInput();
-        void UnbindInput() const;
+        void Update() noexcept override;
+
+        void BindInput() noexcept;
+        void UnbindInput() const noexcept;
 
         void OnNotify(Engine::Event event, Engine::Subject const& caller) noexcept override;
 
@@ -49,6 +52,8 @@ namespace Game
 
         Engine::Event m_onPointsIncreased{ std::to_underlying(EventType::OnPointsIncreased) };
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
+
+        Player::StateMachine m_stateMachine;
     };
 }
 

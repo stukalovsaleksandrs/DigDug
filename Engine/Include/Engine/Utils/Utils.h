@@ -4,6 +4,7 @@
 // Third-party
 #include "glm/vec2.hpp"
 // Standard
+#include <memory>
 #include <string_view>
 
 namespace Engine::Utils {
@@ -20,12 +21,21 @@ namespace Engine::Utils {
 
     void PrintSDLVersion();
 
+    /********************
+     * Comparisons
+     ********************/
     bool NearlyEqual(glm::vec2 lhs, glm::vec2 rhs);
+    bool NearlyEqual(float lhs, float rhs);
+    bool NearlyZero(float value);
+
+    template<typename T, typename U>
+    bool HaveSameType(const std::unique_ptr<T>&, const std::unique_ptr<U>&) {
+        return std::is_same_v<T, U>;
+    }
 
     /********************
      * SDBM hashing
      ********************/
-
     template <int length> struct SDBMHash
     {
         consteval static unsigned int _Calculate(const char* const text, unsigned int& value) {
@@ -45,6 +55,8 @@ namespace Engine::Utils {
     template <size_t N> consteval unsigned int MakeSDBMHash(const char (&text)[N]) {
         return SDBMHash<N - 1>::Calculate(text);
     }
+
+
 
 }
 

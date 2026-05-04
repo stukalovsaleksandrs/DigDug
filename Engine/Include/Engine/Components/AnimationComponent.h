@@ -1,5 +1,5 @@
-#ifndef ENGINE_ANIMATIONCOMPONENT_H
-#define ENGINE_ANIMATIONCOMPONENT_H
+#ifndef ENGINE_ANIMATION_COMPONENT
+#define ENGINE_ANIMATION_COMPONENT
 
 // Engine
 #include "ComponentBase.h"
@@ -23,18 +23,18 @@ namespace Engine
             float secPerFrame;
         };
         explicit AnimationComponent(GameObject& owner, Data const&) noexcept;
-        ~AnimationComponent() noexcept override = default;
         void Update() noexcept override;
+        void ChangeAnimation(SDL_FRect srcRect, uint32_t frameCount) noexcept;
 
     private:
-        Data const m_data;
+        Data m_data;
         uint32_t m_currentFrameIdx{};
         float m_currentSec{};
         RenderComponent& m_ownerRenderComponent;
         std::vector<Sprite::View> m_frames;
 
-        void InitializeFrameSpriteViews();
+        void SetFrameSpriteViews();
     };
 }
 
-#endif //ENGINE_ANIMATIONCOMPONENT_H
+#endif //ENGINE_ANIMATION_COMPONENT

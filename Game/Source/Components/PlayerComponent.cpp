@@ -1,14 +1,18 @@
 // Game
 #include "Components/PlayerComponent.h"
-// Engine
 #include "Commands.h"
+// Engine
 #include "Engine/Components/MovementComponent.h"
 #include "Engine/Utils/Constants.h"
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner) noexcept
-    : Component(owner)
-    , m_movementComponent(*owner.GetComponent<Engine::MovementComponent>())
-    , m_renderComponent(*owner.GetComponent<Engine::RenderComponent>())
+    : Component{owner}
+    , m_movementComponent{*owner.GetComponent<Engine::MovementComponent>()}
+    , m_renderComponent{*owner.GetComponent<Engine::RenderComponent>()}
+    , m_stateMachine{{
+        .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
+        .movementComponent = m_movementComponent
+    }}
 {
     BindInput();
 
@@ -21,7 +25,13 @@ Game::PlayerComponent::~PlayerComponent() noexcept
     UnbindInput();
 }
 
-void Game::PlayerComponent::BindInput()
+void Game::PlayerComponent::Update() noexcept
+{
+    Component::Update();
+    m_stateMachine.Update();
+}
+
+void Game::PlayerComponent::BindInput() noexcept
 {
     Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
     // Movement
@@ -40,7 +50,7 @@ void Game::PlayerComponent::BindInput()
     //// TODO: Gamepad
 }
 
-void Game::PlayerComponent::UnbindInput() const
+void Game::PlayerComponent::UnbindInput() const noexcept
 {
     Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
     inputManager.Unbind(m_upAction);

@@ -1,12 +1,12 @@
 // Engine
 #include "Utils/Timer.h"
+#include "Components/MovementComponent.h"
 #include "Utils/Constants.h"
 #include "Engine/Components/AnimationComponent.h"
 #include "Engine/Scene/GameObject.h"
 // Standard
 #include <ranges>
-
-#include "Components/MovementComponent.h"
+#include <iostream>
 
 Engine::AnimationComponent::AnimationComponent(GameObject& owner, Data const& data) noexcept
     : Component{owner}
@@ -15,17 +15,24 @@ Engine::AnimationComponent::AnimationComponent(GameObject& owner, Data const& da
           m_owner.AddComponent<RenderComponent>(data.firstSpriteView)
       }
 {
-    InitializeFrameSpriteViews();
+    SetFrameSpriteViews();
 }
 
 void Engine::AnimationComponent::Update() noexcept
 {
     Component::Update();
+    if (m_data.frameCount < 1 || Utils::NearlyZero(m_data.secPerFrame)) return;
     if (m_currentSec >= m_data.secPerFrame)
     {
         // Switching to the next frame
         ++m_currentFrameIdx %= m_data.frameCount;
 
+        // Debug output
+        std::cout << "Frame: " << m_currentFrameIdx
+                  << ", Rect: x=" << m_frames.at(m_currentFrameIdx).srcRect.x
+                  << ", y=" << m_frames.at(m_currentFrameIdx).srcRect.y
+                  << ", w=" << m_frames.at(m_currentFrameIdx).srcRect.w
+                  << ", h=" << m_frames.at(m_currentFrameIdx).srcRect.h << std::endl << std::endl;
         // Switching the sprite view in the render component
         m_ownerRenderComponent.SetSpriteView(m_frames.at(m_currentFrameIdx));
 
@@ -40,8 +47,19 @@ void Engine::AnimationComponent::Update() noexcept
     m_currentSec += Timer::GetInstance().GetDeltaSec();
 }
 
-void Engine::AnimationComponent::InitializeFrameSpriteViews()
+void Engine::AnimationComponent::ChangeAnimation(SDL_FRect const srcRect, uint32_t const frameCount) noexcept
 {
+    m_data.firstSpriteView.srcRect = srcRect;
+    m_data.frameCount = frameCount;
+    SetFrameSpriteViews();
+    m_ownerRenderComponent.SetSpriteView(m_data.firstSpriteView);
+    m_currentFrameIdx = 0;
+    m_currentSec = 0.f;
+}
+
+void Engine::AnimationComponent::SetFrameSpriteViews()
+{
+    m_frames.clear();
     m_frames.reserve(m_data.frameCount);
     for (auto const frameSpriteIdx : std::views::iota(0u, m_data.frameCount))
     {

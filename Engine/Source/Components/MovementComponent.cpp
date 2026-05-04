@@ -15,7 +15,12 @@ Engine::MovementComponent::MovementComponent(GameObject& owner, float const pxPe
 
 void Engine::MovementComponent::Update() noexcept
 {
-    if (glm::length2(m_direction) < glm::epsilon<float>()) return;
+    if (glm::length2(m_direction) < glm::epsilon<float>())
+    {
+        m_moving = false;
+        return;
+    }
+    m_moving = true;
 
     m_owner.SetLocalPosition(
         m_owner.GetLocalPosition() + glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec()
@@ -37,4 +42,9 @@ void Engine::MovementComponent::Update() noexcept
 void Engine::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
 {
     m_direction += direction;
+}
+
+bool Engine::MovementComponent::IsMoving() const noexcept
+{
+    return m_moving;
 }
