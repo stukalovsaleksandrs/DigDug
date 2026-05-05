@@ -39,7 +39,6 @@ void Game::PlayerComponent::Update() noexcept
     if (auto const lerpedLocation{ m_locationLerpData.Update()};
         lerpedLocation != std::nullopt)
     {
-        std::println("Current location {}, {}", lerpedLocation.value().x, lerpedLocation.value().y);
         m_owner.SetLocalPosition(lerpedLocation.value());
     }
     m_movementComponent.Enable();

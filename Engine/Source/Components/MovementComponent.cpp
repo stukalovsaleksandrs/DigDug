@@ -20,13 +20,14 @@ Engine::MovementComponent::MovementComponent(GameObject& owner, Dependencies con
 bool Engine::MovementComponent::IsWithinScreen(glm::vec2 const topLeft) const
 {
     // std::println("X: {}/{} Y: {}/{}", topLeft.x + dims.x, Game::windowData.logicalDims.x, topLeft.y + dims.y, Game::windowData.logicalDims.y);
-    return topLeft.x > 0.f && topLeft.x + m_dependencies.characterDims.x < static_cast<int>(m_dependencies.windowData.logicalDims.x) &&
-        topLeft.y > m_verticalPadding && topLeft.y + m_dependencies.characterDims.y < static_cast<int>(m_dependencies.windowData.logicalDims.y) - m_verticalPadding;
+    static float constexpr epsilon{ 0.5f };
+    return topLeft.x >= -epsilon && topLeft.x + static_cast<float>(m_dependencies.characterDims.x) <= static_cast<float>(m_dependencies.windowData.logicalDims.x) + epsilon &&
+        topLeft.y >= (m_verticalPadding-epsilon) && topLeft.y + m_dependencies.characterDims.y <= static_cast<int>(m_dependencies.windowData.logicalDims.y) - (m_verticalPadding - epsilon);
 }
 
 void Engine::MovementComponent::Update() noexcept
 {
-    if (m_stopped) return;
+    if (m_disabled) return;
     // Updating the moving variable
     if (glm::length2(m_direction) < glm::epsilon<float>())
     {

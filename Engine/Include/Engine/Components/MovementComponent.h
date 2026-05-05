@@ -26,15 +26,15 @@ namespace Engine
         [[nodiscard]] bool IsMoving() const noexcept;
         [[nodiscard]] float GetPxPerSec() const noexcept{ return m_pxPerSec; };
         void SetCanMoveDiagonally(bool const canMoveDiagonally) noexcept{ m_canMoveDiagonally = canMoveDiagonally; };
-        void Enable() noexcept{ m_stopped = false; }
-        void Disable() noexcept{ m_stopped = true; }
+        void Enable() noexcept{ m_disabled = false; }
+        void Disable() noexcept{ m_disabled = true; }
 
     private:
         Dependencies m_dependencies;
         float m_pxPerSec{};
         glm::vec2 m_direction{}, m_prevDirection{};
         // It will not get more complex, I do not need a state machine for this, pinky promise
-        bool m_moving{}, m_canMoveDiagonally{}, m_stopped{};// I certainly don't lack abstractions
+        bool m_moving{}, m_canMoveDiagonally{}, m_disabled{};// I certainly don't lack abstractions
         uint32_t m_verticalPadding{};
 
         bool IsWithinScreen(glm::vec2 topLeft) const;
