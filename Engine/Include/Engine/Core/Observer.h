@@ -1,13 +1,11 @@
 #ifndef SE_OBSERVER_H
 #define SE_OBSERVER_H
 
+// Engine
+#include "Engine/Utils/Constants.h"
 // Standard
-#include <cstddef>
-#include <cstdint>
 #include <functional>
 #include <utility>
-
-#include "Engine/Utils/Constants.h"
 
 namespace Engine
 {

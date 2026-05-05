@@ -26,6 +26,7 @@ bool Engine::MovementComponent::IsWithinScreen(glm::vec2 const topLeft) const
 
 void Engine::MovementComponent::Update() noexcept
 {
+    if (m_stopped) return;
     // Updating the moving variable
     if (glm::length2(m_direction) < glm::epsilon<float>())
     {
@@ -44,19 +45,31 @@ void Engine::MovementComponent::Update() noexcept
         );
 
         // Firing event if direction changed
-        if (!Utils::NearlyEqual(m_prevDirection, m_direction) )
+        if (!Utils::NearlyEqual(m_prevDirection, m_direction) && !Utils::NearlyEqual(m_prevDirection, {}))
         {
+            // Dispatching that direction changed in general
             NotifyObservers(
                 Event{
                     std::to_underlying(EventType::OnDirectionChanged)
                 }
             );
+
+            // Dispatching whether the movement axis changed
+            if (Utils::NearlyZero(glm::dot(m_prevDirection, m_direction)))
+            {
+                NotifyObservers(
+                    Event{
+                        std::to_underlying(EventType::OnMovementAxisChanged)
+                    }
+                );
+            }
         }
     }
 
     // Saving the direction
     m_prevDirection = std::exchange(m_direction, {});
 }
+
 void Engine::MovementComponent::AddDirection(glm::vec2 const direction) noexcept
 {
     if (m_canMoveDiagonally) m_direction += direction;

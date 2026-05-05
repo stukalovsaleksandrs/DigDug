@@ -13,6 +13,7 @@ namespace Engine
     {
         SubjectDeleted = Utils::MakeSDBMHash("SubjectDeleted"),
         OnDirectionChanged = Utils::MakeSDBMHash("OnDirectionChanged"),
+        OnMovementAxisChanged = Utils::MakeSDBMHash("OnMovementAxisChanged"),
     };
 }
 

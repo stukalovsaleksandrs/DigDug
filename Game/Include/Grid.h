@@ -18,6 +18,11 @@ namespace Game
     public:
         Grid(int32_t cellSideLength, glm::ivec2 logicalWindowDims);
         void Render() const;
+        // Returns the location(in cells) of the cell the input point(in pixels) is in
+        [[nodiscard]] glm::ivec2 GetCellFromPoint(glm::vec2 point) const noexcept;
+
+        // Returns the location(in pixels) of the top left corner of the input cell(in cells)
+        [[nodiscard]] glm::vec2 GetCellTopLeft(glm::ivec2 cell) const noexcept;
 
     private:
         int32_t m_cellSideLength;

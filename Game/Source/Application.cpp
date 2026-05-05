@@ -87,7 +87,7 @@ Game::Application::Application()
         });
 
         // Player component
-        auto& playerComponent{character.AddComponent<PlayerComponent>()};
+        auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*m_grid})};
 
         // Lives component
         auto& livesComponent{character.AddComponent<LivesComponent>(2)};

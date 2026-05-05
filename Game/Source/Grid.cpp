@@ -42,3 +42,19 @@ void Game::Grid::Render() const
         );
     }
 }
+
+glm::ivec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
+{
+    return {
+        static_cast<int>(point.x / m_cellSideLength),
+        static_cast<int>(point.y / m_cellSideLength)
+    };
+}
+
+glm::vec2 Game::Grid::GetCellTopLeft(glm::ivec2 const cell) const noexcept
+{
+    return {
+        static_cast<float>(cell.x * m_cellSideLength),
+        static_cast<float>(cell.y * m_cellSideLength),
+    };
+}

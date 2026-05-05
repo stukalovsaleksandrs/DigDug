@@ -24,14 +24,17 @@ namespace Engine
         void AddDirection(glm::vec2 direction) noexcept;
         [[nodiscard]] glm::vec2 GetDirection() const noexcept{ return m_direction; };
         [[nodiscard]] bool IsMoving() const noexcept;
+        [[nodiscard]] float GetPxPerSec() const noexcept{ return m_pxPerSec; };
         void SetCanMoveDiagonally(bool const canMoveDiagonally) noexcept{ m_canMoveDiagonally = canMoveDiagonally; };
+        void Enable() noexcept{ m_stopped = false; }
+        void Disable() noexcept{ m_stopped = true; }
 
     private:
         Dependencies m_dependencies;
         float m_pxPerSec{};
         glm::vec2 m_direction{}, m_prevDirection{};
         // It will not get more complex, I do not need a state machine for this, pinky promise
-        bool m_moving{}, m_canMoveDiagonally{};// I certainly don't lack abstractions
+        bool m_moving{}, m_canMoveDiagonally{}, m_stopped{};// I certainly don't lack abstractions
         uint32_t m_verticalPadding{};
 
         bool IsWithinScreen(glm::vec2 topLeft) const;
