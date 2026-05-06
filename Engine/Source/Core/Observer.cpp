@@ -1,4 +1,6 @@
+// Engine
 #include "Core/Observer.h"
+// Standard
 #include <algorithm>
 
 /*******************************************
@@ -33,9 +35,9 @@ void Engine::Subject::BindObserver(Observer& observer) noexcept
 
 void Engine::Subject::RemoveObserver(Observer& observer) noexcept
 {
-    auto& vec = m_pObservers;
+    if (m_pObservers.empty()) return;
     // NOTE: Just std::erase does not work for Emscripten
-    vec.erase(std::remove(vec.begin(), vec.end(), &observer), vec.end());
+    m_pObservers.erase(std::remove(m_pObservers.begin(), m_pObservers.end(), &observer), m_pObservers.end());
 }
 
 Engine::Subject::~Subject() noexcept

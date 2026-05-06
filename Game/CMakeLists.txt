@@ -123,13 +123,13 @@ target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME})
 target_link_directories(${GAME_NAME} PRIVATE ${BINARY_DIR})
 
 # Copying SDL to game dir
-foreach (DLL_TARGET IN LISTS SDL_RUNTIME_LIBRARIES)
+foreach (DLL_TARGET IN LISTS SDL_LIBS)
 add_custom_command(
 	TARGET ${GAME_NAME}
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 	"$<TARGET_FILE:${DLL_TARGET}>"
-	${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
 	VERBATIM
 )
 endforeach ()
