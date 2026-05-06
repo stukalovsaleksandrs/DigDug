@@ -17,7 +17,7 @@ namespace Engine
         struct Dependencies final
         {
             Window::Data const& windowData;
-            glm::uvec2 characterDims;
+            uint32_t tileSideLength;
         };
         explicit MovementComponent(GameObject& owner, Dependencies const&, uint32_t verticalPadding, float pxPerSec) noexcept;
         void Update() noexcept override;

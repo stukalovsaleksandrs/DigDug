@@ -21,8 +21,8 @@ bool Engine::MovementComponent::IsWithinScreen(glm::vec2 const topLeft) const
 {
     // std::println("X: {}/{} Y: {}/{}", topLeft.x + dims.x, Game::windowData.logicalDims.x, topLeft.y + dims.y, Game::windowData.logicalDims.y);
     static float constexpr epsilon{ 0.5f };
-    return topLeft.x >= -epsilon && topLeft.x + static_cast<float>(m_dependencies.characterDims.x) <= static_cast<float>(m_dependencies.windowData.logicalDims.x) + epsilon &&
-        topLeft.y >= (m_verticalPadding-epsilon) && topLeft.y + m_dependencies.characterDims.y <= static_cast<int>(m_dependencies.windowData.logicalDims.y) - (m_verticalPadding - epsilon);
+    return topLeft.x >= -epsilon && topLeft.x + static_cast<float>(m_dependencies.tileSideLength) <= static_cast<float>(m_dependencies.windowData.logicalDims.x) + epsilon &&
+        topLeft.y >= (m_verticalPadding-epsilon) && topLeft.y + m_dependencies.tileSideLength <= static_cast<int>(m_dependencies.windowData.logicalDims.y) - (m_verticalPadding - epsilon);
 }
 
 void Engine::MovementComponent::Update() noexcept

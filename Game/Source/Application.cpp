@@ -55,23 +55,23 @@ Game::Application::Application()
     }
 
     // Grid
-    m_grid = std::make_unique<Grid>(characterDims.x, windowData.logicalDims);
+    m_grid = std::make_unique<Grid>(tileSideLength, windowData.logicalDims);
 
     // Character
     {
-        auto& character{scene.CreateGameObject({1.f, characterDims.y + 1})};
+        auto& character{scene.CreateGameObject({1.f, tileSideLength + 1})};
 
         // Render component
         auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
             Engine::Sprite::View{m_pSpriteSheet.get()}
         )};
         characterRenderComponent.SetSpriteView({m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
-            static_cast<float>(characterDims.x), static_cast<float>(characterDims.y)}});
+            static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
 
         // Movement component
         character.AddComponent<Engine::MovementComponent>(
-            Engine::MovementComponent::Dependencies{windowData, characterDims},
-            characterDims.x,
+            Engine::MovementComponent::Dependencies{windowData, tileSideLength},
+            tileSideLength,
             75.f
         );
 
@@ -79,8 +79,8 @@ Game::Application::Application()
         character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
             .firstSpriteView = Engine::Sprite::View{m_pSpriteSheet.get(),
                 SDL_FRect{0.f, 0.f,
-                static_cast<float>(characterDims.x),
-                static_cast<float>(characterDims.y)}
+                static_cast<float>(tileSideLength),
+                static_cast<float>(tileSideLength)}
                 },
             .frameCount = 2,
             .secPerFrame = 0.1f

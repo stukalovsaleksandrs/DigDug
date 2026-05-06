@@ -23,7 +23,7 @@ namespace Game
     public:
         struct Dependencies final
         {
-            Grid const& grid;
+            Grid& grid;
         };
 
         Engine::Subject subject;

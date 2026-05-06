@@ -1,3 +1,5 @@
+#define ENABLE_DEBUG_DRAWING FALSE
+
 // Game
 #include "Grid.h"
 // Engine
@@ -24,6 +26,7 @@ Game::Grid::Grid(int32_t const cellSideLength, glm::ivec2 const logicalWindowDim
 
 void Game::Grid::Render() const
 {
+#if ENABLE_DEBUG_DRAWING
     // Colls
     for(auto const collIdx : std::views::iota(1, m_dimsInCells.x))
     {
@@ -41,6 +44,7 @@ void Game::Grid::Render() const
             {m_dimsInPx.y, m_cellSideLength * rowIdx}
         );
     }
+#endif// ENABLE_DEBUG_DRAWING
 }
 
 glm::ivec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
@@ -57,4 +61,10 @@ glm::vec2 Game::Grid::GetCellTopLeft(glm::ivec2 const cell) const noexcept
         static_cast<float>(cell.x * m_cellSideLength),
         static_cast<float>(cell.y * m_cellSideLength),
     };
+}
+
+void Game::Grid::TryDigging(glm::ivec2 const point, int32_t const radius) noexcept
+{
+    // TODO: Implement
+    // throw std::runtime_error("NOT IMPLEMENTED");
 }

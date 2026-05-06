@@ -24,10 +24,12 @@ namespace Game
         // Returns the location(in pixels) of the top left corner of the input cell(in cells)
         [[nodiscard]] glm::vec2 GetCellTopLeft(glm::ivec2 cell) const noexcept;
 
+        void TryDigging(glm::ivec2 point, int32_t radius) noexcept;
+
     private:
         int32_t m_cellSideLength;
         glm::ivec2 m_dimsInPx;
-        glm::ivec2 m_dimsInCells;
+        glm::ivec2 m_dimsInCells{};
         Engine::Renderer& m_renderer;
         std::function<void()> m_renderFunction{ [this]{ Render(); } };
 

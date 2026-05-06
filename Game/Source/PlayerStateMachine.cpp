@@ -17,8 +17,8 @@ namespace Game
     {
         m_dependencies.animationComponent.ChangeAnimation(
             SDL_FRect{0.f, 0.f,
-                static_cast<float>(characterDims.x),
-                static_cast<float>(characterDims.y)},
+                static_cast<float>(tileSideLength),
+                static_cast<float>(tileSideLength)},
             1
         );
 }
@@ -41,8 +41,8 @@ namespace Game
     {
         m_dependencies.animationComponent.ChangeAnimation(
             SDL_FRect{0.f, 0.f,
-                static_cast<float>(characterDims.x),
-                static_cast<float>(characterDims.y)},
+                static_cast<float>(tileSideLength),
+                static_cast<float>(tileSideLength)},
             2
         );
     }

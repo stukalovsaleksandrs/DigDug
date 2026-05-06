@@ -147,6 +147,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL3_mixer)
 
 #################################
+# SDL3_image
+#################################
+FetchContent_Declare(
+    SDL3_image
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_image
+    GIT_TAG release-3.4.4
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(SDL3_image)
+
+#################################
 # VLD
 #################################
 if (WIN32)
@@ -186,6 +198,7 @@ set(SDL_RUNTIME_DLLS
       SDL3::SDL3
       SDL3_ttf::SDL3_ttf
       SDL3_mixer::SDL3_mixer
+      SDL3_image::SDL3_image
  )
 
 # TODO: Do not make everything public

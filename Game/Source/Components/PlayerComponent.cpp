@@ -42,6 +42,19 @@ void Game::PlayerComponent::Update() noexcept
         m_owner.SetLocalPosition(lerpedLocation.value());
     }
     m_movementComponent.Enable();
+
+    // Trying to dig
+    if (m_movementComponent.IsMoving())
+    {
+        auto const worldPosition{m_owner.GetWorldPosition()};
+        m_dependencies.grid.TryDigging(
+            {
+                static_cast<int32_t>(worldPosition.x),
+                static_cast<int32_t>(worldPosition.y),
+            },
+            tileSideLength
+        );
+    }
 }
 
 void Game::PlayerComponent::BindInput() noexcept
@@ -131,7 +144,7 @@ void Game::PlayerComponent::ConstrainMovementToGrid() noexcept
 
 glm::vec2 Game::PlayerComponent::GetCurrentCellTopLeft() const noexcept
 {
-    glm::ivec2 const currentCell{ m_dependencies.grid.GetCellFromPoint(m_owner.GetWorldPosition() + 0.5f * glm::vec2{characterDims}) };
+    glm::ivec2 const currentCell{ m_dependencies.grid.GetCellFromPoint(m_owner.GetWorldPosition() + 0.5f * glm::vec2{tileSideLength}) };
     return m_dependencies.grid.GetCellTopLeft(currentCell);
 }
 

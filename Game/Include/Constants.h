@@ -9,7 +9,7 @@
 
 namespace Game
 {
-    glm::uvec2 constexpr characterDims{ 16, 16 };
+    uint32_t constexpr tileSideLength{ 16 };// in px
 
     Engine::Window::Data const windowData( { 224, 288 }, 3.f );
 
