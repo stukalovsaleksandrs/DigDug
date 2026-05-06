@@ -40,7 +40,7 @@ Game::Application::Application()
     // Playing sound
     auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
     auto const soundId{ soundService.LoadSound("GameStart.mp3") };
-    soundService.SetVolume(0.0f);
+    soundService.SetVolume(0.05f);
     soundService.PlaySound(soundId);
 
     // Loading assets
