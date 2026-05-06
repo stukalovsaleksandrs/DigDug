@@ -34,7 +34,8 @@ void Engine::Subject::BindObserver(Observer& observer) noexcept
 void Engine::Subject::RemoveObserver(Observer& observer) noexcept
 {
     auto& vec = m_pObservers;
-    std::erase(vec, &observer);
+    // NOTE: Just std::erase does not work for Emscripten
+    vec.erase(std::remove(vec.begin(), vec.end(), &observer), vec.end());
 }
 
 Engine::Subject::~Subject() noexcept

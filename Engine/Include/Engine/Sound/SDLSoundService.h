@@ -6,6 +6,7 @@
 // Standard
 #include <memory>
 #include <string_view>
+#include <format>// Required by the Emscripten
 
 namespace Engine
 {
