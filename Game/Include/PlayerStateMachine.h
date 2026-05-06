@@ -51,7 +51,7 @@ namespace Game::Player
         void Update() noexcept;
 
     private:
-        std::unique_ptr<Engine::IState> m_pCurrentState;
+        Engine::pState m_pCurrentState;
 
         void TryChangingState(Engine::pState);
 

@@ -55,7 +55,7 @@ namespace Game
     }
 
     /************************
-     * PlayerStateMachine
+     * StateMachine
      ************************/
     Player::StateMachine::StateMachine(State::Dependencies const& dependencies) noexcept
         : m_pCurrentState{ std::make_unique<State::Idle>(dependencies) }
