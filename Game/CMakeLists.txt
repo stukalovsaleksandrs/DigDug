@@ -123,7 +123,7 @@ target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME})
 target_link_directories(${GAME_NAME} PRIVATE ${BINARY_DIR})
 
 # Copying SDL to game dir
-foreach (DLL_TARGET IN LISTS SDL_RUNTIME_DLLS)
+foreach (DLL_TARGET IN LISTS SDL_RUNTIME_LIBRARIES)
 add_custom_command(
 	TARGET ${GAME_NAME}
 	POST_BUILD

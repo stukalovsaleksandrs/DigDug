@@ -147,21 +147,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL3_mixer)
 
 #################################
-# SDL3_image
-#################################
-# NOTE: Windows build cannot find a dependency required for AVIF support
-set(ENABLE_AVIF OFF CACHE BOOL "Disable AVIF support" FORCE)
-set(SDL3_IMAGE_AVIF OFF CACHE BOOL "Disable AVIF support" FORCE)
-FetchContent_Declare(
-    SDL3_image
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_image
-    GIT_TAG release-3.4.4
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-)
-FetchContent_MakeAvailable(SDL3_image)
-
-#################################
 # VLD
 #################################
 if (WIN32)
@@ -197,16 +182,15 @@ endif()
 set(COMMON_DEPENDENCIES "CommonDependencies")
 add_library(${COMMON_DEPENDENCIES} INTERFACE)
 
-set(SDL_RUNTIME_DLLS
-      SDL3::SDL3
-      SDL3_ttf::SDL3_ttf
-      SDL3_mixer::SDL3_mixer
-      SDL3_image::SDL3_image
+set(SDL_LIBS
+    SDL3::SDL3
+    SDL3_ttf::SDL3_ttf
+    SDL3_mixer::SDL3_mixer
  )
 
 # TODO: Do not make everything public
 target_link_libraries(${COMMON_DEPENDENCIES} INTERFACE
-  ${SDL_RUNTIME_DLLS}
+  ${SDL_LIBS}
   glm
   imgui
   implot
@@ -228,4 +212,3 @@ target_link_libraries(${ENGINE_NAME} PUBLIC ${COMMON_DEPENDENCIES})
 
 # Game
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Game")
-
