@@ -1,6 +1,7 @@
 // Game
 #include "Components/DiggingComponent.hpp"
 // Engine
+#include "Constants.hpp"
 #include "Engine/Rendering/Renderer.hpp"
 #include "Engine/Scene/GameObject.hpp"
 
@@ -17,5 +18,7 @@ Game::DiggingComponent::~DiggingComponent() noexcept
 
 void Game::DiggingComponent::Render() const noexcept
 {
-    Engine::Renderer::GetInstance().RenderFilledCircle(m_owner.GetWorldLocation(), 10.f);
+    static auto constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
+    static float constexpr halfTileSideLength{ 0.5f * tileSideLength };
+    Engine::Renderer::GetInstance().RenderFilledCircle(m_owner.GetWorldLocation() + offset, halfTileSideLength);
 }
