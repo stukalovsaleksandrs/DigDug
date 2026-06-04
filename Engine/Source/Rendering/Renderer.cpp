@@ -1,22 +1,30 @@
-﻿// Project
+﻿// Engine
 #include "Utils/Utils.h"
 #include "Rendering/Renderer.h"
 #include "Rendering/Sprite.h"
 #include "Components/Components.h"
+#include "Core/Window.h"
 // Third-party
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlrenderer3.h>
 #include <implot.h>
+#define GLM_ENABLE_EXPERIMENTAL// Required for norm.hpp
+#include <glm/gtx/norm.hpp>
 // Standard
 #include <iostream>
 #include <chrono>
+#include <cmath>
+#include <ranges>
 
-void Engine::Renderer::Init(SDL_Window* pWindow, glm::uvec2 const logicalDims)
+void Engine::Renderer::Init(Window const& window)
 {
+    // Saving the window
+    m_pWindow = &window;
+
     // Creating renderer
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-    m_pSDLRenderer = SDL_CreateRenderer(pWindow, nullptr);
+    m_pSDLRenderer = SDL_CreateRenderer(window.Get(), nullptr);
     if (!m_pSDLRenderer)
     {
         std::cout << "Failed to create the renderer: " << SDL_GetError() << "\n";
@@ -27,14 +35,14 @@ void Engine::Renderer::Init(SDL_Window* pWindow, glm::uvec2 const logicalDims)
     Utils::Check(
         SDL_SetRenderLogicalPresentation(
             m_pSDLRenderer,
-            static_cast<int>(logicalDims.x),
-            static_cast<int>(logicalDims.y),
+            static_cast<int>(m_pWindow->data.logicalDims.x),
+            static_cast<int>(m_pWindow->data.logicalDims.y),
             SDL_LOGICAL_PRESENTATION_LETTERBOX
         ), "Failed creating logical representation of the window"
     );
 
     // Initializing ImGui
-    InitializeImGui(pWindow);
+    InitializeImGui(window.Get());
 }
 
 void Engine::Renderer::Render() const
@@ -51,6 +59,9 @@ void Engine::Renderer::Render() const
 
     // Calling the render functions
     for (auto* const pRenderFunction : m_pRenderFunctions) pRenderFunction->operator()();
+
+    // TODO: Remove
+    RenderFilledCircle(static_cast<glm::vec2>(m_pWindow->data.logicalDims) * 0.5f, 25.f);
 
     // Showing the new frame
     SDL_RenderPresent(m_pSDLRenderer);
@@ -96,6 +107,35 @@ void Engine::Renderer::RenderLine(glm::vec2 const p1, glm::vec2 const p2) const 
 {
     SDL_SetRenderDrawColor(m_pSDLRenderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderLine(m_pSDLRenderer, p1.x, p1.y, p2.x, p2.y);
+}
+
+void Engine::Renderer::RenderFilledCircle(glm::vec2 const center, float const radius) const noexcept
+{
+    using std::ranges::views::iota;
+
+    auto const logicalDims{ static_cast<glm::i32vec2>(m_pWindow->data.logicalDims) };
+    assert(center.y > 0 && center.y < logicalDims.y && center.y > 0 && center.y < logicalDims.y
+        && "Center is outside of window logical dims, make sure you keep logical and not physical dims into account");
+
+    float const radiusSq = radius * radius;
+
+    for (std::pair const vertPoints{// Pair conveys the semantic of the abstraction better than vector
+            std::max(0, static_cast<int32_t>(center.y - radius)),// Top
+            std::min(logicalDims.y - 1, static_cast<int32_t>(center.y + radius))// Bottom
+        };
+        int32_t const y : iota(vertPoints.first, vertPoints.second + 1))// +1 due to half inclusive range
+    {
+        for (std::pair const horPoints{
+                std::max(0, static_cast<int32_t>(center.x - radius)),// Left
+                std::min(logicalDims.x - 1, static_cast<int32_t>(center.x + radius))// Right
+            };
+            int32_t const x : iota(horPoints.first, horPoints.second + 1)){
+            if (glm::vec2 const point{ static_cast<float>(x), static_cast<float>(y) };
+                glm::length2(point - center) <= radiusSq) {
+                SDL_RenderPoint(m_pSDLRenderer, point.x, point.y);
+            }
+        }
+    }
 }
 
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd) noexcept

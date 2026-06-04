@@ -40,10 +40,10 @@ Engine::Application::Application(
     }
 
     // Window
-    m_pWindow = std::make_unique<Window>(data.dims, windowTitle);
+    m_pWindow = std::make_unique<Window>(data, windowTitle);
 
     // Renderer
-    Renderer::GetInstance().Init(m_pWindow->Get(), data.logicalDims);
+    Renderer::GetInstance().Init(*m_pWindow);
 
     // TTF
     Utils::Check(

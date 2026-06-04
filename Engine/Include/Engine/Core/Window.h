@@ -18,8 +18,11 @@ namespace Engine
 
             Data(glm::vec2 logicalDims, float scale) noexcept;
         };
-        explicit Window(glm::uvec2 dims, std::string_view title);
-        ~Window();
+
+        Data const data;
+
+        explicit Window(Data const&, std::string_view title);
+        ~Window() noexcept;
         Window(Window const&) noexcept = delete;
         Window(Window&&) noexcept = delete;
         Window& operator=(Window const&) noexcept = delete;

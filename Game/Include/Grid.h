@@ -17,6 +17,12 @@ namespace Game
     {
     public:
         Grid(int32_t cellSideLength, glm::ivec2 logicalWindowDims);
+        ~Grid() noexcept;
+        Grid(Grid const&) noexcept = delete;
+        Grid(Grid &&) noexcept = delete;
+        Grid& operator=(Grid const&) noexcept = delete;
+        Grid& operator=(Grid &&) noexcept = delete;
+
         void Render() const;
         // Returns the location(in cells) of the cell the input point(in pixels) is in
         [[nodiscard]] glm::ivec2 GetCellFromPoint(glm::vec2 point) const noexcept;

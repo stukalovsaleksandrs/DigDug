@@ -1,4 +1,4 @@
-#define ENABLE_DEBUG_DRAWING FALSE
+//#define ENABLE_DEBUG_DRAWING
 
 // Game
 #include "Grid.h"
@@ -24,9 +24,14 @@ Game::Grid::Grid(int32_t const cellSideLength, glm::ivec2 const logicalWindowDim
     m_renderer.RegisterFunction(m_renderFunction);
 }
 
+Game::Grid::~Grid() noexcept
+{
+    m_renderer.UnregisterFunction(m_renderFunction);
+}
+
 void Game::Grid::Render() const
 {
-#if ENABLE_DEBUG_DRAWING
+#ifdef ENABLE_DEBUG_DRAWING
     // Colls
     for(auto const collIdx : std::views::iota(1, m_dimsInCells.x))
     {
@@ -65,6 +70,5 @@ glm::vec2 Game::Grid::GetCellTopLeft(glm::ivec2 const cell) const noexcept
 
 void Game::Grid::TryDigging(glm::ivec2 const point, int32_t const radius) noexcept
 {
-    // TODO: Implement
-    // throw std::runtime_error("NOT IMPLEMENTED");
+
 }

@@ -4,6 +4,7 @@
 // Engine
 #include "Engine/Utils/Constants.h"
 // Standard
+#include <any>
 #include <functional>
 #include <utility>
 
@@ -18,9 +19,11 @@ namespace Engine
         EventId const id;
         // static constexpr uint8_t maxArgumentCount{ 8 };
         // uint8_t argumentCount;
+        std::any arguments;
 
-        explicit Event(EventId const in_id)
+        explicit Event(EventId const in_id/*, std::any arguments*/)
             : id{in_id}
+            // , std::any
             // , argumentCount{in_argumentCount}
         {}
     };
