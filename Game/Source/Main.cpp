@@ -234,32 +234,6 @@ int main(int, char*[]) {
 //         SDL_DestroyTexture(playerTexture);
 //     }
 //
-//     // void DigCircle(float cx, float cy, float radius)
-//     // {
-//     //     using std::ranges::views::iota;
-//     //
-//     //     auto const logicalDims{ static_cast<glm::ivec2>(m_pWindow->data.logicalDims) };
-//     //     float const radiusSq = radius * radius;
-//     //
-//     //     for (std::pair const vertPoints{// Pair conveys the semantic of the abstraction better than vector
-//     //             std::max(0, static_cast<int32_t>(center.y - radius)),// Top
-//     //             std::min(logicalDims.y - 1, static_cast<int32_t>(center.y + radius))// Bottom
-//     //         };
-//     //         int32_t const y : iota(vertPoints.first, vertPoints.second + 1))// +1 due to half inclusive range
-//     //     {
-//     //         for (std::pair const horPoints{
-//     //                 std::max(0, static_cast<int32_t>(center.x - radius)),// Left
-//     //                 std::min(logicalDims.x - 1, static_cast<int32_t>(center.x + radius))// Right
-//     //             };
-//     //             int32_t const x : iota(horPoints.first, horPoints.second + 1)){
-//     //             if (glm::vec2 const point{ static_cast<float>(x), static_cast<float>(y) };
-//     //                 glm::length2(point - center) <= radiusSq) {
-//     //                 SDL_RenderPoint(m_pSDLRenderer, point.x, point.y);
-//     //                 }
-//     //             }
-//     //     }
-//     // }
-//
 //     void DigCircle(float cx, float cy, float radius) {
 //         SDL_SetRenderTarget(renderer, maskTexture);
 //

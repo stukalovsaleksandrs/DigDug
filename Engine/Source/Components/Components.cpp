@@ -32,7 +32,7 @@ Engine::RenderComponent::~RenderComponent()
 
 void Engine::RenderComponent::Render() const noexcept {
     assert(m_spriteView.pSprite && "Texture is not set");
-    auto const& topLeft{ m_owner.GetWorldPosition() };
+    auto const& topLeft{ m_owner.GetWorldLocation() };
     if (m_spriteView.srcRect.w > 0.f && m_spriteView.srcRect.h > 0.f)
     {
         Renderer::GetInstance().RenderTexture(
@@ -190,7 +190,7 @@ void Engine::OrbitComponent::Update() noexcept
     Component::Update();
 
     // 1. Getting the normalized distance vector and distance
-    auto const distanceVector{ m_owner.GetWorldPosition() - m_owner.hierarchyElement.GetParentGameObject()->GetWorldPosition() };
+    auto const distanceVector{ m_owner.GetWorldLocation() - m_owner.hierarchyElement.GetParentGameObject()->GetWorldLocation() };
     // NOTE: glm::vec2::length always returns 2 for some reason
     float const distance{ glm::sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y) };
     glm::vec2 const distanceVectorNormalized{ glm::normalize(distanceVector) };

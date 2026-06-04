@@ -15,6 +15,8 @@
 // Standard
 #include <filesystem>
 
+#include "Components/DiggingComponent.h"
+
 namespace fs = std::filesystem;
 
 [[nodiscard]] std::string GetResourceFolderPath()
@@ -86,6 +88,9 @@ Game::Application::Application()
             .secPerFrame = 0.1f
         });
 
+        // Digging component
+        character.AddComponent<DiggingComponent>();
+
         // Player component
         auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*m_grid})};
 
@@ -94,16 +99,20 @@ Game::Application::Application()
         livesComponent.subject.BindObserver(playerComponent);
 
         // Lives display
-        auto& livesDisplay{scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.dims.y) - 10.f})};
-        livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get()); // NOTE: Text must not be empty
-        auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
-        livesComponent.subject.BindObserver(livesDisplayComponent);
+        {
+            auto& livesDisplay{scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.dims.y) - 10.f})};
+            livesDisplay.AddComponent<Engine::TextComponent>(" ", m_pFont.get()); // NOTE: Text must not be empty
+            auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
+            livesComponent.subject.BindObserver(livesDisplayComponent);
+        }
 
         // Point display
-        auto& pointDisplay{scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.dims.y) - 20.f})};
-        pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
-        auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
-        playerComponent.subject.BindObserver(pointDisplayComponent);
+        {
+            auto& pointDisplay{scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.dims.y) - 20.f})};
+            pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_pFont.get());
+            auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
+            playerComponent.subject.BindObserver(pointDisplayComponent);
+        }
     }
 }
 

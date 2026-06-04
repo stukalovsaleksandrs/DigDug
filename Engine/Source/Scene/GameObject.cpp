@@ -44,12 +44,12 @@ void Engine::GameObject::SetLocalPosition(glm::vec2 const position) noexcept
     SetPositionDirty();
 }
 
-glm::vec2 Engine::GameObject::GetLocalPosition() const noexcept
+glm::vec2 Engine::GameObject::GetLocalLocation() const noexcept
 {
     return m_localPosition;
 }
 
-glm::vec2 Engine::GameObject::GetWorldPosition() noexcept
+glm::vec2 Engine::GameObject::GetWorldLocation() noexcept
 {
     if (m_positionIsDirty)
     {
@@ -77,7 +77,7 @@ void Engine::GameObject::UpdateWorldPosition() noexcept
     else
     {
         m_worldPosition =
-            hierarchyElement.GetParentGameObject()->GetWorldPosition()
+            hierarchyElement.GetParentGameObject()->GetWorldLocation()
             + m_localPosition;
     }
 }

@@ -146,10 +146,10 @@ namespace Engine
          *******************************************/
 
         void SetLocalPosition(glm::vec2 position) noexcept;
-        [[nodiscard]] glm::vec2 GetLocalPosition() const noexcept;
+        [[nodiscard]] glm::vec2 GetLocalLocation() const noexcept;
 
         // NOTE: Non-const, because it can update the position
-        [[nodiscard]] glm::vec2 GetWorldPosition() noexcept;
+        [[nodiscard]] glm::vec2 GetWorldLocation() noexcept;
 
         // Marks as dirty the position of the current game object and all its children
         void SetPositionDirty() noexcept;

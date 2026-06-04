@@ -5,6 +5,7 @@
 // Standard
 #include <format>
 
+
 // TODO: For displaying sprites as lives, I can spawn a game object for every live
 
 Game::LivesDisplayComponent::LivesDisplayComponent(Engine::GameObject& owner, LivesComponent const& livesComponent) noexcept

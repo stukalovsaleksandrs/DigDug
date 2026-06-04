@@ -60,9 +60,6 @@ void Engine::Renderer::Render() const
     // Calling the render functions
     for (auto* const pRenderFunction : m_pRenderFunctions) pRenderFunction->operator()();
 
-    // TODO: Remove
-    RenderFilledCircle(static_cast<glm::vec2>(m_pWindow->data.logicalDims) * 0.5f, 25.f);
-
     // Showing the new frame
     SDL_RenderPresent(m_pSDLRenderer);
 

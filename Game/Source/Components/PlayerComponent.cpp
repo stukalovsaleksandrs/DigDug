@@ -46,7 +46,7 @@ void Game::PlayerComponent::Update() noexcept
     // Trying to dig
     if (m_movementComponent.IsMoving())
     {
-        auto const worldPosition{m_owner.GetWorldPosition()};
+        auto const worldPosition{m_owner.GetWorldLocation()};
         m_dependencies.grid.TryDigging(
             {
                 static_cast<int32_t>(worldPosition.x),
@@ -133,9 +133,9 @@ void Game::PlayerComponent::ProcessSpriteOrientation(glm::vec2 const direction) 
 
 void Game::PlayerComponent::ConstrainMovementToGrid() noexcept
 {
-    glm::vec2 const srcTopLeft{  m_owner.GetWorldPosition()  };// in px
+    glm::vec2 const srcTopLeft{  m_owner.GetWorldLocation()  };// in px
     glm::vec2 const dstTopLeft{  GetCurrentCellTopLeft()  };// in px
-    float const distance{ glm::length(dstTopLeft - m_owner.GetWorldPosition()) };// in px
+    float const distance{ glm::length(dstTopLeft - m_owner.GetWorldLocation()) };// in px
     float const lerpSec{ distance / m_movementComponent.GetPxPerSec() };
 
     m_movementComponent.Disable();
@@ -144,7 +144,7 @@ void Game::PlayerComponent::ConstrainMovementToGrid() noexcept
 
 glm::vec2 Game::PlayerComponent::GetCurrentCellTopLeft() const noexcept
 {
-    glm::ivec2 const currentCell{ m_dependencies.grid.GetCellFromPoint(m_owner.GetWorldPosition() + 0.5f * glm::vec2{tileSideLength}) };
+    glm::ivec2 const currentCell{ m_dependencies.grid.GetCellFromPoint(m_owner.GetWorldLocation() + 0.5f * glm::vec2{tileSideLength}) };
     return m_dependencies.grid.GetCellTopLeft(currentCell);
 }
 

@@ -3,6 +3,7 @@
 
 // ENGINE
 #include "Engine/Components/ComponentBase.h"
+#include "Engine/Components/Components.h"
 #include "Engine/Core/Observer.h"
 
 namespace Engine
@@ -15,7 +16,7 @@ namespace Game
     class LivesComponent;
 
     // Requires the owner to gave LivesComponent
-    class LivesDisplayComponent : public Engine::Component, public Engine::Observer
+    class LivesDisplayComponent final : public Engine::Component, public Engine::Observer
     {
     public:
         explicit LivesDisplayComponent(Engine::GameObject& owner, LivesComponent const&) noexcept;

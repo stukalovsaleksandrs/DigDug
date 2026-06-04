@@ -38,11 +38,11 @@ void Engine::MovementComponent::Update() noexcept
 
     // Limiting player only to the screen borders
     if (auto const deltaPosition{ glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec() };
-        IsWithinScreen(m_owner.GetWorldPosition() + deltaPosition))
+        IsWithinScreen(m_owner.GetWorldLocation() + deltaPosition))
     {
         // Updating location
         m_owner.SetLocalPosition(
-            m_owner.GetLocalPosition() + deltaPosition
+            m_owner.GetLocalLocation() + deltaPosition
         );
 
         // Firing event if direction changed
