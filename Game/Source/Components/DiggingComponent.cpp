@@ -1,8 +1,8 @@
 // Game
-#include "Components/DiggingComponent.h"
+#include "Components/DiggingComponent.hpp"
 // Engine
-#include "Engine/Rendering/Renderer.h"
-#include "Engine/Scene/GameObject.h"
+#include "Engine/Rendering/Renderer.hpp"
+#include "Engine/Scene/GameObject.hpp"
 
 Game::DiggingComponent::DiggingComponent(Engine::GameObject& owner) noexcept
     : Component(owner)

@@ -1,5 +1,5 @@
 // Game
-#include "Commands.h"
+#include "Commands.hpp"
 
 /*******************************************
  * Die command

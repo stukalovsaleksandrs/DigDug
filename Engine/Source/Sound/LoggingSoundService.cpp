@@ -1,5 +1,5 @@
 // Engine
-#include "Engine/Sound/LoggingSoundService.h"
+#include "Engine/Sound/LoggingSoundService.hpp"
 // Standard
 #include <print>
 

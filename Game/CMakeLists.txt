@@ -4,14 +4,14 @@
 set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 set(HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Include")
 file(GLOB_RECURSE GAME_SOURCES "${SOURCE_PATH}/*.cpp")
-file(GLOB_RECURSE GAME_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB_RECURSE GAME_HEADERS "${HEADER_PATH}/*.h" "${HEADER_PATH}/*.hpp")
 
 # Parameters
 if(EMSCRIPTEN)
     set(GAME_PARAM)
 else()
     set(GAME_PARAM WIN32
-            Include/Application.h)
+            Include/Application.hpp)
 endif()
 
 add_executable(${GAME_NAME} ${GAME_PARAM} ${GAME_SOURCES} ${GAME_HEADERS})

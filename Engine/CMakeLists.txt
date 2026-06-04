@@ -13,7 +13,7 @@ set(HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Include")
 # manually adding a path to every new source file.
 file(GLOB_RECURSE ENGINE_SOURCES "${SOURCE_PATH}/*.cpp")
 # Headers for VS to display in Solution Explorer
-file(GLOB_RECURSE ENGINE_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB_RECURSE ENGINE_HEADERS "${HEADER_PATH}/*.h" "${HEADER_PATH}/*.hpp")
 
 add_library(${ENGINE_NAME} STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS})
 

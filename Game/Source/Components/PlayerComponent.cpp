@@ -1,10 +1,10 @@
 // Game
-#include "Components/PlayerComponent.h"
-#include "Commands.h"
+#include "Components/PlayerComponent.hpp"
+#include "Commands.hpp"
 // Engine
-#include "Engine/Components/MovementComponent.h"
-#include "Engine/Utils/Constants.h"
-#include "Engine/Utils/Timer.h"
+#include "Engine/Components/MovementComponent.hpp"
+#include "Engine/Utils/Constants.hpp"
+#include "Engine/Utils/Timer.hpp"
 // Third-party
 #include "glm/geometric.hpp"
 // Standard

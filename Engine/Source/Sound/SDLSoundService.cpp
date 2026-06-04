@@ -1,6 +1,6 @@
 // Engine
-#include "Utils/Utils.h"
-#include "Sound/SDLSoundService.h"
+#include "Utils/Utils.hpp"
+#include "Sound/SDLSoundService.hpp"
 // Third-party
 #include "SDL3/SDL.h"
 #include "SDL3_mixer/SDL_mixer.h"

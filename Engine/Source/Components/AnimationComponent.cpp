@@ -1,9 +1,9 @@
 // Engine
-#include "Utils/Timer.h"
-#include "Components/MovementComponent.h"
-#include "Utils/Constants.h"
-#include "Engine/Components/AnimationComponent.h"
-#include "Engine/Scene/GameObject.h"
+#include "Utils/Timer.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Utils/Constants.hpp"
+#include "Engine/Components/AnimationComponent.hpp"
+#include "Engine/Scene/GameObject.hpp"
 // Standard
 #include <ranges>
 #include <iostream>

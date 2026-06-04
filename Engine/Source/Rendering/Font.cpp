@@ -1,5 +1,5 @@
-#include "Rendering/Font.h"
-#include "Utils/Utils.h"
+#include "Rendering/Font.hpp"
+#include "Utils/Utils.hpp"
 #include <SDL3_ttf/SDL_ttf.h>
 
 TTF_Font* Engine::Font::GetFont() const {

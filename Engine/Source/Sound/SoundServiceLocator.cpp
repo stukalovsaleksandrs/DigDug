@@ -1,4 +1,4 @@
-#include "Sound/SoundServiceLocator.h"
+#include "Sound/SoundServiceLocator.hpp"
 
 ////////////////////////////
 /// Null sound service

@@ -1,5 +1,5 @@
 // Engine
-#include "Core/Observer.h"
+#include "Core/Observer.hpp"
 // Standard
 #include <algorithm>
 

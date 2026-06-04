@@ -1,4 +1,4 @@
-#include "Scene/Scene.h"
+#include "Scene/Scene.hpp"
 
 void Engine::Scene::Update()
 {

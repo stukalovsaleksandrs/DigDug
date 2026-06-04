@@ -1,6 +1,6 @@
 // Game
-#include "Constants.h"
-#include "PlayerStateMachine.h"
+#include "Constants.hpp"
+#include "PlayerStateMachine.hpp"
 
 #include <print>
 

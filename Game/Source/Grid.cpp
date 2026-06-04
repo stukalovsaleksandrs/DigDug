@@ -1,9 +1,9 @@
 //#define ENABLE_DEBUG_DRAWING
 
 // Game
-#include "Grid.h"
+#include "Grid.hpp"
 // Engine
-#include "Engine/Rendering/Renderer.h"
+#include "Engine/Rendering/Renderer.hpp"
 // Standard
 #include <ranges>
 

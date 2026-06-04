@@ -1,9 +1,9 @@
 ﻿// Engine
-#include "Utils/Utils.h"
-#include "Rendering/Renderer.h"
-#include "Rendering/Sprite.h"
-#include "Components/Components.h"
-#include "Core/Window.h"
+#include "Utils/Utils.hpp"
+#include "Rendering/Renderer.hpp"
+#include "Rendering/Sprite.hpp"
+#include "Components/Components.hpp"
+#include "Core/Window.hpp"
 // Third-party
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>

@@ -1,5 +1,5 @@
-#include "Scene/HierarchyElement.h"
-#include "Scene/Scene.h"
+#include "Scene/HierarchyElement.hpp"
+#include "Scene/Scene.hpp"
 
 Engine::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElement, GameObject* pOwnerGameObject) noexcept
     : m_pParentHierarchyElement(pSceneHierarchyElement)

@@ -1,12 +1,12 @@
 // Engine
-#include "Components/MovementComponent.h"
-#include "Utils/Timer.h"
-#include "Utils/Utils.h"
-#include "Utils/Constants.h"
-#include "Scene/GameObject.h"
+#include "Components/MovementComponent.hpp"
+#include "Utils/Timer.hpp"
+#include "Utils/Utils.hpp"
+#include "Utils/Constants.hpp"
+#include "Scene/GameObject.hpp"
 // Third-party
 #define GLM_ENABLE_EXPERIMENTAL
-#include "Core/Window.h"
+#include "Core/Window.hpp"
 #include "glm/gtx/norm.hpp"
 
 Engine::MovementComponent::MovementComponent(GameObject& owner, Dependencies const& dependencies, uint32_t const verticalPadding,

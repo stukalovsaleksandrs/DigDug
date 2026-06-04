@@ -1,7 +1,7 @@
-#include "Components/LivesDisplayComponent.h"
-#include "Components/LivesComponent.h"
-#include "Engine/Components/Components.h"
-#include "Engine/Scene/GameObject.h"
+#include "Components/LivesDisplayComponent.hpp"
+#include "Components/LivesComponent.hpp"
+#include "Engine/Components/Components.hpp"
+#include "Engine/Scene/GameObject.hpp"
 // Standard
 #include <format>
 

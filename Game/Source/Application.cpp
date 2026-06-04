@@ -1,21 +1,21 @@
 // Game
-#include "Constants.h"
-#include "Application.h"
-#include "Components/PlayerComponent.h"
-#include "Components/LivesComponent.h"
-#include "Components/LivesDisplayComponent.h"
-#include "Components/PointDisplayComponent.h"
+#include "Constants.hpp"
+#include "Application.hpp"
+#include "Components/PlayerComponent.hpp"
+#include "Components/LivesComponent.hpp"
+#include "Components/LivesDisplayComponent.hpp"
+#include "Components/PointDisplayComponent.hpp"
 // Engine
-#include "Engine/Scene/Scene.h"
-#include "Engine/Components/MovementComponent.h"
-#include "Engine/Components/AnimationComponent.h"
-#include "Engine/Sound/SoundServiceLocator.h"
-#include "Engine/Rendering/Font.h"
-#include "Engine/Rendering/Sprite.h"
+#include "Engine/Scene/Scene.hpp"
+#include "Engine/Components/MovementComponent.hpp"
+#include "Engine/Components/AnimationComponent.hpp"
+#include "Engine/Sound/SoundServiceLocator.hpp"
+#include "Engine/Rendering/Font.hpp"
+#include "Engine/Rendering/Sprite.hpp"
 // Standard
 #include <filesystem>
 
-#include "Components/DiggingComponent.h"
+#include "Components/DiggingComponent.hpp"
 
 namespace fs = std::filesystem;
 

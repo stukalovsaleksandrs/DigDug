@@ -1,6 +1,6 @@
 // Engine
-#include "Commands.h"
-#include "Components/MovementComponent.h"
+#include "Commands.hpp"
+#include "Components/MovementComponent.hpp"
 
 /*******************************************
 * Move command

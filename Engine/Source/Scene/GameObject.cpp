@@ -1,4 +1,4 @@
-#include "Scene/Scene.h"
+#include "Scene/Scene.hpp"
 
 Engine::GameObject::GameObject(Scene& scene, glm::vec2 const localPosition) noexcept
     : hierarchyElement(&scene.hierarchyElement, nullptr)

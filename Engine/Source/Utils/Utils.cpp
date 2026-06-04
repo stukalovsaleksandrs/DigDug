@@ -1,5 +1,5 @@
 // Engine
-#include "Engine/Utils/Utils.h"
+#include "Engine/Utils/Utils.hpp"
 // Third-party
 #include <SDL3_ttf/SDL_ttf.h>
 #include <glm/glm.hpp>

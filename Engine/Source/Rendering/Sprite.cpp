@@ -1,7 +1,7 @@
 // Engine
-#include "Utils/Utils.h"
-#include "Rendering/Sprite.h"
-#include "Rendering/Renderer.h"
+#include "Utils/Utils.hpp"
+#include "Rendering/Sprite.hpp"
+#include "Rendering/Renderer.hpp"
 // Third-party
 #include <SDL3/SDL.h>
 // Standard

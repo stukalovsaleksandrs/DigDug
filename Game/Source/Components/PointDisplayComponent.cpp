@@ -1,8 +1,8 @@
 // Project
-#include "Components/PointDisplayComponent.h"
-#include "Components/PlayerComponent.h"
+#include "Components/PointDisplayComponent.hpp"
+#include "Components/PlayerComponent.hpp"
 // Engine
-#include "Engine/Scene/GameObject.h"
+#include "Engine/Scene/GameObject.hpp"
 // Standard
 #include <format>
 

@@ -1,4 +1,4 @@
-#include "Utils/Timer.h"
+#include "Utils/Timer.hpp"
 #include <chrono>
 
 void Engine::Timer::Update() {

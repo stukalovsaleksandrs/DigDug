@@ -1,6 +1,6 @@
 // Engine
-#include "Engine/Core/Window.h"
-#include "Engine/Utils/Utils.h"
+#include "Engine/Core/Window.hpp"
+#include "Engine/Utils/Utils.hpp"
 
 Engine::Window::Data::Data(glm::vec2 const logicalDims, float const scale) noexcept
     : dims{ logicalDims * scale }
