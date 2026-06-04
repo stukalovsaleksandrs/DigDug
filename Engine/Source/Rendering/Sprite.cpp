@@ -4,8 +4,6 @@
 #include "Rendering/Renderer.hpp"
 // Third-party
 #include <SDL3/SDL.h>
-// Standard
-#include <format>
 
 Engine::Sprite::~Sprite()
 {

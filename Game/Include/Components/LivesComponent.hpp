@@ -1,5 +1,5 @@
-#ifndef HEALTH_COMPONENT_H
-#define HEALTH_COMPONENT_H
+#ifndef LIVES_COMPONENT
+#define LIVES_COMPONENT
 
 // Game
 #include "Constants.hpp"
@@ -30,4 +30,4 @@ namespace Game
     };
 }
 
-#endif
+#endif// LIVES_COMPONENT

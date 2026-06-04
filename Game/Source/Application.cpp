@@ -63,12 +63,8 @@ Game::Application::Application()
     {
         auto& character{scene.CreateGameObject({1.f, tileSideLength + 1})};
 
-        // Render component
-        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
-            Engine::Sprite::View{m_pSpriteSheet.get()}
-        )};
-        characterRenderComponent.SetSpriteView({m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
-            static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
+        // Digging component
+        character.AddComponent<DiggingComponent>();
 
         // Movement component
         character.AddComponent<Engine::MovementComponent>(
@@ -88,8 +84,12 @@ Game::Application::Application()
             .secPerFrame = 0.1f
         });
 
-        // Digging component
-        character.AddComponent<DiggingComponent>();
+        // Render component
+        auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
+            Engine::Sprite::View{m_pSpriteSheet.get()}
+        )};
+        characterRenderComponent.SetSpriteView({m_pSpriteSheet.get(), SDL_FRect{0.f, 0.f,
+            static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
 
         // Player component
         auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*m_grid})};
