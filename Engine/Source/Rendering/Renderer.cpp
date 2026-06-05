@@ -53,12 +53,15 @@ void Engine::Renderer::Render() const
     ImGui::NewFrame();
 
     // Clearing the background
-    const auto&[r, g, b, a]{ GetBackgroundColor() };
+    auto const&[r, g, b, a]{ GetBackgroundColor() };
     SDL_SetRenderDrawColor(m_pSDLRenderer, r, g, b, a);
     SDL_RenderClear(m_pSDLRenderer);
 
     // Calling the render functions
-    for (auto* const pRenderFunction : m_pRenderFunctions) pRenderFunction->operator()();
+    for (auto const& renderFunctions : m_layerToRenderFunctions | std::views::values)
+    {
+        for (auto* const pRenderFunction : renderFunctions) pRenderFunction->operator()();
+    }
 
     // Showing the new frame
     SDL_RenderPresent(m_pSDLRenderer);
@@ -135,18 +138,19 @@ void Engine::Renderer::RenderFilledCircle(glm::vec2 const center, float const ra
     }
 }
 
-void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd) noexcept
+void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd, Layer const layer) noexcept
 {
-    m_pRenderFunctions.push_back(&renderFunctionToAdd);
+    m_layerToRenderFunctions.at(layer).push_back(&renderFunctionToAdd);
 }
 
 void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFunctionToRemove) noexcept
 {
-    // NOTE: [[maybe_unused]] is added to avoid unused variable errors in release build
-    [[maybe_unused]] auto const erasedElementCount{
-        std::erase(m_pRenderFunctions, &renderFunctionToRemove)
-    };
-    assert(erasedElementCount > 0 && "Render function not found");
+    for (auto& renderFunctions : m_layerToRenderFunctions | std::views::values)
+    {
+        if (std::erase(renderFunctions, &renderFunctionToRemove) != 0) return;
+    }
+
+    assert(false && "Render function not found");
 }
 
 void Engine::Renderer::InitializeImGui(SDL_Window* pWindow) noexcept

@@ -28,6 +28,8 @@ namespace Engine
     class Renderer final : public Singleton<Renderer>// TODO: Add a service locator for it
     {
     public:
+        enum class Layer { foreground, background };
+
         void Init(Window const&);
         // Calls Render() on all the registered components
         void Render() const;
@@ -45,7 +47,7 @@ namespace Engine
         void SetBackgroundColor(SDL_Color const& color) noexcept { m_clearColor = color; }
 
         // Adds the function for tracking, so the renderer now calls it
-        void RegisterFunction(RenderFunctionType const& renderFunctionToAdd) noexcept;
+        void RegisterFunction(RenderFunctionType const& renderFunctionToAdd, Layer layer = Layer::foreground) noexcept;
 
         // Removes the function from tracking, so the renderer will not attempt to call it
         void UnregisterFunction(RenderFunctionType const& renderFunctionToRemove) noexcept;
@@ -54,8 +56,11 @@ namespace Engine
         SDL_Renderer* m_pSDLRenderer{};
         Window const* m_pWindow{};// Non-owning
         SDL_Color m_clearColor{  0, 0, 0, 255 };
-        std::vector<std::function<void()> const*> m_pRenderFunctions;// Non-owning
-        std::vector<std::function<void()> const*> m_pDebugRenderFunctions;// Non-owning
+
+        std::unordered_map<Layer, std::vector<RenderFunctionType const*> > m_layerToRenderFunctions
+        {
+            {Layer::foreground, {}}, {Layer::background, {}}
+        };
 
         void InitializeImGui(SDL_Window* pWindow) noexcept;
 

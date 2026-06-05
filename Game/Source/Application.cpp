@@ -51,7 +51,7 @@ Game::Application::Application()
     // Background
     {
         auto& background{scene.CreateGameObject({})};
-        background.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pBackgroundTexture.get()});
+        background.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pBackgroundTexture.get()}, Engine::Renderer::Layer::background);
     }
 
     // Grid
@@ -79,7 +79,7 @@ Game::Application::Application()
             .secPerFrame = 0.1f
         });
 
-        // Player component
+        // Player component(must be added after animation component)
         auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*m_grid})};
 
         // Render component

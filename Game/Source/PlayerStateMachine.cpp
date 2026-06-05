@@ -76,7 +76,7 @@ namespace Game
         , m_pSDLRenderer{ Engine::Renderer::GetInstance().GetSDLRenderer() }
     {
         // Registering the tunnel digging render callback to the renderer
-        Engine::Renderer::GetInstance().RegisterFunction(m_renderTunnelsFunction);
+        Engine::Renderer::GetInstance().RegisterFunction(m_renderTunnelsFunction, Engine::Renderer::Layer::background);
 
         // TODO: Wrap it all up, the game should not touch SDL
 

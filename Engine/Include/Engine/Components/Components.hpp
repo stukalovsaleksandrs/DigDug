@@ -27,7 +27,7 @@ namespace Engine
 
     class RenderComponent final : public Component {
     public:
-        explicit RenderComponent(GameObject& owner, Sprite::View const&) noexcept;
+        explicit RenderComponent(GameObject& owner, Sprite::View const&, Renderer::Layer layer = Renderer::Layer::foreground) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;

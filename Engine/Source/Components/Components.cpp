@@ -17,11 +17,11 @@
 
 #pragma region RenderComponent
 Engine::RenderComponent::RenderComponent(GameObject &owner,
-    Sprite::View const& spriteView) noexcept
+    Sprite::View const& spriteView, Renderer::Layer const layer) noexcept
     : Component{owner}
     , m_spriteView{ spriteView }
 {
-    Renderer::GetInstance().RegisterFunction(m_renderFunction);
+    Renderer::GetInstance().RegisterFunction(m_renderFunction, layer);
     SetSpriteView({spriteView});
 }
 
