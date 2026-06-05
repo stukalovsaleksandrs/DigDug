@@ -4,6 +4,7 @@
 // Engine
 #include "Engine/Core/Window.hpp"
 #include "Engine/Core/Observer.hpp"
+#include "Engine/Utils/Utils.hpp"
 // Third-party
 #include "glm/vec2.hpp"
 
@@ -17,10 +18,10 @@ namespace Game
 
     enum class EventType : Engine::EventId
     {
-        OnPointsIncreased = EU::MakeSDBMHash("OnPointsIncreased"),
-        OnCollected5Points = EU::MakeSDBMHash("OnCollected5Points"),
-        OnDied = EU::MakeSDBMHash("OnDied"),
-        OnDamageTaken = EU::MakeSDBMHash("OnDamageTaken"),
+        OnPointsIncreased = "OnPointsIncreased"_h,
+        OnCollected5Points = "OnCollected5Points"_h,
+        OnDied = "OnDied"_h,
+        OnDamageTaken = "OnDamageTaken"_h,
     };
 }
 

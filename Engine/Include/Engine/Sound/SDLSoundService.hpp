@@ -1,5 +1,5 @@
-#ifndef ENGINE_DEFAULT_SOUND_SERVICE
-#define ENGINE_DEFAULT_SOUND_SERVICE
+#ifndef ENGINE_SDL_SOUND_SERVICE
+#define ENGINE_SDL_SOUND_SERVICE
 
 // Engine
 #include "ISoundService.hpp"
@@ -33,4 +33,4 @@ namespace Engine
 
 }
 
-#endif// ENGINE_DEFAULT_SOUND_SERVICE
+#endif// ENGINE_SDL_SOUND_SERVICE

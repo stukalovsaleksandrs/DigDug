@@ -28,6 +28,7 @@ public:
         m_pTrack = MIX_CreateTrack(m_pMixer);
         Utils::Check(m_pTrack,"Sound effect track creation failed");
 
+        // Starting a separate thread for sound
         // m_soundThread = std::jthread([this]()
         // {
         //     while ()
@@ -36,21 +37,22 @@ public:
 
     ~Impl()
     {
-        // Destroy audio objects
+        // Destroying audio objects
         for (auto* pAudio : m_pAudio)
         {
             MIX_DestroyAudio(pAudio);
         }
 
-        // Stop playback globally (not just one track if possible)
+        // Stopping playback globally
         MIX_StopTrack(m_pTrack, 0);
 
-        // Destroy track first
+        // Destroying track first
         MIX_DestroyTrack(m_pTrack);
 
-        // Now destroy mixer (nothing should reference it anymore)
+        // Destroying mixer
         MIX_DestroyMixer(m_pMixer);
 
+        // Shutting the service down
         MIX_Quit();
     }
     Impl(Impl&&) noexcept = delete;

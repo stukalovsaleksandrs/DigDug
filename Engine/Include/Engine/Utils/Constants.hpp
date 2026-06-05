@@ -11,9 +11,9 @@ namespace Engine
     using EventId = uint32_t;
     enum class EventType : EventId
     {
-        SubjectDeleted = Utils::MakeSDBMHash("SubjectDeleted"),
-        OnDirectionChanged = Utils::MakeSDBMHash("OnDirectionChanged"),
-        OnMovementAxisChanged = Utils::MakeSDBMHash("OnMovementAxisChanged"),
+        SubjectDeleted = "SubjectDeleted"_h,
+        OnDirectionChanged = "OnDirectionChanged"_h,
+        OnMovementAxisChanged = "OnMovementAxisChanged"_h,
     };
 }
 
