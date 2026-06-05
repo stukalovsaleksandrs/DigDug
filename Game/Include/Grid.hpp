@@ -16,7 +16,7 @@ namespace Game
     class Grid final
     {
     public:
-        Grid(int32_t cellSideLength, glm::ivec2 logicalWindowDims);
+        Grid(glm::ivec2 logicalWindowDims);
         ~Grid() noexcept;
         Grid(Grid const&) noexcept = delete;
         Grid(Grid &&) noexcept = delete;
@@ -34,7 +34,6 @@ namespace Game
         bool TryDigging(glm::ivec2 pointInPx) noexcept;
 
     private:
-        int32_t m_cellSideLength{};
         glm::ivec2 m_dimsInPx{};
         glm::ivec2 m_dimsInCells{};
         Engine::Renderer& m_renderer;
