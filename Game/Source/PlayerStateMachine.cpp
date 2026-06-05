@@ -37,7 +37,7 @@ namespace Game
 
     StateType Player::State::Idle::Update() noexcept
     {
-        if (m_dependencies.movementComponent.IsMoving()) return typeid(Walking);
+        if (IsMoving()) return typeid(Walking);
         return std::nullopt;
     }
 #pragma endregion Idle
@@ -130,7 +130,7 @@ namespace Game
         Dig();
 
         // Trying to switch state
-        if (!TryDigging()) return typeid(Walking);
+        if (!(TryDigging() and IsMoving())) return typeid(Idle);
         return std::nullopt;
     }
 

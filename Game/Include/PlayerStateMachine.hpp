@@ -38,6 +38,10 @@ namespace Game::Player
         protected:
             Dependencies m_dependencies;
 
+            [[nodiscard]] bool IsMoving() const noexcept
+            {
+                return m_dependencies.movementComponent.IsMoving();
+            }
             // true - digging, false - not digging
             [[nodiscard]] bool TryDigging() const noexcept;
         };
