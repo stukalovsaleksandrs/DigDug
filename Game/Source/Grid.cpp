@@ -1,6 +1,7 @@
 //#define ENABLE_DEBUG_DRAWING
 
 // Game
+#include "Constants.hpp"
 #include "Grid.hpp"
 // Engine
 #include "Engine/Rendering/Renderer.hpp"
@@ -10,18 +11,23 @@
 Game::Grid::Grid(int32_t const cellSideLength, glm::ivec2 const logicalWindowDims)
     : m_cellSideLength{ cellSideLength }
     , m_dimsInPx{ logicalWindowDims }
+    , m_dimsInCells{ m_dimsInPx.x / m_cellSideLength, m_dimsInPx.y / m_cellSideLength }
     , m_renderer{ Engine::Renderer::GetInstance() }
+    , m_isGround( m_dimsInCells.x * m_dimsInCells.y )
 {
+    // Validating input
     assert(
         m_dimsInPx.x % m_cellSideLength == 0
         && m_dimsInPx.y % m_cellSideLength == 0
         && "Window dimensions are not divisible by the cell side length"
     );
 
-    m_dimsInCells.x = m_dimsInPx.x / m_cellSideLength;
-    m_dimsInCells.y = m_dimsInPx.y / m_cellSideLength;
-
+    // Registering rendering callback
     m_renderer.RegisterFunction(m_renderFunction);
+
+    // Filling marking the ground tiles with true
+    uint32_t constexpr upperAirRowCount{ 2 };
+    std::fill(m_isGround.begin() + m_dimsInCells.x * upperAirRowCount, m_isGround.end(), true);
 }
 
 Game::Grid::~Grid() noexcept
@@ -55,8 +61,8 @@ void Game::Grid::Render() const
 glm::ivec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
 {
     return {
-        static_cast<int>(point.x / m_cellSideLength),
-        static_cast<int>(point.y / m_cellSideLength)
+        static_cast<int>(point.x / static_cast<float>(m_cellSideLength)),
+        static_cast<int>(point.y / static_cast<float>(m_cellSideLength))
     };
 }
 
@@ -68,7 +74,17 @@ glm::vec2 Game::Grid::GetCellTopLeft(glm::ivec2 const cell) const noexcept
     };
 }
 
-void Game::Grid::TryDigging(glm::ivec2 const point, int32_t const radius) noexcept
+bool Game::Grid::TryDigging(glm::ivec2 const pointInPx) noexcept
 {
+    uint32_t const newCellIdx{ pointInPx.y / tileSideLength * m_dimsInCells.x + pointInPx.x / tileSideLength };
 
+    // Updating current cell if changed
+    if (newCellIdx != m_currentCellIdx)
+    {
+        // NOTE: 0 is unreachable(top left)
+        if (m_currentCellIdx != 0) m_isGround.at(m_currentCellIdx) = false;
+        m_currentCellIdx = newCellIdx;
+    }
+
+    return m_isGround.at(newCellIdx);
 }

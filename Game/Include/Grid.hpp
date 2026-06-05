@@ -30,14 +30,19 @@ namespace Game
         // Returns the location(in pixels) of the top left corner of the input cell(in cells)
         [[nodiscard]] glm::vec2 GetCellTopLeft(glm::ivec2 cell) const noexcept;
 
-        void TryDigging(glm::ivec2 point, int32_t radius) noexcept;
+        // Returns whether the point is in the ground and preserves the current location
+        bool TryDigging(glm::ivec2 pointInPx) noexcept;
 
     private:
-        int32_t m_cellSideLength;
-        glm::ivec2 m_dimsInPx;
+        int32_t m_cellSideLength{};
+        glm::ivec2 m_dimsInPx{};
         glm::ivec2 m_dimsInCells{};
         Engine::Renderer& m_renderer;
         std::function<void()> m_renderFunction{ [this]{ Render(); } };
+
+        // Array representing 2D grid of bools communicating whether each cell is ground or not
+        std::vector<bool> m_isGround{};
+        uint32_t m_currentCellIdx{};
 
     };
 }

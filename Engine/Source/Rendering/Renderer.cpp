@@ -146,7 +146,7 @@ void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFuncti
     [[maybe_unused]] auto const erasedElementCount{
         std::erase(m_pRenderFunctions, &renderFunctionToRemove)
     };
-    assert(erasedElementCount > 0 && "Render component not found");
+    assert(erasedElementCount > 0 && "Render function not found");
 }
 
 void Engine::Renderer::InitializeImGui(SDL_Window* pWindow) noexcept

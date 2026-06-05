@@ -18,7 +18,9 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
     , m_renderComponent{*owner.GetComponent<Engine::RenderComponent>()}
     , m_stateMachine{{
         .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
-        .movementComponent = m_movementComponent
+        .movementComponent = m_movementComponent,
+        .grid = m_dependencies.grid,
+        .owner = owner
     }}
 {
     BindInput();
@@ -43,18 +45,7 @@ void Game::PlayerComponent::Update() noexcept
     }
     m_movementComponent.Enable();
 
-    // Trying to dig
-    if (m_movementComponent.IsMoving())
-    {
-        auto const worldPosition{m_owner.GetWorldLocation()};
-        m_dependencies.grid.TryDigging(
-            {
-                static_cast<int32_t>(worldPosition.x),
-                static_cast<int32_t>(worldPosition.y),
-            },
-            tileSideLength
-        );
-    }
+
 }
 
 void Game::PlayerComponent::BindInput() noexcept
