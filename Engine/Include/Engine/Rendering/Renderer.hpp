@@ -28,7 +28,7 @@ namespace Engine
     class Renderer final : public Singleton<Renderer>// TODO: Add a service locator for it
     {
     public:
-        enum class Layer { foreground, background };
+        enum class Layer { foreground, middleground, background };
 
         void Init(Window const&);
         // Calls Render() on all the registered components
@@ -59,7 +59,7 @@ namespace Engine
 
         std::unordered_map<Layer, std::vector<RenderFunctionType const*> > m_layerToRenderFunctions
         {
-            {Layer::foreground, {}}, {Layer::background, {}}
+            {Layer::foreground, {}}, {Layer::middleground, {}}, {Layer::background, {}}
         };
 
         void InitializeImGui(SDL_Window* pWindow) noexcept;

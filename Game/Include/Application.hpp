@@ -23,7 +23,8 @@ namespace Game
         Engine::Scene scene;
         std::unique_ptr<Engine::Font> m_pFont{};
 
-        std::unique_ptr<Engine::Sprite> m_pBackgroundTexture{};
+        std::unique_ptr<Engine::Sprite> m_pGroundTexture{};
+        std::unique_ptr<Engine::Sprite> m_pSkyTexture{};
         std::unique_ptr<Engine::Sprite> m_pSpriteSheet{};
 
         std::unique_ptr<Grid> m_grid;

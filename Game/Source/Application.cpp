@@ -46,12 +46,19 @@ Game::Application::Application()
     // Loading assets
     m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);
     m_pSpriteSheet = std::make_unique<Engine::Sprite>("Sprites/DigDugSpriteSheet.png");
-    m_pBackgroundTexture = std::make_unique<Engine::Sprite>("Sprites/DigDugBackground.png");
+    m_pGroundTexture = std::make_unique<Engine::Sprite>("Sprites/DigDug_Ground.png");
+    m_pSkyTexture = std::make_unique<Engine::Sprite>("Sprites/DigDug_Sky.png");
 
-    // Background
+    // Ground
     {
-        auto& background{scene.CreateGameObject({})};
-        background.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pBackgroundTexture.get()}, Engine::Renderer::Layer::background);
+        auto& ground{scene.CreateGameObject({})};
+        ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pGroundTexture.get()}, Engine::Renderer::Layer::background);
+    }
+
+    // Sky
+    {
+        auto& sky{scene.CreateGameObject({})};
+        sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pSkyTexture.get()}, Engine::Renderer::Layer::middleground);
     }
 
     // Grid
