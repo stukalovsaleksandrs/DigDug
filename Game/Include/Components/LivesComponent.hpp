@@ -2,7 +2,7 @@
 #define LIVES_COMPONENT
 
 // Game
-#include "Constants.hpp"
+#include "Utils.hpp"
 // Engine
 #include "Engine/Components/ComponentBase.hpp"
 #include "Engine/Core/Observer.hpp"

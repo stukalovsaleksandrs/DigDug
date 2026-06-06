@@ -15,10 +15,10 @@ Engine::SoundId Engine::LoggingSoundService::LoadSound(std::string_view const pa
     return m_realSoundService.LoadSound(path);
 }
 
-void Engine::LoggingSoundService::PlaySound(SoundId const soundId) noexcept
+void Engine::LoggingSoundService::PlaySound(SoundData const& data) noexcept
 {
-    std::println("Playing sound at ID {}", soundId);
-    m_realSoundService.PlaySound(soundId);
+    std::println("Playing sound at ID {}", data.id);
+    m_realSoundService.PlaySound(data);
 }
 
 void Engine::LoggingSoundService::StopAllSounds() noexcept

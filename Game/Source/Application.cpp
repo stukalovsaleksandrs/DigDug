@@ -1,5 +1,5 @@
 // Game
-#include "Constants.hpp"
+#include "Utils.hpp"
 #include "Application.hpp"
 #include "Components/PlayerComponent.hpp"
 #include "Components/LivesComponent.hpp"
@@ -39,9 +39,9 @@ Game::Application::Application()
 
     // Playing sound
     auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
-    auto const soundId{ soundService.LoadSound("GameStart.mp3") };
     soundService.SetVolume(0.05f);
-    soundService.PlaySound(soundId);
+    LoadSound(SoundName::GameStart, "GameStart.mp3");
+    PlaySound(SoundName::GameStart);
 
     // Loading assets
     m_pFont = std::make_unique<Engine::Font>("Lingua.otf", 36);

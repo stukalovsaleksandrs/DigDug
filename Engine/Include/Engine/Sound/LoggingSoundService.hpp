@@ -12,7 +12,7 @@ namespace Engine
         explicit LoggingSoundService(ISoundService&);
         ~LoggingSoundService() override;
         [[nodiscard]] SoundId LoadSound(std::string_view path) override;
-        void PlaySound(SoundId soundId) noexcept override;
+        void PlaySound(SoundData const&) noexcept override;
         void StopAllSounds() noexcept override;
         void SetVolume(float volume) noexcept override;
 

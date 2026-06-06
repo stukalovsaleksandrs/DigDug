@@ -1,10 +1,11 @@
-#ifndef GAME_CONSTANTS_H
-#define GAME_CONSTANTS_H
+#ifndef GAME_UTILS
+#define GAME_UTILS
 
 // Engine
 #include "Engine/Core/Window.hpp"
 #include "Engine/Core/Observer.hpp"
 #include "Engine/Utils/Utils.hpp"
+#include "Engine/Sound/ISoundService.hpp"
 // Third-party
 #include "glm/vec2.hpp"
 
@@ -23,6 +24,14 @@ namespace Game
         OnDied = "OnDied"_h,
         OnDamageTaken = "OnDamageTaken"_h,
     };
+
+    enum class SoundName
+    {
+        GameStart
+    };
+
+    void LoadSound(SoundName name, std::string_view path) noexcept;
+    void PlaySound(SoundName name, bool looping = false) noexcept;
 }
 
-#endif// GAME_CONSTANTS_H
+#endif// GAME_UTILS

@@ -14,6 +14,34 @@
 class Engine::SDLSoundService::Impl final
 {
 public:
+#pragma region Messages
+    struct Message
+    {
+        virtual ~Message() noexcept = default;
+    };
+
+    struct LoadMessage final : Message
+    {
+        explicit LoadMessage(SoundId const _id, std::string_view const _path) noexcept : Message(), id{ _id }, path{ _path }{}
+        SoundId id;
+        std::string path;
+    };
+
+    struct PlayMessage final : Message
+    {
+        explicit PlayMessage(SoundData const& data) noexcept : Message(), data{ data }{}
+        SoundData data;
+    };
+
+    struct StopMessage final : Message{};
+
+    struct VolumeMessage final : Message
+    {
+        explicit VolumeMessage(float const volume) noexcept : Message(), volume{ volume }{}
+        float volume;
+    };
+#pragma endregion Messages
+
     Impl()
     {
         // 1. Initializing SDL_mixer
@@ -31,7 +59,7 @@ public:
     ~Impl()
     {
         // Destroying audio objects
-        for (auto* pAudio : m_pAudio)
+        for (auto* pAudio : m_pSounds)
         {
             MIX_DestroyAudio(pAudio);
         }
@@ -53,50 +81,100 @@ public:
     Impl(Impl const&) noexcept = delete;
     Impl& operator=(Impl const&) noexcept = delete;
 
-    [[nodiscard]] SoundId LoadSound(std::string_view const path)
+    [[nodiscard]] SoundId LoadSound(std::string_view const path) noexcept
     {
-        MIX_Audio* const pAudio{ MIX_LoadAudio(m_pMixer, path.data(), true) };
-        Utils::Check(pAudio, std::format("Failed to load {}", path));
-        m_pAudio.push_back(pAudio);
-        return static_cast<SoundId>(m_pAudio.size() - 1);
+        m_pSounds.push_back(nullptr);// Will get populated in another thread
+        SoundId const soundId{ static_cast<SoundId>(m_pSounds.size() - 1) };
+        PushMessage(std::make_unique<LoadMessage>(soundId, path));
+        return soundId;
     }
 
-    void PlaySound(SoundId const soundId) const noexcept
+    void PlaySound(SoundData const& data) noexcept
     {
-        MIX_SetTrackAudio(m_pTrack, m_pAudio.at(soundId));
-        MIX_PlayTrack(m_pTrack, 0);
+        PushMessage(std::make_unique<PlayMessage>(data));
     }
 
-    void StopAllSounds() const noexcept
+    void StopAllSounds() noexcept
     {
-        MIX_StopTrack(m_pTrack, 10);
+        PushMessage(std::make_unique<StopMessage>());
     }
 
-    void SetVolume(float const volume) const noexcept
+    void SetVolume(float const volume) noexcept
     {
-        MIX_SetMixerGain(m_pMixer, volume);
+        PushMessage(std::make_unique<VolumeMessage>(volume));
     }
 
 private:
     MIX_Mixer* m_pMixer{};
     MIX_Track* m_pTrack{};
-    std::vector<MIX_Audio*> m_pAudio{};
+
+    std::unordered_map<SoundId, uint32_t> m_idToIdx{};
+    std::vector<MIX_Audio*> m_pSounds{};
 
     // Ring buffer
-    std::array<Message, 6> m_messages{};
+    std::array<std::unique_ptr<Message>, 6> m_messageQueue{};
     uint32_t m_head{}, m_tail{};
-    std::mutex m_messageMutex{};
+    std::mutex m_messageQueueMutex{};
     std::condition_variable_any m_messageCV{};
+
+    void PushMessage(std::unique_ptr<Message>&& pMessage) noexcept
+    {
+        assert((m_tail + 1) % m_messageQueue.size() != m_head);
+        std::scoped_lock const lock{m_messageQueueMutex};
+        m_messageQueue.at(m_tail) = std::move(pMessage);
+        m_tail = (m_tail + 1) % m_messageQueue.size();
+        m_messageCV.notify_one();
+    }
+
+    void _LoadSound(LoadMessage const& message)
+    {
+        MIX_Audio* const pAudio{ MIX_LoadAudio(m_pMixer, message.path.data(), true) };
+        Utils::Check(pAudio, std::format("Failed to load {}", message.path));
+        m_pSounds.at(message.id) = pAudio;
+    }
+
+    void _PlaySound(SoundData const& data) const noexcept
+    {
+        // TODO: Manage looping sounds
+        MIX_SetTrackAudio(m_pTrack, m_pSounds.at(data.id));
+        MIX_PlayTrack(m_pTrack, 0);
+    }
 
     [[nodiscard]] bool HasMessages() const noexcept
     {
         return m_tail != m_head;
     }
 
+    void ProcessMessage(Message const& message)
+    {
+        // NOTE: I know it's unoptimized to do it all the time,
+        // but I'm already doodling around here for too long
+        if (auto* const pLoadMessage{ dynamic_cast<LoadMessage const*>(&message)})
+        {
+            _LoadSound(*pLoadMessage);
+        }
+        else if (auto* const pPlayMessage{ dynamic_cast<PlayMessage const*>(&message)})
+        {
+            _PlaySound(pPlayMessage->data);
+        }
+        else if (dynamic_cast<StopMessage const*>(&message))
+        {
+            MIX_StopTrack(m_pTrack, 10);
+        }
+        else if (auto* const pVolumeMessage{ dynamic_cast<VolumeMessage const*>(&message)})
+        {
+            MIX_SetMixerGain(m_pMixer, pVolumeMessage->volume);
+        }
+        else
+        {
+            throw std::runtime_error{"Unknown sound message type"};
+        }
+    }
+
     void ProcessMessages(std::stop_token const stopToken) noexcept
     {
         // 1. Creating a lock to reuse later
-        std::unique_lock messageLock{m_messageMutex};
+        std::unique_lock messageLock{m_messageQueueMutex};
         while (true)
         {
             // 2. Waiting for the message buffer to have something
@@ -107,25 +185,26 @@ private:
 
             // 3. Messages available, processing the oldest
             // 3.1. Retrieving the oldest message
-            auto const [id, loop]{ m_messages.at(m_head) };
+            std::unique_ptr pMessage{ std::move(m_messageQueue.at(m_head)) };
             // 3.2. Incrementing the head
             // NOTE: No need to check if head is at the tail since it's checked above
-            m_head = (m_head + 1) % m_messages.size();
+            m_head = (m_head + 1) % m_messageQueue.size();
             // 3.3. Unlocking the mutex to allow new messages come in during playback
             messageLock.unlock();
             // 3.4. Processing the message
             // TODO: Process looping sounds
-            PlaySound(id);
+            ProcessMessage(*pMessage.get());
             // 3.5. Locking the mutex back since wait() requires it
             messageLock.lock();
         }
     }
 
     std::jthread m_soundThread{ &Impl::ProcessMessages, this };
+
 };
 #pragma endregion Impl
 
-#pragma region DefaultSoundService
+#pragma region SDLSoundService
 Engine::SDLSoundService::SDLSoundService() noexcept
     : m_pImpl{ std::make_unique<Impl>() }{}
 
@@ -139,9 +218,9 @@ Engine::SoundId Engine::SDLSoundService::LoadSound(std::string_view const path)
     return m_pImpl->LoadSound(path);
 }
 
-void Engine::SDLSoundService::PlaySound(glm::uint32_t const soundId) noexcept
+void Engine::SDLSoundService::PlaySound(SoundData const& soundData) noexcept
 {
-    m_pImpl->PlaySound(soundId);
+    m_pImpl->PlaySound(soundData);
 }
 
 void Engine::SDLSoundService::StopAllSounds() noexcept
@@ -153,4 +232,4 @@ void Engine::SDLSoundService::SetVolume(float const volume) noexcept
 {
     m_pImpl->SetVolume(volume);
 }
-#pragma endregion DefaultSoundService
+#pragma endregion SDLSoundService

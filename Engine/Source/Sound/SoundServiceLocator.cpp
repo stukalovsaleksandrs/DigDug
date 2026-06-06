@@ -9,9 +9,9 @@ namespace Engine
     class NullSoundService final : public ISoundService
     {
     public:
-        [[nodiscard]] SoundId LoadSound(std::string_view) noexcept override{ return 0; };
-        void PlaySound([[maybe_unused]] uint32_t soundId) noexcept override{}
-        void StopAllSounds() noexcept override{};
+        [[nodiscard]] SoundId LoadSound(std::string_view) noexcept override{ return 0; }
+        void PlaySound([[maybe_unused]] const SoundData&) noexcept override{}
+        void StopAllSounds() noexcept override{}
         void SetVolume([[maybe_unused]] float volume) noexcept override{}
     };
 

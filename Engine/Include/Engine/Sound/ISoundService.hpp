@@ -8,8 +8,14 @@
 
 namespace Engine
 {
-    // Opaque handle for clients to be able to refer to a specific loaded sound
-    using SoundId = glm::uint32_t;
+    // Opaque handle for users to be able to refer to a specific loaded sound
+    using SoundId = uint32_t;
+
+    struct SoundData final
+    {
+        SoundId id;
+        bool loop;
+    };
 
     // Interface for an object providing ability to manipulate sounds
     class ISoundService
@@ -17,7 +23,7 @@ namespace Engine
     public:
         virtual ~ISoundService() = default;
         [[nodiscard]] virtual SoundId LoadSound(std::string_view path) = 0;
-        virtual void PlaySound(SoundId soundId) noexcept = 0;
+        virtual void PlaySound(SoundData const&) noexcept = 0;
         virtual void StopAllSounds() noexcept = 0;
         virtual void SetVolume(float volume) noexcept = 0;
 
