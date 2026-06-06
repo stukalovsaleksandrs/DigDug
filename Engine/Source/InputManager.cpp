@@ -7,6 +7,8 @@
 #include <ranges>
 #include <print>
 
+SDL_Gamepad* g_pGamepad{};
+
 Engine::InputManager::InputManager()
 {
     InitializeGamepad();
@@ -50,14 +52,23 @@ void Engine::InputManager::Unbind(Action const& action)
 void Engine::InputManager::ProcessPressing()
 {
     auto const keyboardState{ SDL_GetKeyboardState(nullptr) };
-    for (const auto& key : m_actionToCommand | std::views::keys)
+    for (const auto& action : m_actionToCommand | std::views::keys)
     {
         // Returning early if the action is not bound to the held type
-        auto const & action{ key };
-        if (std::get<InputType>(action) != InputType::held) continue;
+        if (action.type != InputType::held) continue;
 
         // Returning early if the key is not held
-        if (!keyboardState[std::get<SDL_Scancode>(action.first)]) continue;
+        if (auto* pKey{ std::get_if<SDL_Scancode>(&action.input) })
+        {
+            if (not keyboardState[*pKey]) continue;
+        }
+        else if (auto* pGamepadButton{ std::get_if<SDL_GamepadButton>(&action.input) })
+        {
+            if (SDL_HasGamepad())
+            {
+                if (not SDL_GetGamepadButton(g_pGamepad, *pGamepadButton)) continue;
+            }
+        }
 
         // Bound to held & actually held -> executing
         ExecuteIfExists(action);
@@ -75,14 +86,26 @@ void Engine::InputManager::ExecuteIfExists(Action const& action) const
 void Engine::InputManager::InitializeGamepad()
 {
     // Early returning if no gamepad
-    if (!SDL_HasGamepad())
+    if (not SDL_HasGamepad())
     {
         std::println("No gamepads connected");
         return;
     }
 
     // Getting the first connected gamepad
-    // int gamepadCount{};
-    // SDL_JoystickID* gamepads{ SDL_GetGamepads(&gamepadCount) };
-    // TODO: Finish gamepad initialization logic
+    // Source: https://glusoft.com/sdl3-tutorials/use-gamepads-joysticks-sdl3
+    int32_t deviceCount{};
+    SDL_JoystickID const* const devices{ SDL_GetGamepads(&deviceCount) };
+    for (int32_t const deviceIdx : std::ranges::views::iota(0, deviceCount))
+    {
+        SDL_Gamepad* pGamepad{ SDL_OpenGamepad(devices[deviceIdx]) };
+        if (not g_pGamepad)
+        {
+            g_pGamepad = pGamepad;
+        }
+
+        std::println("Gamepad connected: {}", SDL_GetGamepadName(pGamepad));
+
+        if (deviceIdx > 0) SDL_CloseGamepad(pGamepad);
+    }
 }

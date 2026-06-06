@@ -33,7 +33,7 @@ Engine::Application::Application(
 
     // SDL instance
     Utils::PrintSDLVersion();
-    if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
+    if (!SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
     {
         SDL_Log("Renderer error: %s", SDL_GetError());
         Utils::ThrowSDLError("SDL_Init Error");

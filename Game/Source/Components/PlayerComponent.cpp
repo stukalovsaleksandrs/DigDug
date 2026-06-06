@@ -59,22 +59,38 @@ void Game::PlayerComponent::BindInput() noexcept
             return std::make_unique<Engine::MoveCommand>(m_movementComponent, direction);
         }
     };
-    inputManager.Bind(m_upAction, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
-    inputManager.Bind(m_leftAction, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
-    inputManager.Bind(m_downAction, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
-    inputManager.Bind(m_rightAction, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
-    inputManager.Bind(m_pointAction, std::make_unique<PointCommand>(*this));
-    //// TODO: Gamepad
+
+    inputManager.Bind(m_keyboardUp, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
+    inputManager.Bind(m_keyboardLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
+    inputManager.Bind(m_keyboardDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
+    inputManager.Bind(m_keyboardRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
+    inputManager.Bind(m_keyboardPointAction, std::make_unique<PointCommand>(*this));
+
+    // Gamepad
+    inputManager.Bind(m_gamepadUp, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
+    inputManager.Bind(m_gamepadLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
+    inputManager.Bind(m_gamepadDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
+    inputManager.Bind(m_gamepadRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
 }
 
 void Game::PlayerComponent::UnbindInput() const noexcept
 {
     Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
-    inputManager.Unbind(m_upAction);
-    inputManager.Unbind(m_leftAction);
-    inputManager.Unbind(m_downAction);
-    inputManager.Unbind(m_rightAction);
-    inputManager.Unbind(m_pointAction);
+
+    // TODO: RAII
+
+    // Keyboard
+    inputManager.Unbind(m_keyboardUp);
+    inputManager.Unbind(m_keyboardLeft);
+    inputManager.Unbind(m_keyboardDown);
+    inputManager.Unbind(m_keyboardRight);
+    inputManager.Unbind(m_keyboardPointAction);
+
+    // Gamepad
+    inputManager.Unbind(m_gamepadUp);
+    inputManager.Unbind(m_gamepadLeft);
+    inputManager.Unbind(m_gamepadDown);
+    inputManager.Unbind(m_gamepadRight);
 }
 
 void Game::PlayerComponent::OnNotify(Engine::Event const event, Engine::Subject const&) noexcept

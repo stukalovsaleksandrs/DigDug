@@ -65,11 +65,16 @@ namespace Game
         Engine::MovementComponent& m_movementComponent;
         Engine::RenderComponent& m_renderComponent;
 
-        Engine::Action m_upAction{SDL_SCANCODE_W, Engine::InputType::held};
-        Engine::Action m_leftAction{SDL_SCANCODE_A, Engine::InputType::held};
-        Engine::Action m_downAction{SDL_SCANCODE_S, Engine::InputType::held};
-        Engine::Action m_rightAction{SDL_SCANCODE_D, Engine::InputType::held};
-        Engine::Action m_pointAction{SDL_SCANCODE_P, Engine::InputType::released};
+        Engine::Action m_keyboardUp{SDL_SCANCODE_W, Engine::InputType::held};
+        Engine::Action m_keyboardLeft{SDL_SCANCODE_A, Engine::InputType::held};
+        Engine::Action m_keyboardDown{SDL_SCANCODE_S, Engine::InputType::held};
+        Engine::Action m_keyboardRight{SDL_SCANCODE_D, Engine::InputType::held};
+        Engine::Action m_keyboardPointAction{SDL_SCANCODE_P, Engine::InputType::released};
+
+        Engine::Action m_gamepadUp{SDL_GAMEPAD_BUTTON_DPAD_UP, Engine::InputType::held};
+        Engine::Action m_gamepadLeft{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Engine::InputType::held};
+        Engine::Action m_gamepadDown{SDL_GAMEPAD_BUTTON_DPAD_DOWN, Engine::InputType::held};
+        Engine::Action m_gamepadRight{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Engine::InputType::held};
 
         Engine::Event m_onPointsIncreased{ std::to_underlying(EventType::OnPointsIncreased) };
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
