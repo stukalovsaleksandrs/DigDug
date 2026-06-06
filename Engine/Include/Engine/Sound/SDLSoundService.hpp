@@ -13,6 +13,12 @@ namespace Engine
     class SDLSoundService final : public ISoundService
     {
     public:
+        struct Message final
+        {
+            SoundId id;
+            bool loop{};
+        };
+
         SDLSoundService() noexcept;
         ~SDLSoundService() noexcept override;
         SDLSoundService(SDLSoundService const&) noexcept = delete;
@@ -28,7 +34,6 @@ namespace Engine
     private:
         class Impl;
         std::unique_ptr<Impl> m_pImpl;
-
     };
 
 }
