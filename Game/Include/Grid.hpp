@@ -16,7 +16,7 @@ namespace Game
     class Grid final
     {
     public:
-        Grid(glm::ivec2 logicalWindowDims);
+        explicit Grid();
         ~Grid() noexcept;
         Grid(Grid const&) noexcept = delete;
         Grid(Grid &&) noexcept = delete;

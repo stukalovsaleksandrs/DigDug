@@ -62,7 +62,7 @@ Game::Application::Application()
     }
 
     // Grid
-    m_grid = std::make_unique<Grid>(windowData.logicalDims);
+    m_grid = std::make_unique<Grid>();
 
     // Character
     {

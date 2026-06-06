@@ -8,8 +8,8 @@
 // Standard
 #include <ranges>
 
-Game::Grid::Grid(glm::ivec2 const logicalWindowDims)
-    : m_dimsInPx{ logicalWindowDims }
+Game::Grid::Grid()
+    : m_dimsInPx{ windowData.logicalDims }
     , m_dimsInCells{ m_dimsInPx.x / tileSideLength, m_dimsInPx.y / tileSideLength}
     , m_renderer{ Engine::Renderer::GetInstance() }
     , m_isGround( m_dimsInCells.x * m_dimsInCells.y )
