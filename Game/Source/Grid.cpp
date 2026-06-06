@@ -9,9 +9,7 @@
 #include <ranges>
 
 Game::Grid::Grid()
-    : m_dimsInPx{ windowData.logicalDims }
-    , m_dimsInCells{ m_dimsInPx.x / tileSideLength, m_dimsInPx.y / tileSideLength}
-    , m_renderer{ Engine::Renderer::GetInstance() }
+    : m_renderer{ Engine::Renderer::GetInstance() }
     , m_isGround( m_dimsInCells.x * m_dimsInCells.y )
 {
     // Validating input
@@ -23,10 +21,6 @@ Game::Grid::Grid()
 
     // Registering rendering callback
     m_renderer.RegisterFunction(m_renderFunction);
-
-    // Filling marking the ground tiles with true
-    uint32_t constexpr upperAirRowCount{ 2 };
-    std::fill(m_isGround.begin() + m_dimsInCells.x * upperAirRowCount, m_isGround.end(), true);
 }
 
 Game::Grid::~Grid() noexcept
@@ -57,7 +51,7 @@ void Game::Grid::Render() const
 #endif// ENABLE_DEBUG_DRAWING
 }
 
-glm::ivec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
+glm::i32vec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) noexcept
 {
     return {
         static_cast<int>(point.x / static_cast<float>(tileSideLength)),
@@ -65,7 +59,7 @@ glm::ivec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
     };
 }
 
-glm::vec2 Game::Grid::GetCellTopLeft(glm::ivec2 const cell) const noexcept
+glm::vec2 Game::Grid::GetCellTopLeft(glm::i32vec2 const cell) const noexcept
 {
     return {
         static_cast<float>(cell.x * tileSideLength),
@@ -73,7 +67,7 @@ glm::vec2 Game::Grid::GetCellTopLeft(glm::ivec2 const cell) const noexcept
     };
 }
 
-bool Game::Grid::TryDigging(glm::ivec2 const pointInPx) noexcept
+bool Game::Grid::TryDigging(glm::i32vec2 const pointInPx) noexcept
 {
     return true;
     uint32_t const newCellIdx{ pointInPx.y / tileSideLength * m_dimsInCells.x + pointInPx.x / tileSideLength };
