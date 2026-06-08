@@ -7,6 +7,7 @@
 
 Game::Levels::Levels(std::vector<std::string_view> const& paths)
 {
+    // Paring the files
     m_levels.reserve(paths.size());
     std::ranges::transform(paths, std::back_inserter(m_levels), [this](std::string_view const path)
     {
@@ -52,6 +53,9 @@ std::unique_ptr<Game::Level> Game::Levels::ParseFile(std::string_view const path
         }
         ++row;
     }
+
+    // Punching the holes is the grid
+    //
 
     return pLevel;
 }

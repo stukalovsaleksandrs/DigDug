@@ -19,6 +19,9 @@ Game::Grid::Grid()
         && "Window dimensions are not divisible by the cell side length"
     );
 
+    // Filling it all with ground
+    std::ranges::fill(m_isGround, true);
+
     // Registering rendering callback
     m_renderer.RegisterFunction(m_renderFunction);
 }

@@ -64,10 +64,8 @@ void Engine::InputManager::ProcessPressing()
         }
         else if (auto* pGamepadButton{ std::get_if<SDL_GamepadButton>(&action.input) })
         {
-            if (SDL_HasGamepad())
-            {
-                if (not SDL_GetGamepadButton(g_pGamepad, *pGamepadButton)) continue;
-            }
+            if (not SDL_HasGamepad()) continue;
+            if (not SDL_GetGamepadButton(g_pGamepad, *pGamepadButton)) continue;
         }
 
         // Bound to held & actually held -> executing

@@ -20,13 +20,13 @@ namespace Game
     {
     public:
         explicit Levels(std::vector<std::string_view> const& paths);
-        [[nodiscard]] Level& GetCurrentLevel() noexcept{ return *m_levels.at(m_currentLevelIdx); };
+        [[nodiscard]] Level& GetCurrentLevel() const noexcept{ return *m_levels.at(m_currentLevelIdx); };
 
     private:
         std::vector<std::unique_ptr<Level>> m_levels;
         uint32_t m_currentLevelIdx{};
 
-        [[nodiscard]] std::unique_ptr<Level> ParseFile(std::string_view path);
+        [[nodiscard]] static std::unique_ptr<Level> ParseFile(std::string_view path);
         static void ParseCharacter(Level&, std::string_view path, std::string_view line, glm::u32vec2 cell);
     };
 }
