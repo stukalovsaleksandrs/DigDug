@@ -3,7 +3,7 @@
 
 // Game
 #include "Utils.hpp"
-#include "../FSM/PlayerFSM.hpp"
+#include "../FSM/PlayerStates.hpp"
 #include "Grid.hpp"
 // Engine
 #include "PawnComponent.hpp"

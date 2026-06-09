@@ -1,9 +1,10 @@
 // Game
 #include "Utils.hpp"
-#include "FSM/PlayerFSM.hpp"
+#include "FSM/PlayerStates.hpp"
 #include "Levels/LevelManager.hpp"
 // Engine
 #include "Engine/Components/AnimationComponent.hpp"
+#include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Scene/GameObject.hpp"
 
 namespace Game
@@ -27,6 +28,7 @@ namespace Game
 
     void Player::State::Idle::OnEnter() noexcept
     {
+        // Just using the first frame statically
         m_dependencies.animationComponent.ChangeAnimation(
             SDL_FRect{0.f, 0.f,
                 static_cast<float>(tileSideLength),

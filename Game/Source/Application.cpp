@@ -151,8 +151,7 @@ Game::Application::Application()
             static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
 
         // AI component
-        auto& aiComponent{ pooka.AddComponent<AIComponent>() };
-
+        auto& aiComponent{ pooka.AddComponent<AIComponent>(PlayerComponent::Dependencies{*m_pLevelManager}) };
     }
 }
 
