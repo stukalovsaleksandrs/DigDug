@@ -17,8 +17,12 @@ namespace Game
 
     private:
         Engine::MovementComponent& m_movementComponent;
-        Engine::MoveCommand m_moveCommand{ m_movementComponent, {-1, 0} };
         FSM m_pookaFSM;
+        Engine::MoveCommand m_moveLeftCommand{ m_movementComponent, {-1, 0} };
+        Engine::MoveCommand m_moveRightCommand{ m_movementComponent, {1, 0} };
+        Engine::MoveCommand m_moveUpCommand{ m_movementComponent, {0, 1} };
+        Engine::MoveCommand m_moveDownCommand{ m_movementComponent, {0, -1} };
+        glm::vec2 prevLocation{ -1.f, -1.f };
     };
 }
 

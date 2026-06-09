@@ -18,12 +18,13 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
         };
         FSM::States states;
         states.emplace(typeid(Pooka::Walking), std::make_unique<Pooka::Walking>(stateDependencies));
-        return std::pair(std::move(states), states.at(typeid(Pooka::Walking)).get());
+        return std::pair{std::move(states), states.at(typeid(Pooka::Walking)).get()};
     }() }
 {}
 
 void Game::AIComponent::Update() noexcept
 {
     Component::Update();
-    m_moveCommand.Execute();
+    // If old pos and new pos are the same, change the command
+    m_moveLeftCommand.Execute();
 }
