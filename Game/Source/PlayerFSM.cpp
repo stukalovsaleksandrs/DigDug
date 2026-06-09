@@ -1,6 +1,6 @@
 // Game
 #include "Utils.hpp"
-#include "PlayerStateMachine.hpp"
+#include "PlayerFSM.hpp"
 #include "Levels/LevelManager.hpp"
 // Engine
 #include "Engine/Scene/GameObject.hpp"
@@ -107,7 +107,7 @@ namespace Game
 #pragma endregion Digging
 
 #pragma region StateMachine
-    Player::StateMachine::StateMachine(State::Dependencies const& dependencies) noexcept
+    Player::FSM::FSM(State::Dependencies const& dependencies) noexcept
     : m_states([&dependencies]{
         // NOTE: Direct construction does not work since it requires copy contructors
         std::unordered_map<std::type_index, std::unique_ptr<StateBase>> states;
@@ -121,14 +121,14 @@ namespace Game
         m_pCurrentState->OnEnter();
     }
 
-    void Player::StateMachine::Update() noexcept
+    void Player::FSM::Update() noexcept
     {
         TryChangingState(
             m_pCurrentState->Update()
         );
     }
 
-    void Player::StateMachine::TryChangingState(StateType const stateType)
+    void Player::FSM::TryChangingState(StateType const stateType)
     {
         if (!stateType.has_value()) return;
         if (stateType.value() == typeid(*m_pCurrentState)) return;

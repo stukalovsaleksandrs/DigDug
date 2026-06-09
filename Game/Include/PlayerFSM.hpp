@@ -87,10 +87,10 @@ namespace Game::Player
         };
     }
 
-    class StateMachine final
+    class FSM final
     {
     public:
-        explicit StateMachine(State::Dependencies const&) noexcept;
+        explicit FSM(State::Dependencies const&) noexcept;
         void Update() noexcept;
 
     private:

@@ -3,7 +3,7 @@
 
 // Game
 #include "Utils.hpp"
-#include "PlayerStateMachine.hpp"
+#include "PlayerFSM.hpp"
 #include "Grid.hpp"
 // Engine
 #include "PawnComponent.hpp"
@@ -54,7 +54,7 @@ namespace Game
         Engine::Event m_onPointsIncreased{ std::to_underlying(EventType::OnPointsIncreased) };
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
 
-        Player::StateMachine m_playerStateMachine;
+        Player::FSM m_playerStateMachine;
     };
 }
 
