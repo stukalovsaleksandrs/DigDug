@@ -45,11 +45,20 @@ namespace Game::Player
             {
                 return m_dependencies.movementComponent.IsMoving();
             }
+        };
+
+        class PlayerStateBase : public StateBase
+        {
+        public:
+            explicit PlayerStateBase(Dependencies const& dependencies)
+                : StateBase{ dependencies }{}
+
+        protected:
             // true - digging, false - not digging
             [[nodiscard]] bool TryDigging() const noexcept;
         };
 
-        class Idle final : public StateBase
+        class Idle final : public PlayerStateBase
         {
         public:
             explicit Idle(Dependencies const&) noexcept;
@@ -58,7 +67,7 @@ namespace Game::Player
             StateType Update() noexcept override;
         };
 
-        class Walking final : public StateBase
+        class Walking final : public PlayerStateBase
         {
         public:
             explicit Walking(Dependencies const&) noexcept;
@@ -67,7 +76,7 @@ namespace Game::Player
             StateType Update() noexcept override;
         };
 
-        class Digging final : public StateBase
+        class Digging final : public PlayerStateBase
         {
         public:
             explicit Digging(Dependencies const&) noexcept;
@@ -96,8 +105,9 @@ namespace Game::Player
         void Update() noexcept;
 
     private:
-         States m_states;
-        State::StateBase* m_pCurrentState;// Not a ref, bc assigning ref calls copy assignment
+        States m_states;
+        // Not a ref, bc, when changing state, assigning ref calls copy assignment
+        State::StateBase* m_pCurrentState;
         void TryChangingState(State::StateType);
 
         [[nodiscard]] State::StateBase* StatesAt(std::type_index const& typeIdx) const noexcept

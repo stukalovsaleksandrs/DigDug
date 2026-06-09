@@ -1,6 +1,6 @@
 // Game
 #include "Utils.hpp"
-#include "../../Include/FSM/PlayerFSM.hpp"
+#include "FSM/PlayerFSM.hpp"
 #include "Levels/LevelManager.hpp"
 // Engine
 #include "Engine/Scene/GameObject.hpp"
@@ -10,23 +10,22 @@ namespace Game
     using Player::State::StateBase;
     using Player::State::StateType;
 
-#pragma region StateBase
-    bool StateBase::TryDigging() const noexcept
+#pragma region PlayerStateBase
+    bool Player::State::PlayerStateBase::TryDigging() const noexcept
     {
-        static glm::vec2 constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
         auto const worldPosition{m_dependencies.owner.GetWorldLocation()};
         m_dependencies.levelManager.GetCurrentLevel().DigCircle(
         {
-            worldPosition + offset
+            worldPosition + topLeftToCenterOffset
         });
         // TODO: Revive TryDigging in the grid
         return true;
     }
-#pragma endregion StateBase
+#pragma endregion PlayerStateBase
 
 #pragma region Idle
     Player::State::Idle::Idle(Dependencies const& dependencies) noexcept
-        : StateBase(dependencies){}
+        : PlayerStateBase{dependencies}{}
 
     void Player::State::Idle::OnEnter() noexcept
     {
@@ -47,7 +46,7 @@ namespace Game
 
 #pragma region Walking
     Player::State::Walking::Walking(Dependencies const& dependencies) noexcept
-        : StateBase(dependencies) {}
+        : PlayerStateBase{dependencies} {}
 
     void Player::State::Walking::OnEnter() noexcept
     {
@@ -75,7 +74,7 @@ namespace Game
 
 #pragma region Digging
     Player::State::Digging::Digging(Dependencies const& dependencies) noexcept
-        : StateBase(dependencies)
+        : PlayerStateBase{dependencies}
     {}
 
     Player::State::Digging::~Digging() noexcept
