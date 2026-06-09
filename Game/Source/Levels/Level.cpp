@@ -79,7 +79,7 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
     auto DigCell{
         [&]
         {
-            DigSquare(m_grid.GetCellCenter(cell));
+            DigSquare(m_grid.GetCellTopLeft(cell));
         }
     };
 
@@ -123,7 +123,10 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
     }
 }
 
-void Game::Level::DigSquare(glm::vec2 const centerPx) const noexcept
+void Game::Level::DigSquare(glm::vec2 const topLeftPx) const noexcept
 {
-    m_maskTexture.MaskSquare({centerPx + topLeftToCenterOffset, tileSideLength});
+    m_maskTexture.MaskSquare({
+        topLeftPx,
+        tileSideLength
+    });
 }
