@@ -24,6 +24,16 @@ namespace Engine::Utils {
     {
         glm::vec2 topLeft;
         float sideLength;
+
+        struct Corners
+        {
+            bool topLeft     : 1 { false };
+            bool topRight    : 1 { false };
+            bool bottomLeft  : 1 { true };
+            bool bottomRight : 1 { true };
+        } roundedCorners{};
+
+        float cornerRadius{ 5.f };
     };
 
     void Check(bool result, std::string_view message);

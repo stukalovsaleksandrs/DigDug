@@ -142,13 +142,52 @@ void Engine::Renderer::RenderFilledCircle(Utils::Circle const& circle) const noe
 
 void Engine::Renderer::RenderFilledSquare(Utils::Square const& square) const noexcept
 {
-    SDL_FRect const rect{
-        .x = square.topLeft.x,
-        .y = square.topLeft.y,
-        .w = square.sideLength,
-        .h = square.sideLength
+    using std::ranges::views::iota;
+
+    float const x{ square.topLeft.x };
+    float const y{ square.topLeft.y };
+    float const s{ square.sideLength };
+    float const r{ square.cornerRadius };
+
+    // Three strips covering the body (corner regions left empty)
+    SDL_FRect const rects[]{
+        { x + r,     y,     s - 2 * r, s         }, // center vertical strip
+        { x,         y + r, r,         s - 2 * r }, // left strip
+        { x + s - r, y + r, r,         s - 2 * r }, // right strip
     };
-    SDL_RenderFillRect(m_pSDLRenderer, &rect);
+    SDL_RenderFillRects(m_pSDLRenderer, rects, 3);
+
+    float const rSq{ r * r };
+
+    struct Corner { float cx, cy, flushX, flushY; bool rounded; };
+    Corner const corners[]{
+        { x + r,     y + r,     x,         y,         square.roundedCorners.topLeft     },
+        { x + s - r, y + r,     x + s - r, y,         square.roundedCorners.topRight    },
+        { x + r,     y + s - r, x,         y + s - r, square.roundedCorners.bottomLeft  },
+        { x + s - r, y + s - r, x + s - r, y + s - r, square.roundedCorners.bottomRight },
+    };
+
+    for (auto const [cx, cy, flushX, flushY, rounded] : corners)
+    {
+        if (rounded)
+        {
+            for (int32_t const dy : iota(0, static_cast<int32_t>(r) + 1))
+            {
+                float const fy{ static_cast<float>(dy) };
+                float const halfWidth{ std::sqrt(rSq - fy * fy) };
+                SDL_FRect const rowAbove{ cx - halfWidth, cy - fy, halfWidth * 2, 1.f };
+                SDL_FRect const rowBelow{ cx - halfWidth, cy + fy, halfWidth * 2, 1.f };
+                SDL_RenderFillRect(m_pSDLRenderer, &rowAbove);
+                if (dy > 0)
+                    SDL_RenderFillRect(m_pSDLRenderer, &rowBelow);
+            }
+        }
+        else
+        {
+            SDL_FRect const cornerRect{ flushX, flushY, r, r };
+            SDL_RenderFillRect(m_pSDLRenderer, &cornerRect);
+        }
+    }
 }
 
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd, Layer const layer) noexcept
