@@ -3,23 +3,25 @@
 #include "Commands.hpp"
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
+#include "Engine/Components/AnimationComponent.hpp"
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
     : PawnComponent{owner, dependencies}
     , m_playerStateMachine{
         [&]{
-            Player::State::Dependencies const stateDependencies{
+            StateBase::Dependencies const stateDependencies{
                 .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
                 .movementComponent = m_movementComponent,
                 .owner = owner,
                 .levelManager = m_dependencies.levelManager
             };
             // NOTE: Direct construction does not work since it requires copy contructors
-            Player::FSM::States states;
+            FSM::States states;
             states.emplace(typeid(Player::State::Idle), std::make_unique<Player::State::Idle>(stateDependencies));
             states.emplace(typeid(Player::State::Walking), std::make_unique<Player::State::Walking>(stateDependencies));
             states.emplace(typeid(Player::State::Digging), std::make_unique<Player::State::Digging>(stateDependencies));
-            return states;
+            // Returning the states and setting the idle state as the default one
+            return std::pair(std::move(states), states.at(typeid(Player::State::Idle)).get());
         }()
     }
 {

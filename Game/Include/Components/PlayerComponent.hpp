@@ -54,7 +54,7 @@ namespace Game
         Engine::Event m_onPointsIncreased{ std::to_underlying(EventType::OnPointsIncreased) };
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
 
-        Player::FSM m_playerStateMachine;
+        FSM m_playerStateMachine;
     };
 }
 

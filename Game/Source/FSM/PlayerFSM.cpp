@@ -3,13 +3,11 @@
 #include "FSM/PlayerFSM.hpp"
 #include "Levels/LevelManager.hpp"
 // Engine
+#include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Scene/GameObject.hpp"
 
 namespace Game
 {
-    using Player::State::StateBase;
-    using Player::State::StateType;
-
 #pragma region PlayerStateBase
     bool Player::State::PlayerStateBase::TryDigging() const noexcept
     {
@@ -104,30 +102,5 @@ namespace Game
     }
 
 #pragma endregion Digging
-
-#pragma region StateMachine
-    Player::FSM::FSM(States&& initialStates) noexcept
-    : m_states{ std::move(initialStates) }
-    , m_pCurrentState{ StatesAt(typeid(State::Idle)) }
-    {
-        m_pCurrentState->OnEnter();
-    }
-
-    void Player::FSM::Update() noexcept
-    {
-        TryChangingState(
-            m_pCurrentState->Update()
-        );
-    }
-
-    void Player::FSM::TryChangingState(StateType const stateType)
-    {
-        if (!stateType.has_value()) return;
-        if (stateType.value() == typeid(*m_pCurrentState)) return;
-        m_pCurrentState->OnExit();
-        m_pCurrentState = StatesAt(stateType.value());
-        m_pCurrentState->OnEnter();
-    }
-#pragma endregion StateMachine
 
 }
