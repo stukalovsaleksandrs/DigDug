@@ -1,6 +1,6 @@
 // Game
 #include "Utils.hpp"
-#include "PlayerFSM.hpp"
+#include "../../Include/FSM/PlayerFSM.hpp"
 #include "Levels/LevelManager.hpp"
 // Engine
 #include "Engine/Scene/GameObject.hpp"
@@ -107,15 +107,8 @@ namespace Game
 #pragma endregion Digging
 
 #pragma region StateMachine
-    Player::FSM::FSM(State::Dependencies const& dependencies) noexcept
-    : m_states([&dependencies]{
-        // NOTE: Direct construction does not work since it requires copy contructors
-        std::unordered_map<std::type_index, std::unique_ptr<StateBase>> states;
-        states.emplace(typeid(State::Idle), std::make_unique<State::Idle>(dependencies));
-        states.emplace(typeid(State::Walking), std::make_unique<State::Walking>(dependencies));
-        states.emplace(typeid(State::Digging), std::make_unique<State::Digging>(dependencies));
-        return states;
-    }())
+    Player::FSM::FSM(States&& initialStates) noexcept
+    : m_states{ std::move(initialStates) }
     , m_pCurrentState{ StatesAt(typeid(State::Idle)) }
     {
         m_pCurrentState->OnEnter();

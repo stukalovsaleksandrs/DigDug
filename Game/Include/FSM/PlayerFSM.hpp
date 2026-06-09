@@ -2,7 +2,7 @@
 #define GAME_PLAYER_STATES
 
 // Game
-#include "Grid.hpp"
+#include "../Grid.hpp"
 // Engine
 #include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Components/MovementComponent.hpp"
@@ -90,11 +90,13 @@ namespace Game::Player
     class FSM final
     {
     public:
-        explicit FSM(State::Dependencies const&) noexcept;
+        using States = std::unordered_map<std::type_index, std::unique_ptr<State::StateBase>>;
+
+        explicit FSM(States&& initialStates) noexcept;
         void Update() noexcept;
 
     private:
-        std::unordered_map<std::type_index, std::unique_ptr<State::StateBase>> m_states;
+         States m_states;
         State::StateBase* m_pCurrentState;// Not a ref, bc assigning ref calls copy assignment
         void TryChangingState(State::StateType);
 

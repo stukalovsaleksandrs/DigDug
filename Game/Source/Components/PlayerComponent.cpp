@@ -6,12 +6,22 @@
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
     : PawnComponent{owner, dependencies}
-    , m_playerStateMachine{{
-        .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
-        .movementComponent = m_movementComponent,
-        .owner = owner,
-        .levelManager = m_dependencies.levelManager
-    }}
+    , m_playerStateMachine{
+        [&]{
+            Player::State::Dependencies const stateDependencies{
+                .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
+                .movementComponent = m_movementComponent,
+                .owner = owner,
+                .levelManager = m_dependencies.levelManager
+            };
+            // NOTE: Direct construction does not work since it requires copy contructors
+            Player::FSM::States states;
+            states.emplace(typeid(Player::State::Idle), std::make_unique<Player::State::Idle>(stateDependencies));
+            states.emplace(typeid(Player::State::Walking), std::make_unique<Player::State::Walking>(stateDependencies));
+            states.emplace(typeid(Player::State::Digging), std::make_unique<Player::State::Digging>(stateDependencies));
+            return states;
+        }()
+    }
 {
     BindInput();
 }
