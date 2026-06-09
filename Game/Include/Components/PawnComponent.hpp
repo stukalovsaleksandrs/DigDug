@@ -59,4 +59,4 @@ namespace Game
 
 }
 
-#endif GAME_PAWN_COMPONENT
+#endif// GAME_PAWN_COMPONENT

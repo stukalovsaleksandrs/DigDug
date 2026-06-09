@@ -11,9 +11,11 @@ namespace Game
     {
     public:
         explicit AIComponent(Engine::GameObject& owner);
+        void Update() noexcept override;
 
     private:
-
+        Engine::MovementComponent& m_movementComponent;
+        Engine::MoveCommand m_moveCommand{ m_movementComponent, {-1, 0} };
 
     };
 }

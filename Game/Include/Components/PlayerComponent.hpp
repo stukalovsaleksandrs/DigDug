@@ -7,7 +7,6 @@
 #include "Grid.hpp"
 // Engine
 #include "PawnComponent.hpp"
-#include "Engine/Components/ComponentBase.hpp"
 #include "Engine/Core/Observer.hpp"
 #include "Engine/InputManager.hpp"
 
