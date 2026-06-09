@@ -17,14 +17,14 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
             .levelManager = m_dependencies.levelManager
         };
         FSM::States states;
-        states.emplace(typeid(Pooka::Walking), std::make_unique<Pooka::Walking>(stateDependencies));
-        return std::pair{std::move(states), states.at(typeid(Pooka::Walking)).get()};
+        states.emplace(typeid(Pooka::WanderHorizontally), std::make_unique<Pooka::WanderHorizontally>(stateDependencies));
+        return std::pair{std::move(states), states.at(typeid(Pooka::WanderHorizontally)).get()};
     }() }
 {}
 
 void Game::AIComponent::Update() noexcept
 {
     Component::Update();
-    // If old pos and new pos are the same, change the command
-    m_moveLeftCommand.Execute();
+
+    m_pookaFSM.Update();
 }

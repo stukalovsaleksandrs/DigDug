@@ -27,7 +27,7 @@ namespace Game
         struct Dependencies final
         {
             Engine::AnimationComponent& animationComponent;
-            Engine::MovementComponent const& movementComponent;
+            Engine::MovementComponent& movementComponent;
             Engine::GameObject& owner;// GetWorldLocation is not const
             LevelManager const& levelManager;
         };
