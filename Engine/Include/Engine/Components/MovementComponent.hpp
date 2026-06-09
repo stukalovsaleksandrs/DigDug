@@ -10,7 +10,6 @@
 
 namespace Engine
 {
-    // TODO: Remove ability for diagonal movement
     class MovementComponent final : public Component, public Subject
     {
     public:

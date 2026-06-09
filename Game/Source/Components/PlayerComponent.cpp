@@ -1,24 +1,12 @@
 // Game
 #include "Components/PlayerComponent.hpp"
 #include "Commands.hpp"
-#include "Levels/Level.hpp"
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
-#include "Engine/Utils/Constants.hpp"
-#include "Engine/Utils/Timer.hpp"
-// Third-party
-#include "glm/geometric.hpp"
-// Standard
-#include <print>
-
-#include "Levels/LevelManager.hpp"
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
-    : Component{owner}
-    , m_dependencies{ dependencies }
-    , m_movementComponent{*owner.GetComponent<Engine::MovementComponent>()}
-    , m_renderComponent{*owner.GetComponent<Engine::RenderComponent>()}
-    , m_stateMachine{{
+    : PawnComponent{owner, dependencies}
+    , m_playerStateMachine{{
         .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
         .movementComponent = m_movementComponent,
         .owner = owner,
@@ -26,9 +14,6 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
     }}
 {
     BindInput();
-
-    // Binding ourselves to movement component
-    m_movementComponent.BindObserver(*this);
 }
 
 Game::PlayerComponent::~PlayerComponent() noexcept
@@ -38,16 +23,8 @@ Game::PlayerComponent::~PlayerComponent() noexcept
 
 void Game::PlayerComponent::Update() noexcept
 {
-    Component::Update();
-    m_stateMachine.Update();
-    if (auto const lerpedLocation{ m_locationLerpData.Update()};
-        lerpedLocation != std::nullopt)
-    {
-        m_owner.SetLocalPosition(lerpedLocation.value());
-    }
-    m_movementComponent.Enable();
-
-
+    PawnComponent::Update();
+    m_playerStateMachine.Update();
 }
 
 void Game::PlayerComponent::BindInput() noexcept
@@ -95,91 +72,9 @@ void Game::PlayerComponent::UnbindInput() const noexcept
     inputManager.Unbind(m_gamepadRight);
 }
 
-void Game::PlayerComponent::OnNotify(Engine::Event const event, Engine::Subject const&) noexcept
-{
-    // TODO: Find a proper way to bind functions to the events directly
-    switch (event.id)
-    {
-    case std::to_underlying(EventType::OnDied):
-        {
-            m_owner.MarkForDeletion();
-            break;
-        }
-    case std::to_underlying(Engine::EventType::OnDirectionChanged):
-        {
-            glm::vec2 const direction{ m_movementComponent.GetDirection() };
-            ProcessSpriteOrientation(direction);
-            break;
-        }
-    case std::to_underlying(Engine::EventType::OnMovementAxisChanged):
-        {
-            ConstrainMovementToGrid();
-            break;
-        }
-    default: ;
-    }
-}
-
 void Game::PlayerComponent::AddPoints(uint32_t const points) noexcept
 {
     m_points += points;
     subject.NotifyObservers(m_onPointsIncreased);
     if (m_points == 5) subject.NotifyObservers(m_onCollected5Points);
-}
-
-void Game::PlayerComponent::ProcessSpriteOrientation(glm::vec2 const direction) const noexcept
-{
-    // Flipping
-    SDL_FlipMode flipMode{};
-    if (direction.x < 0.f) flipMode = SDL_FLIP_HORIZONTAL;
-    m_renderComponent.SetFlipMode(flipMode);
-
-    // Rotation
-    if (direction.y < 0.f) m_renderComponent.SetRotation(-90.f);
-    else if (direction.y > 0.f) m_renderComponent.SetRotation(90.f);
-    else m_renderComponent.SetRotation(0.f);
-}
-
-void Game::PlayerComponent::ConstrainMovementToGrid() noexcept
-{
-    glm::vec2 const srcTopLeft{  m_owner.GetWorldLocation()  };// in px
-    glm::vec2 const dstTopLeft{  GetCurrentCellTopLeft()  };// in px
-    float const distance{ glm::length(dstTopLeft - m_owner.GetWorldLocation()) };// in px
-    float const lerpSec{ distance / m_movementComponent.GetPxPerSec() };
-
-    m_movementComponent.Disable();
-    m_locationLerpData.Reset(srcTopLeft, dstTopLeft, lerpSec);
-}
-
-glm::vec2 Game::PlayerComponent::GetCurrentCellTopLeft() const noexcept
-{
-    Level const& level{ m_dependencies.levelManager.GetCurrentLevel() };
-    return level.GetCellTopLeft(m_owner.GetWorldLocation() + 0.5f * glm::vec2{tileSideLength});
-}
-
-/************************
- * LocationLerpData
-************************/
-
-void Game::PlayerComponent::LocationLerpData::Reset(glm::vec2 const srcLocation, glm::vec2 const dstLocation, float const totalSec) noexcept
-{
-    if (Engine::Utils::NearlyEqual(srcLocation, dstLocation)) return;
-
-    m_srcLocation = srcLocation;
-    m_dstLocation = dstLocation;
-    m_dstSec = totalSec;
-
-    m_currentSec = 0.f;
-    m_active = true;
-}
-
-std::optional<glm::vec2> Game::PlayerComponent::LocationLerpData::Update() noexcept
-{
-    if (!m_active) return std::nullopt;
-    m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
-    glm::vec2 const currentLocation{ m_srcLocation + (m_dstLocation - m_srcLocation) * (m_currentSec / m_dstSec) };
-    // Disabling on overshoot
-    if (glm::dot(m_dstLocation - m_srcLocation, m_dstLocation - currentLocation) < 0.f) m_active = false;
-
-    return currentLocation;
 }

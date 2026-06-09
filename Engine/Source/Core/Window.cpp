@@ -3,7 +3,7 @@
 #include "Engine/Utils/Utils.hpp"
 
 Engine::Window::Data::Data(glm::vec2 const logicalDims, float const scale) noexcept
-    : dims{ logicalDims * scale }
+    : physicalDims{ logicalDims * scale }
     , logicalDims{ logicalDims }
 {}
 
@@ -12,8 +12,8 @@ Engine::Window::Window(Data const& _data, std::string_view const title)
     , m_pWindow{
        SDL_CreateWindow(
            title.data(),
-           static_cast<int>(_data.dims.x),
-           static_cast<int>(_data.dims.y),
+           static_cast<int>(_data.physicalDims.x),
+           static_cast<int>(_data.physicalDims.y),
            SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE
        )
    }

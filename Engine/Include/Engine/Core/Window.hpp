@@ -14,7 +14,7 @@ namespace Engine
     public:
         struct Data final
         {
-            glm::uvec2 const dims{}, logicalDims{};
+            glm::uvec2 const physicalDims{}, logicalDims{};
 
             Data(glm::vec2 logicalDims, float scale) noexcept;
         };

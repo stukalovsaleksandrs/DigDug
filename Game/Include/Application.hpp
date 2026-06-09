@@ -23,9 +23,10 @@ namespace Game
         Engine::Scene scene;
         std::unique_ptr<Engine::Font> m_pFont{};
 
-        std::unique_ptr<Engine::Sprite> m_pGroundTexture{};
-        std::unique_ptr<Engine::Sprite> m_pSkyTexture{};
-        std::unique_ptr<Engine::Sprite> m_pSpriteSheet{};
+        std::unique_ptr<Engine::Sprite> m_pGroundSprite{};
+        std::unique_ptr<Engine::Sprite> m_pSkySprite{};
+        std::unique_ptr<Engine::Sprite> m_pTaizoHoriSprite{};
+        std::unique_ptr<Engine::Sprite> m_pPookaSprite{};
 
         std::unique_ptr<LevelManager> m_pLevelManager{};
 
