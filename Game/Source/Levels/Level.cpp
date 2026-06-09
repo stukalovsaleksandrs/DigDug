@@ -72,17 +72,12 @@ void Game::Level::ParseFile(std::string_view const path)
         }
         ++row;
     }
+
+    MaskInitialTunnels();
 }
 
 void Game::Level::ParseCharacter(std::string_view const path, std::string_view const line, glm::u32vec2 const cell)
 {
-    auto DigCell{
-        [&]
-        {
-            DigSquare(m_grid.GetCellTopLeft(cell));
-        }
-    };
-
     // TODO: Map of characters to functions
 
     switch (line.at(cell.x))
@@ -93,19 +88,19 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
             throw std::runtime_error{ std::format("{} has multiple character spawn points", path.data()) };
 
         m_characterSpawnCell = cell;
-        DigCell();
+        m_grid.SetAir(cell);
         break;
     }
     case '2':
     {
         m_pookaSpawnCells.push_back(cell);
-        DigCell();
+        m_grid.SetAir(cell);
         break;
     }
     case '3':
     {
         m_flygarSpawnCells.push_back(cell);
-        DigCell();
+        m_grid.SetAir(cell);
         break;
     }
     case '*': m_rockSpawnCells.push_back(cell); break;
@@ -113,7 +108,6 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
     case ' ':
     {
         m_grid.SetAir(cell);
-        DigCell();
         break;
     }
     default:
@@ -121,12 +115,49 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
             "Unknown character '{}' at ({}, {}) in {}", line.at(cell.x), cell.x, cell.y, path
         ));
     }
+
 }
 
-void Game::Level::DigSquare(glm::vec2 const topLeftPx) const noexcept
+void Game::Level::DigSquare(glm::vec2 const topLeftPx, EU::Square::Corners const corners) const noexcept
 {
     m_maskTexture.MaskSquare({
         topLeftPx,
-        tileSideLength
+        static_cast<float>(tileSideLength),
+        corners
     });
+}
+
+void Game::Level::MaskInitialTunnels() const noexcept
+{
+    glm::i32vec2 const dims{
+        static_cast<int32_t>(windowData.logicalDims.x) / tileSideLength,
+        static_cast<int32_t>(windowData.logicalDims.y) / tileSideLength
+    };
+
+    for (int32_t row{}; row < dims.y; ++row)
+    {
+        for (int32_t col{}; col < dims.x; ++col)
+        {
+            glm::i32vec2 const cell{ col, row };
+            if (m_grid.IsGround(cell)) continue;
+
+            // Check the four cardinal neighbors
+            bool const airLeft  { !m_grid.IsGround({ col - 1, row }) };
+            bool const airRight { !m_grid.IsGround({ col + 1, row }) };
+            bool const airUp    { !m_grid.IsGround({ col, row - 1 }) };
+            bool const airDown  { !m_grid.IsGround({ col, row + 1 }) };
+
+            // A corner is sharp if ANY adjacent neighbor in that corner's directions is air.
+            // e.g. top-left corner is sharp if the cell to the left OR above is air.
+            EU::Square::Corners const corners
+            {
+                .topLeft     = !airLeft  && !airUp,
+                .topRight    = !airRight && !airUp,
+                .bottomLeft  = !airLeft  && !airDown,
+                .bottomRight = !airRight && !airDown,
+            };
+
+            DigSquare(Grid::GetCellTopLeft(cell), corners);
+        }
+    }
 }

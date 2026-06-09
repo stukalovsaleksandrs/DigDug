@@ -40,7 +40,9 @@ namespace Game
 
         void ParseCharacter(std::string_view path, std::string_view line, glm::u32vec2 cell);
 
-        void DigSquare(glm::vec2 topLeftPx) const noexcept;
+        void DigSquare(glm::vec2 topLeftPx, EU::Square::Corners corners = {}) const noexcept;
+
+        void MaskInitialTunnels() const noexcept;
     };
 }
 

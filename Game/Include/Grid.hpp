@@ -39,6 +39,13 @@ namespace Game
 
         void SetAir(glm::i32vec2 const cell) noexcept{ At(cell) = false; };
 
+        [[nodiscard]] bool IsGround(glm::i32vec2 const cell) const noexcept
+        {
+            if (cell.x < 0 || cell.y < 0 || cell.x >= m_dimsInCells.x || cell.y >= m_dimsInCells.y)
+                return false; // treat out-of-bounds as air so border cells do not get rounded edges
+            return At(cell);
+        }
+
     private:
         glm::i32vec2 m_dimsInPx{ windowData.logicalDims  };
         glm::i32vec2 m_dimsInCells{ m_dimsInPx.x / tileSideLength, m_dimsInPx.y / tileSideLength };
@@ -50,6 +57,11 @@ namespace Game
         uint32_t m_currentCellIdx{};
 
         [[nodiscard]] std::vector<bool>::reference At(glm::i32vec2 const cell) noexcept
+        {
+            return m_isGround.at(cell.y * m_dimsInCells.x + cell.x);
+        }
+
+        [[nodiscard]] bool At(glm::i32vec2 const cell) const noexcept
         {
             return m_isGround.at(cell.y * m_dimsInCells.x + cell.x);
         }

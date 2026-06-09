@@ -27,8 +27,8 @@ namespace Engine::Utils {
 
         struct Corners
         {
-            bool topLeft     : 1 { false };
-            bool topRight    : 1 { false };
+            bool topLeft     : 1 { true };
+            bool topRight    : 1 { true };
             bool bottomLeft  : 1 { true };
             bool bottomRight : 1 { true };
         } roundedCorners{};
