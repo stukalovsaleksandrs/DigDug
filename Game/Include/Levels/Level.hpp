@@ -36,9 +36,11 @@ namespace Game
             this->m_maskTexture.Render();
         } };
 
+        std::unordered_map<char, std::function<void(glm::i32vec2 cell)>> m_charToParsingFunc{};
+
         void ParseFile(std::string_view path);
 
-        void ParseCharacter(std::string_view path, std::string_view line, glm::u32vec2 cell);
+        void ParseCharacter(std::string_view line, glm::u32vec2 cell) const;
 
         void DigSquare(glm::vec2 topLeftPx, EU::Square::Corners corners = {}) const noexcept;
 

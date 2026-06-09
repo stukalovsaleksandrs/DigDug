@@ -8,6 +8,38 @@
 
 Game::Level::Level(std::string_view const path) noexcept
     : m_maskTexture{ SDL_Color{255, 255, 255, 255}, windowData.logicalDims, SDL_BLENDMODE_MOD}
+    , m_charToParsingFunc{
+        { '1', [this](glm::i32vec2 const cell)
+        {
+            if (m_characterSpawnCell != glm::u32vec2{})
+                throw std::runtime_error{ std::format("A file has multiple character spawn points") };
+
+            m_characterSpawnCell = cell;
+            m_grid.SetAir(cell);
+        }},
+        { '2', [this](glm::i32vec2 const cell)
+        {
+            m_pookaSpawnCells.push_back(cell);
+            m_grid.SetAir(cell);
+        }},
+        {'3', [this](glm::i32vec2 const cell)
+        {
+            m_flygarSpawnCells.push_back(cell);
+            m_grid.SetAir(cell);
+        }},
+        {'*', [this](glm::i32vec2 const cell)
+        {
+            m_rockSpawnCells.push_back(cell);
+        }},
+        {'.', [](glm::i32vec2 const)
+        {
+            // grid is all ground by default
+        }},
+        {' ', [this](glm::i32vec2 const cell)
+        {
+            m_grid.SetAir(cell);
+        }}
+    }
 {
     ParseFile(path);
 }
@@ -68,7 +100,7 @@ void Game::Level::ParseFile(std::string_view const path)
         for (uint32_t const col : std::ranges::views::iota(0u, line.size()))
         {
             glm::u32vec2 const cell{ col, row };
-            ParseCharacter(path, line, cell);
+            ParseCharacter(line, cell);
         }
         ++row;
     }
@@ -76,46 +108,10 @@ void Game::Level::ParseFile(std::string_view const path)
     MaskInitialTunnels();
 }
 
-void Game::Level::ParseCharacter(std::string_view const path, std::string_view const line, glm::u32vec2 const cell)
+void Game::Level::ParseCharacter(std::string_view const line, glm::u32vec2 const cell) const
 {
-    // TODO: Map of characters to functions
-
-    switch (line.at(cell.x))
-    {
-    case '1':
-    {
-        if (m_characterSpawnCell != glm::u32vec2{})
-            throw std::runtime_error{ std::format("{} has multiple character spawn points", path.data()) };
-
-        m_characterSpawnCell = cell;
-        m_grid.SetAir(cell);
-        break;
-    }
-    case '2':
-    {
-        m_pookaSpawnCells.push_back(cell);
-        m_grid.SetAir(cell);
-        break;
-    }
-    case '3':
-    {
-        m_flygarSpawnCells.push_back(cell);
-        m_grid.SetAir(cell);
-        break;
-    }
-    case '*': m_rockSpawnCells.push_back(cell); break;
-    case '.': /* grid is all ground by default */ break;
-    case ' ':
-    {
-        m_grid.SetAir(cell);
-        break;
-    }
-    default:
-        throw std::runtime_error(std::format(
-            "Unknown character '{}' at ({}, {}) in {}", line.at(cell.x), cell.x, cell.y, path
-        ));
-    }
-
+    char const c{ line.at(cell.x) };
+    m_charToParsingFunc.at(c)(cell);
 }
 
 void Game::Level::DigSquare(glm::vec2 const topLeftPx, EU::Square::Corners const corners) const noexcept
