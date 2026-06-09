@@ -6,11 +6,14 @@
 // Engine
 #include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Components/MovementComponent.hpp"
-// Third-party
-#include <SDL3/SDL_render.h>
 // Standard
 #include <memory>
 #include <typeindex>
+
+namespace Game
+{
+    class LevelManager;
+}
 
 namespace Game::Player
 {
@@ -20,8 +23,8 @@ namespace Game::Player
         {
             Engine::AnimationComponent& animationComponent;
             Engine::MovementComponent const& movementComponent;
-            Grid& grid;
             Engine::GameObject& owner;// GetWorldLocation is not const
+            LevelManager const& levelManager;
         };
 
         using StateType = std::optional<std::type_index>;
@@ -77,15 +80,10 @@ namespace Game::Player
             void OnEnter() noexcept override;
             StateType Update() noexcept override;
             void OnExit() noexcept override{};
-            void RenderTunnels() const noexcept;
 
         private:
-            std::function<void()> m_renderTunnelsFunction{ [this]{this->RenderTunnels();} };
-
-            SDL_Texture* m_maskTexture{};
-            SDL_Renderer* m_pSDLRenderer{};
-
             void Dig() const noexcept;
+
         };
     }
 

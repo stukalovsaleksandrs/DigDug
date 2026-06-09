@@ -1,6 +1,7 @@
 // Game
 #include "Components/PlayerComponent.hpp"
 #include "Commands.hpp"
+#include "Levels/Level.hpp"
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Utils/Constants.hpp"
@@ -10,6 +11,7 @@
 // Standard
 #include <print>
 
+#include "Levels/LevelManager.hpp"
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
     : Component{owner}
@@ -19,8 +21,8 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
     , m_stateMachine{{
         .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
         .movementComponent = m_movementComponent,
-        .grid = m_dependencies.grid,
-        .owner = owner
+        .owner = owner,
+        .levelManager = m_dependencies.levelManager
     }}
 {
     BindInput();
@@ -151,8 +153,8 @@ void Game::PlayerComponent::ConstrainMovementToGrid() noexcept
 
 glm::vec2 Game::PlayerComponent::GetCurrentCellTopLeft() const noexcept
 {
-    glm::ivec2 const currentCell{ m_dependencies.grid.GetCellFromPoint(m_owner.GetWorldLocation() + 0.5f * glm::vec2{tileSideLength}) };
-    return m_dependencies.grid.GetCellTopLeft(currentCell);
+    Level const& level{ m_dependencies.levelManager.GetCurrentLevel() };
+    return level.GetCellTopLeft(m_owner.GetWorldLocation() + 0.5f * glm::vec2{tileSideLength});
 }
 
 /************************

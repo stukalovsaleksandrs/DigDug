@@ -14,6 +14,12 @@ namespace Engine::Utils {
         glm::vec2 topLeft, dims;
     };
 
+    struct Circle final
+    {
+        glm::vec2 center;
+        float radius;
+    };
+
     void Check(bool result, std::string_view message);
 
     void ThrowSDLError(std::string_view message);

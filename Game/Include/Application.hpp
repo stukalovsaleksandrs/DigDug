@@ -2,7 +2,7 @@
 #define GAME_APPLICATION
 
 // Game
-#include "Levels.hpp"
+#include "Levels/LevelManager.hpp"
 // Engine
 #include "Engine/Core/Application.hpp"
 #include "Engine/Scene/Scene.hpp"
@@ -27,7 +27,7 @@ namespace Game
         std::unique_ptr<Engine::Sprite> m_pSkyTexture{};
         std::unique_ptr<Engine::Sprite> m_pSpriteSheet{};
 
-        std::unique_ptr<Levels> m_pLevels{};
+        std::unique_ptr<LevelManager> m_pLevelManager{};
 
     };
 }

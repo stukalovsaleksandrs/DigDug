@@ -109,9 +109,11 @@ void Engine::Renderer::RenderLine(glm::vec2 const p1, glm::vec2 const p2) const 
     SDL_RenderLine(m_pSDLRenderer, p1.x, p1.y, p2.x, p2.y);
 }
 
-void Engine::Renderer::RenderFilledCircle(glm::vec2 const center, float const radius) const noexcept
+void Engine::Renderer::RenderFilledCircle(Utils::Circle const& circle) const noexcept
 {
     using std::ranges::views::iota;
+
+    auto const [center, radius]{ circle };
 
     auto const logicalDims{ static_cast<glm::i32vec2>(m_pWindow->data.logicalDims) };
     assert(center.y > 0 && center.y < logicalDims.y && center.y > 0 && center.y < logicalDims.y

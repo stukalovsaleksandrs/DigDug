@@ -37,9 +37,6 @@ Game::Application::Application()
     // cd into the resource directory
     fs::current_path(GetResourceFolderPath());
 
-    // Loading the levels
-    m_pLevels = std::make_unique<Levels>(std::vector<std::string_view>{"Levels/Level1.txt"});
-
     // Playing sound
     auto& soundService{ Engine::SoundServiceLocator::GetSoundService() };
     soundService.SetVolume(0.05f);
@@ -57,6 +54,10 @@ Game::Application::Application()
         auto& ground{scene.CreateGameObject({})};
         ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_pGroundTexture.get()}, Engine::Renderer::Layer::background);
     }
+
+    // Levels
+    // Don't move to the header, has to be added to rendering after the ground
+    m_pLevelManager = std::make_unique<LevelManager>(std::vector<std::string_view>{"Levels/Level1.txt"});
 
     // Sky
     {
@@ -87,7 +88,7 @@ Game::Application::Application()
         });
 
         // Player component(must be added after animation component)
-        auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{m_pLevels->GetCurrentLevel().grid})};
+        auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*m_pLevelManager})};
 
         // Render component
         auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(

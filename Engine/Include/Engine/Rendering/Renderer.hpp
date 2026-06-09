@@ -10,6 +10,11 @@
 #include <vector>
 #include <functional>
 
+namespace Engine::Utils
+{
+    struct Circle;
+}
+
 using RenderFunctionType = std::function<void()>;
 
 namespace Engine
@@ -39,7 +44,7 @@ namespace Engine
         void RenderTexture(Sprite const&, glm::vec2 location) const noexcept;
         void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float degrees, SDL_FlipMode flipMode = SDL_FLIP_NONE) const noexcept;
         void RenderLine(glm::vec2 p1, glm::vec2 p2) const noexcept;
-        void RenderFilledCircle(glm::vec2 center, float radius) const noexcept;
+        void RenderFilledCircle(Utils::Circle const&) const noexcept;
 
         [[nodiscard]] SDL_Renderer* GetSDLRenderer() const noexcept { return m_pSDLRenderer; };
 
