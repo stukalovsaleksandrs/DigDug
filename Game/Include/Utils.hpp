@@ -15,6 +15,8 @@ namespace Game
 
     Engine::Window::Data const windowData( { 224, 288 }, 3.f );
 
+    glm::vec2 constexpr topLeftToCenterOffset{ 0.5f * glm::vec2{ tileSideLength, tileSideLength } };
+
     namespace EU = Engine::Utils;
 
     enum class EventType : Engine::EventId

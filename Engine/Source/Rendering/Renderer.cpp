@@ -140,6 +140,17 @@ void Engine::Renderer::RenderFilledCircle(Utils::Circle const& circle) const noe
     }
 }
 
+void Engine::Renderer::RenderFilledSquare(Utils::Square const& square) const noexcept
+{
+    SDL_FRect const rect{
+        .x = square.topLeft.x,
+        .y = square.topLeft.y,
+        .w = square.sideLength,
+        .h = square.sideLength
+    };
+    SDL_RenderFillRect(m_pSDLRenderer, &rect);
+}
+
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd, Layer const layer) noexcept
 {
     m_layerToRenderFunctions.at(layer).push_back(&renderFunctionToAdd);

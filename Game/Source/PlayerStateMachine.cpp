@@ -15,7 +15,7 @@ namespace Game
     {
         static glm::vec2 constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
         auto const worldPosition{m_dependencies.owner.GetWorldLocation()};
-        m_dependencies.levelManager.GetCurrentLevel().Dig(
+        m_dependencies.levelManager.GetCurrentLevel().DigCircle(
         {
             worldPosition + offset
         });
@@ -86,7 +86,7 @@ namespace Game
         // Digging a circle
         static auto constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
         Level const& level{ m_dependencies.levelManager.GetCurrentLevel() };
-        level.Dig(m_dependencies.owner.GetWorldLocation() + offset);
+        level.DigCircle(m_dependencies.owner.GetWorldLocation() + offset);
     }
 
     void Player::State::Digging::OnEnter() noexcept

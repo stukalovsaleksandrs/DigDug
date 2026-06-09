@@ -54,6 +54,7 @@ namespace Engine
 
         void Render() const noexcept;
         void MaskCircle(Utils::Circle const&) const noexcept;
+        void MaskSquare(Utils::Square const&) const noexcept;
 
     private:
         SDL_Renderer* m_pSDLRenderer{ Renderer::GetInstance().GetSDLRenderer() };

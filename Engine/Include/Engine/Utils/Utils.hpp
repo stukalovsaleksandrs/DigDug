@@ -20,6 +20,12 @@ namespace Engine::Utils {
         float radius;
     };
 
+    struct Square final
+    {
+        glm::vec2 topLeft;
+        float sideLength;
+    };
+
     void Check(bool result, std::string_view message);
 
     void ThrowSDLError(std::string_view message);

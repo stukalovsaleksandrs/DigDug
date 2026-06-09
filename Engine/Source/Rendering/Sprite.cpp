@@ -36,8 +36,17 @@ void Engine::Sprite::Render() const noexcept
 
 void Engine::Sprite::MaskCircle(Utils::Circle const& circle) const noexcept
 {
+    SDL_SetRenderDrawColor(m_pSDLRenderer, 0, 0, 0, 255);
     SDL_SetRenderTarget(m_pSDLRenderer, m_pSDLTexture);
     Renderer::GetInstance().RenderFilledCircle(circle);
+    SDL_SetRenderTarget(m_pSDLRenderer, nullptr);
+}
+
+void Engine::Sprite::MaskSquare(Utils::Square const& square) const noexcept
+{
+    SDL_SetRenderDrawColor(m_pSDLRenderer, 0, 0, 0, 255);
+    SDL_SetRenderTarget(m_pSDLRenderer, m_pSDLTexture);
+    Renderer::GetInstance().RenderFilledSquare(square);
     SDL_SetRenderTarget(m_pSDLRenderer, nullptr);
 }
 
@@ -67,7 +76,7 @@ Engine::Sprite::Sprite(std::string_view const fullPath)
     }
 }
 
-Engine::Sprite::Sprite(SDL_Color const& color, glm::uvec2 dims, SDL_BlendMode blendMode)
+Engine::Sprite::Sprite(SDL_Color const& color, glm::uvec2 const dims, SDL_BlendMode const blendMode)
     : m_pSDLTexture{ SDL_CreateTexture(m_pSDLRenderer,
                                 SDL_PIXELFORMAT_RGBA8888,
                                SDL_TEXTUREACCESS_TARGET,

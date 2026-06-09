@@ -17,10 +17,10 @@ namespace Game
 
         void SetActive(bool active) const noexcept;
 
-        void Dig(glm::vec2 px) const noexcept;
+    void DigCircle(glm::vec2 centerPx) const noexcept;
 
-        // Given a px, gets a cell of this px and returns top left px of this cell
-        glm::vec2 GetCellTopLeft(glm::u32vec2 px) const noexcept;
+    // Given a px, gets a cell of this px and returns top left px of this cell
+    glm::vec2 GetCellTopLeft(glm::u32vec2 centerPx) const noexcept;
 
     private:
         SDL_Renderer* m_pSDLRenderer{};
@@ -40,7 +40,7 @@ namespace Game
 
         void ParseCharacter(std::string_view path, std::string_view line, glm::u32vec2 cell);
 
-        void CreateInitialTunnels() noexcept;
+        void DigSquare(glm::vec2 centerPx) const noexcept;
     };
 }
 

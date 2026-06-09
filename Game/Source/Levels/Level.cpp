@@ -25,15 +25,15 @@ void Game::Level::SetActive(bool const active) const noexcept
     }
 }
 
-void Game::Level::Dig(glm::vec2 const px) const noexcept
+void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
 {
     static float constexpr halfTileSideLength{ 0.5f * tileSideLength };
-    m_maskTexture.MaskCircle({px, halfTileSideLength});
+    m_maskTexture.MaskCircle({centerPx, halfTileSideLength});
 }
 
 glm::vec2 Game::Level::GetCellTopLeft(glm::u32vec2 const px) const noexcept
 {
-    glm::i32vec2 const cell{ m_grid.GetCellFromPoint(px) };
+    glm::i32vec2 const cell{ m_grid.PointToCell(px) };
     return m_grid.GetCellTopLeft(cell);
 }
 
@@ -72,13 +72,19 @@ void Game::Level::ParseFile(std::string_view const path)
         }
         ++row;
     }
-
-    // Punching the holes in the ground
-    CreateInitialTunnels();
 }
 
 void Game::Level::ParseCharacter(std::string_view const path, std::string_view const line, glm::u32vec2 const cell)
 {
+    auto DigCell{
+        [&]
+        {
+            DigSquare(m_grid.GetCellCenter(cell));
+        }
+    };
+
+    // TODO: Map of characters to functions
+
     switch (line.at(cell.x))
     {
     case '1':
@@ -87,13 +93,29 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
             throw std::runtime_error{ std::format("{} has multiple character spawn points", path.data()) };
 
         m_characterSpawnCell = cell;
+        DigCell();
         break;
     }
-    case '2': m_pookaSpawnCells.push_back(cell); break;
-    case '3': m_flygarSpawnCells.push_back(cell); break;
+    case '2':
+    {
+        m_pookaSpawnCells.push_back(cell);
+        DigCell();
+        break;
+    }
+    case '3':
+    {
+        m_flygarSpawnCells.push_back(cell);
+        DigCell();
+        break;
+    }
     case '*': m_rockSpawnCells.push_back(cell); break;
     case '.': /* grid is all ground by default */ break;
-    case ' ': m_grid.SetAir(cell); break;
+    case ' ':
+    {
+        m_grid.SetAir(cell);
+        DigCell();
+        break;
+    }
     default:
         throw std::runtime_error(std::format(
             "Unknown character '{}' at ({}, {}) in {}", line.at(cell.x), cell.x, cell.y, path
@@ -101,7 +123,7 @@ void Game::Level::ParseCharacter(std::string_view const path, std::string_view c
     }
 }
 
-void Game::Level::CreateInitialTunnels() noexcept
+void Game::Level::DigSquare(glm::vec2 const centerPx) const noexcept
 {
-
+    m_maskTexture.MaskSquare({centerPx + topLeftToCenterOffset, tileSideLength});
 }
