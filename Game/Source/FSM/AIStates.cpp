@@ -1,18 +1,18 @@
 // Game
-#include "FSM/PookaStates.hpp"
+#include "FSM/AIStates.hpp"
 #include "Utils.hpp"
 // Engine
 #include "Engine/Components/AnimationComponent.hpp"
 
 #pragma region StateBase
-Game::Pooka::PookaStateBase::PookaStateBase(Dependencies const& dependencies)
+Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
     : StateBase{ dependencies } {}
 #pragma endregion StateBase
 
 #pragma region Wander
 template<typename Direction>
-Game::Pooka::Wander<Direction>::Wander(Dependencies const& dependencies)
-    : PookaStateBase{ dependencies }
+Game::AI::Wander<Direction>::Wander(Dependencies const& dependencies)
+    : AIStateBase{ dependencies }
     , m_moveCommand1{ dependencies.movementComponent,
         std::is_same_v<Direction, Horizontal> ? glm::vec2{-1.f, 0.f} : glm::vec2{0.f, 1.f} }
     , m_moveCommand2{ dependencies.movementComponent,
@@ -21,7 +21,7 @@ Game::Pooka::Wander<Direction>::Wander(Dependencies const& dependencies)
 {}
 
 template<typename Direction>
-Game::StateType Game::Pooka::Wander<Direction>::Update() noexcept
+Game::StateType Game::AI::Wander<Direction>::Update() noexcept
 {
     glm::vec2 const currentLocation{ m_dependencies.owner.GetWorldLocation() };
 
@@ -36,7 +36,7 @@ Game::StateType Game::Pooka::Wander<Direction>::Update() noexcept
 }
 
 template<typename Direction>
-void Game::Pooka::Wander<Direction>::OnEnter() noexcept
+void Game::AI::Wander<Direction>::OnEnter() noexcept
 {
     m_dependencies.animationComponent.ChangeAnimation(
         SDL_FRect{0.f, 0.f,
@@ -51,7 +51,7 @@ void Game::Pooka::Wander<Direction>::OnEnter() noexcept
 }
 
 template<typename Direction>
-void Game::Pooka::Wander<Direction>::FlipDirection() noexcept
+void Game::AI::Wander<Direction>::FlipDirection() noexcept
 {
     if (m_pCurrentCommand == &m_moveCommand1)
         m_pCurrentCommand = &m_moveCommand2;
@@ -59,7 +59,7 @@ void Game::Pooka::Wander<Direction>::FlipDirection() noexcept
         m_pCurrentCommand = &m_moveCommand1;
 }
 
-template class Game::Pooka::Wander<Game::Pooka::Horizontal>;
-template class Game::Pooka::Wander<Game::Pooka::Vertical>;
+template class Game::AI::Wander<Game::AI::Horizontal>;
+template class Game::AI::Wander<Game::AI::Vertical>;
 #pragma endregion
 

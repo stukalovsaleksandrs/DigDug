@@ -1,17 +1,17 @@
-#ifndef GAME_POOKA_FSM
-#define GAME_POOKA_FSM
+#ifndef GAME_AI_FSM
+#define GAME_AI_FSM
 
 // Game
 #include "FSM.hpp"
 // Engine
 #include "Engine/Commands.hpp"
 
-namespace Game::Pooka
+namespace Game::AI
 {
-    class PookaStateBase : public StateBase
+    class AIStateBase : public StateBase
     {
     public:
-        explicit PookaStateBase(Dependencies const& dependencies);
+        explicit AIStateBase(Dependencies const& dependencies);
     };
 
     // Direction tags
@@ -19,7 +19,7 @@ namespace Game::Pooka
     struct Vertical {};
 
     template<typename Direction>
-    class Wander final : public PookaStateBase
+    class Wander final : public AIStateBase
     {
     public:
         explicit Wander(Dependencies const& dependencies);
@@ -40,4 +40,4 @@ namespace Game::Pooka
     using WanderVertically = Wander<Vertical>;
 }
 
-#endif // GAME_POOKA_FSM
+#endif// GAME_AI_FSM

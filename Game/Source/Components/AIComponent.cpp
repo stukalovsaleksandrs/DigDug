@@ -4,7 +4,7 @@
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Components/AnimationComponent.hpp"
-#include "FSM/PookaStates.hpp"
+#include "FSM/AIStates.hpp"
 
 Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& dependencies)
     : PawnComponent{owner, dependencies}
@@ -18,8 +18,8 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
             .level = m_dependencies.level
         };
         FSM::States states;
-        states.emplace(typeid(Pooka::WanderHorizontally), std::make_unique<Pooka::WanderHorizontally>(stateDependencies));
-        states.emplace(typeid(Pooka::WanderVertically), std::make_unique<Pooka::WanderVertically>(stateDependencies));
+        states.emplace(typeid(AI::WanderHorizontally), std::make_unique<AI::WanderHorizontally>(stateDependencies));
+        states.emplace(typeid(AI::WanderVertically), std::make_unique<AI::WanderVertically>(stateDependencies));
         return std::pair{std::move(states), states.at(SelectInitialState()).get()};
     }() }
 {}
@@ -39,8 +39,8 @@ std::type_index Game::AIComponent::SelectInitialState() const noexcept
     if (glm::i32vec2 const currentCell{ grid.GetCellFromPoint(m_owner.GetWorldLocation()) };
         grid.IsGround({currentCell.x - 1, currentCell.y}) || grid.IsGround({currentCell.x + 1, currentCell.y}))
     {
-        return typeid(Pooka::WanderVertically);
+        return typeid(AI::WanderVertically);
     }
 
-    return typeid(Pooka::WanderHorizontally);
+    return typeid(AI::WanderHorizontally);
 }
