@@ -43,6 +43,7 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
         {'.', [](glm::i32vec2 const)
         {
             // grid is all ground by default
+            // I do still need a callback, otherwise there'll be an exception
         }},
         {' ', [this](glm::i32vec2 const cell)
         {
@@ -84,7 +85,7 @@ void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
     m_maskTexture.MaskCircle({centerPx, halfTileSideLength});
 }
 
-glm::vec2 Game::Level::GetCellTopLeft(glm::u32vec2 const centerPx) const noexcept
+glm::vec2 Game::Level::GetCellTopLeftFromCellCenter(glm::u32vec2 const centerPx) const noexcept
 {
     glm::i32vec2 const cell{ m_grid.PointToCell(centerPx) };
     return m_grid.GetCellTopLeft(cell);
@@ -241,7 +242,7 @@ void Game::Level::SpawnPookas() noexcept
 {
     for (glm::i32vec2 const cell: m_pookaSpawnCells)
     {
-        SpawnPooka(GetCellTopLeft(cell));
+        SpawnPooka(m_grid.GetCellTopLeft(cell));
     }
 }
 
@@ -256,11 +257,11 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
         55.f
     );
 
-    m_pPookaSprite = std::make_unique<Engine::Sprite>("Sprites/Pooka/Default.png");
+
 
     // Animation component
     pooka.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
-        .firstSpriteView = Engine::Sprite::View{m_pPookaSprite.get(),
+        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pPookaSprite.get(),
             SDL_FRect{0.f, 0.f,
             static_cast<float>(tileSideLength),
             static_cast<float>(tileSideLength)}
@@ -271,9 +272,9 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
 
     // Render component
     auto& renderComponent{pooka.AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{m_pPookaSprite.get()}
+        Engine::Sprite::View{m_sharedResources.pPookaSprite.get()}
     )};
-    renderComponent.SetSpriteView({m_pPookaSprite.get(), SDL_FRect{0.f, 0.f,
+    renderComponent.SetSpriteView({m_sharedResources.pPookaSprite.get(), SDL_FRect{0.f, 0.f,
         static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
 
     // AI component

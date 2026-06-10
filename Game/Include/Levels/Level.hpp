@@ -15,9 +15,7 @@ namespace Game
         struct Resources final
         {
             std::unique_ptr<Engine::Font> pFont;
-            std::unique_ptr<Engine::Sprite> pTaizoHoriSprite;
-            std::unique_ptr<Engine::Sprite> pGroundSprite;
-            std::unique_ptr<Engine::Sprite> pSkySprite;
+            std::unique_ptr<Engine::Sprite> pTaizoHoriSprite, pPookaSprite, pGroundSprite, pSkySprite;
         };
 
         explicit Level(std::string_view path, Resources const& sharedResources) noexcept;
@@ -30,7 +28,7 @@ namespace Game
         void DigCircle(glm::vec2 centerPx) const noexcept;
 
         // Given a px, gets a cell of this px and returns top left px of this cell
-        glm::vec2 GetCellTopLeft(glm::u32vec2 centerPx) const noexcept;
+        glm::vec2 GetCellTopLeftFromCellCenter(glm::u32vec2 centerPx) const noexcept;
 
         void Update() noexcept;
 
@@ -49,8 +47,6 @@ namespace Game
         } };
 
         std::unordered_map<char, std::function<void(glm::i32vec2 cell)>> m_charToParsingFunc{};
-
-        std::unique_ptr<Engine::Sprite> m_pPookaSprite{};
 
         Engine::Scene m_scene;
 
