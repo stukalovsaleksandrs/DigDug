@@ -18,6 +18,7 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
         };
         FSM::States states;
         states.emplace(typeid(Pooka::WanderHorizontally), std::make_unique<Pooka::WanderHorizontally>(stateDependencies));
+        states.emplace(typeid(Pooka::WanderVertically), std::make_unique<Pooka::WanderVertically>(stateDependencies));
         return std::pair{std::move(states), states.at(typeid(Pooka::WanderHorizontally)).get()};
     }() }
 {}
