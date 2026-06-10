@@ -24,7 +24,7 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
 
 void Game::AIComponent::Update() noexcept
 {
-    Component::Update();
+    PawnComponent::Update();
 
     m_pookaFSM.Update();
 }

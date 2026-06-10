@@ -54,7 +54,7 @@ void Game::Grid::Render() const
 #endif// ENABLE_DEBUG_DRAWING
 }
 
-glm::i32vec2 Game::Grid::PointToCell(glm::vec2 const point) noexcept
+glm::i32vec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) noexcept
 {
     return {
         static_cast<int>(point.x / static_cast<float>(tileSideLength)),

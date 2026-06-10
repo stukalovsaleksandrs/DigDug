@@ -1,20 +1,23 @@
 // Engine
+#include "Core/Window.hpp"
 #include "Components/MovementComponent.hpp"
+
+#include <utility>
 #include "Utils/Timer.hpp"
 #include "Utils/Utils.hpp"
 #include "Utils/Constants.hpp"
 #include "Scene/GameObject.hpp"
 // Third-party
 #define GLM_ENABLE_EXPERIMENTAL
-#include "Core/Window.hpp"
 #include "glm/gtx/norm.hpp"
 
 Engine::MovementComponent::MovementComponent(GameObject& owner, Dependencies const& dependencies, uint32_t const verticalPadding,
-    float const pxPerSec) noexcept
+    float const pxPerSec, CanMovePred canMovePred) noexcept
     : Component{owner}
     , m_dependencies{ dependencies }
     , m_pxPerSec{ pxPerSec }
     , m_verticalPadding{ verticalPadding }
+    , m_canMovePred{ std::move(canMovePred) }
 {}
 
 bool Engine::MovementComponent::IsWithinScreen(glm::vec2 const topLeft) const
@@ -38,7 +41,8 @@ void Engine::MovementComponent::Update() noexcept
 
     // Limiting player only to the screen borders
     if (auto const deltaPosition{ glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec() };
-        IsWithinScreen(m_owner.GetWorldLocation() + deltaPosition))
+        IsWithinScreen(m_owner.GetWorldLocation() + deltaPosition) &&
+        m_canMovePred(m_owner.GetWorldLocation()))
     {
         // Updating location
         m_owner.SetLocalPosition(

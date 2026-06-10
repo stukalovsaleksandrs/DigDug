@@ -5,8 +5,10 @@
 #include "Engine/Components/ComponentBase.hpp"
 #include "Engine/Core/Observer.hpp"
 #include "Engine/Core/Window.hpp"
-// Third-parth
+// Third-party
 #include "glm/vec2.hpp"
+// Standard
+#include <functional>
 
 namespace Engine
 {
@@ -18,7 +20,9 @@ namespace Engine
             Window::Data const& windowData;
             uint32_t tileSideLength;
         };
-        explicit MovementComponent(GameObject& owner, Dependencies const&, uint32_t verticalPadding, float pxPerSec) noexcept;
+        using CanMovePred = std::function<bool(glm::vec2 topLeft)>;
+        // pred is a custom condition for whether the character is allowed to move or not
+        explicit MovementComponent(GameObject& owner, Dependencies const&, uint32_t verticalPadding, float pxPerSec, CanMovePred canMovePred = [](glm::vec2){return true;}) noexcept;
         void Update() noexcept override;
         void AddDirection(glm::vec2 direction) noexcept;
         [[nodiscard]] glm::vec2 GetDirection() const noexcept{ return m_direction; };
@@ -35,8 +39,9 @@ namespace Engine
         // It will not get more complex, I do not need a state machine for this, pinky promise
         bool m_moving{}, m_canMoveDiagonally{}, m_disabled{};// I certainly don't lack abstractions
         uint32_t m_verticalPadding{};
+        CanMovePred m_canMovePred;
 
-        bool IsWithinScreen(glm::vec2 topLeft) const;
+        [[nodiscard]] bool IsWithinScreen(glm::vec2 topLeft) const;
     };
 
 }

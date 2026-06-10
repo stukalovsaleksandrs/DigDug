@@ -87,13 +87,22 @@ void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
 
 glm::vec2 Game::Level::GetCellTopLeftFromCellCenter(glm::u32vec2 const centerPx) const noexcept
 {
-    glm::i32vec2 const cell{ m_grid.PointToCell(centerPx) };
+    glm::i32vec2 const cell{ m_grid.GetCellFromPoint(centerPx) };
     return m_grid.GetCellTopLeft(cell);
 }
 
 void Game::Level::Update() noexcept
 {
     m_scene.Update();
+}
+
+Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexcept
+{
+    return [this](glm::vec2 const topLeft)
+    {
+        auto const cell{ m_grid.GetCellFromPoint(topLeft) };
+        return not m_grid.IsGround(cell);
+    };
 }
 
 [[nodiscard]] std::string_view GetExtension(std::string_view const path)
@@ -254,10 +263,9 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
     pooka.AddComponent<Engine::MovementComponent>(
         Engine::MovementComponent::Dependencies{windowData, tileSideLength},
         tileSideLength,
-        55.f
+        55.f,
+        GetCanMovePred()
     );
-
-
 
     // Animation component
     pooka.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{

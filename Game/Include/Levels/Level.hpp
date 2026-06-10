@@ -4,6 +4,7 @@
 // Game
 #include "Grid.hpp"
 // Engine
+#include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Rendering/Sprite.hpp"
 #include "Engine/Scene/Scene.hpp"
 
@@ -58,12 +59,11 @@ namespace Game
 
         void MaskInitialTunnels() const noexcept;
 
-        void SpawnBackground() noexcept;
-
         void SpawnCharacter() noexcept;
-
         void SpawnPookas() noexcept;
         void SpawnPooka(glm::vec2 topLeft) noexcept;
+
+        Engine::MovementComponent::CanMovePred GetCanMovePred() const noexcept;
     };
 }
 
