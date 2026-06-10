@@ -1,4 +1,4 @@
-//#define ENABLE_DEBUG_DRAWING
+#define ENABLE_DEBUG_DRAWING
 
 // Game
 #include "Utils.hpp"
@@ -34,22 +34,26 @@ Game::Grid::~Grid() noexcept
 void Game::Grid::Render() const
 {
 #ifdef ENABLE_DEBUG_DRAWING
-    // Colls
-    for(auto const collIdx : std::views::iota(1, m_dimsInCells.x))
+    for (int32_t const row : std::ranges::views::iota(0, m_dimsInCells.y) )
     {
-        m_renderer.RenderLine(
-            {tileSideLength * collIdx, 0},
-            {tileSideLength * collIdx, m_dimsInPx.y}
-        );
-    }
+        for (int32_t const coll : std::ranges::views::iota(0, m_dimsInCells.x) )
+        {
+            glm::i32vec2 const cell{coll, row};
+            glm::vec2 const topLeft = GetCellTopLeft(cell);
 
-    // Rows
-    for(auto const rowIdx : std::views::iota(1, m_dimsInCells.y))
-    {
-        m_renderer.RenderLine(
-            {0, tileSideLength * rowIdx,},
-            {m_dimsInPx.y, tileSideLength * rowIdx}
-        );
+            // Choose color based on ground/air
+            SDL_FColor const color{
+                IsGround(cell)
+                ? SDL_FColor{139, 69, 19, 255}// Brown
+                : SDL_FColor{255, 255, 255, 255}// White
+            };
+
+            m_renderer.RenderSquare(
+                Engine::Utils::Square{topLeft,
+                tileSideLength
+            }, color
+            );
+        }
     }
 #endif// ENABLE_DEBUG_DRAWING
 }

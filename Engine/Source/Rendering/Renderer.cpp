@@ -190,6 +190,16 @@ void Engine::Renderer::RenderFilledSquare(Utils::Square const& square) const noe
     }
 }
 
+void Engine::Renderer::RenderSquare(Utils::Square const& square, SDL_FColor const& color) const noexcept
+{
+    SDL_SetRenderDrawColor(m_pSDLRenderer, color.r, color.g, color.b, color.a);
+    SDL_FRect const rect{
+        square.topLeft.x, square.topLeft.y,
+        square.sideLength, square.sideLength
+    };
+    SDL_RenderRect(m_pSDLRenderer, &rect);
+}
+
 void Engine::Renderer::RegisterFunction(RenderFunctionType const& renderFunctionToAdd, Layer const layer) noexcept
 {
     m_layerToRenderFunctions.at(layer).push_back(&renderFunctionToAdd);

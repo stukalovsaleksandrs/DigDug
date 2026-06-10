@@ -47,6 +47,7 @@ namespace Engine
         void RenderLine(glm::vec2 p1, glm::vec2 p2) const noexcept;
         void RenderFilledCircle(Utils::Circle const&) const noexcept;
         void RenderFilledSquare(Utils::Square const&) const noexcept;
+        void RenderSquare(Utils::Square const&, SDL_FColor const&) const noexcept;
 
         [[nodiscard]] SDL_Renderer* GetSDLRenderer() const noexcept { return m_pSDLRenderer; };
 
