@@ -58,10 +58,15 @@ bool Engine::Utils::NearlyEqual(glm::vec2 const lhs, glm::vec2 const rhs, float 
 
 bool Engine::Utils::NearlyEqual(float const lhs, float const rhs, float const epsilon)
 {
-    return std::fabs(lhs - rhs) < epsilon * epsilon;
+    return std::fabs(lhs - rhs) < epsilon;
 }
 
 bool Engine::Utils::NearlyZero(float const value, float const epsilon)
 {
-    return std::fabs(value) < epsilon * epsilon;
+    return std::fabs(value) < epsilon;
+}
+
+bool Engine::Utils::NearlyZero(glm::vec2 const& value, float const epsilon)
+{
+    return length2(value) < epsilon * epsilon;
 }

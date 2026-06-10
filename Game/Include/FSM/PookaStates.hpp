@@ -28,7 +28,6 @@ namespace Game::Pooka
         Engine::MoveCommand* m_pCurrentCommand{ &m_moveRightCommand };// Not ref. since I couldn't assign to it for some reason
         glm::vec2 m_prevLocation{};
 
-        bool m_wasFlippedLastFrame{};
         void FlipDirection() noexcept;
     };
 

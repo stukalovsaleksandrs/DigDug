@@ -58,7 +58,7 @@ void Game::Grid::Render() const
 #endif// ENABLE_DEBUG_DRAWING
 }
 
-glm::i32vec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) noexcept
+glm::i32vec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
 {
     return {
         static_cast<int>(point.x / static_cast<float>(tileSideLength)),
@@ -66,7 +66,7 @@ glm::i32vec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) noexcept
     };
 }
 
-glm::vec2 Game::Grid::GetCellTopLeft(glm::i32vec2 const cell) noexcept
+glm::vec2 Game::Grid::GetCellTopLeft(glm::i32vec2 const cell) const noexcept
 {
     return {
         static_cast<float>(cell.x * tileSideLength),
@@ -74,7 +74,7 @@ glm::vec2 Game::Grid::GetCellTopLeft(glm::i32vec2 const cell) noexcept
     };
 }
 
-glm::vec2 Game::Grid::GetCellCenter(glm::i32vec2 const cell) noexcept
+glm::vec2 Game::Grid::GetCellCenter(glm::i32vec2 const cell) const noexcept
 {
     static glm::vec2 constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
     return GetCellTopLeft(cell) + offset;

@@ -29,7 +29,9 @@ namespace Game
         bool TryDigging(glm::vec2 cellCenterPx) noexcept;
 
         // Given a px, gets a cell of this px and returns top left px of this cell
-        glm::vec2 GetCellTopLeftFromCellCenter(glm::u32vec2 centerPx) const noexcept;
+        [[nodiscard]] glm::vec2 GetCellTopLeftFromCellCenter(glm::u32vec2 centerPx) const noexcept;
+
+        [[nodiscard]] Grid const& GetGrid() const noexcept { return m_grid; };
 
         void Update() noexcept;
 

@@ -27,12 +27,12 @@ namespace Game
 
         void Render() const;
         // Returns the location(in cells) of the cell the input point(in pixels) is in
-        [[nodiscard]] static glm::i32vec2 GetCellFromPoint(glm::vec2 point) noexcept;
+        [[nodiscard]] glm::i32vec2 GetCellFromPoint(glm::vec2 point) const noexcept;
 
         // Returns the location(in pixels) of the top left corner of the input cell(in cells)
-        [[nodiscard]] static glm::vec2 GetCellTopLeft(glm::i32vec2 cell) noexcept;
+        [[nodiscard]] glm::vec2 GetCellTopLeft(glm::i32vec2 cell) const noexcept;
 
-        [[nodiscard]] static glm::vec2 GetCellCenter(glm::i32vec2 cell) noexcept;
+        [[nodiscard]] glm::vec2 GetCellCenter(glm::i32vec2 cell) const noexcept;
 
         // Returns whether the point is in the ground and preserves the current location
         bool TryDigging(glm::i32vec2 pointInPx) noexcept;

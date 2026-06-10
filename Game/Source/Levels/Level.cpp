@@ -200,7 +200,7 @@ void Game::Level::MaskInitialTunnels() const noexcept
                 .bottomRight = !airRight && !airDown,
             };
 
-            DigSquare(Grid::GetCellTopLeft(cell), corners);
+            DigSquare(m_grid.GetCellTopLeft(cell), corners);
         }
     }
 }

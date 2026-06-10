@@ -52,6 +52,7 @@ namespace Engine::Utils {
     bool NearlyEqual(glm::vec2 lhs, glm::vec2 rhs, float epsilon = glm::epsilon<float>());
     bool NearlyEqual(float lhs, float rhs, float epsilon = glm::epsilon<float>());
     bool NearlyZero(float value, float epsilon = glm::epsilon<float>());
+    bool NearlyZero(glm::vec2 const& value, float epsilon);
 
     template<typename T, typename U>
     bool HaveSameType(const std::unique_ptr<T>&, const std::unique_ptr<U>&) {
