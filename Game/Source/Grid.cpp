@@ -1,4 +1,4 @@
-#define ENABLE_DEBUG_DRAWING
+//#define ENABLE_DEBUG_DRAWING
 
 // Game
 #include "Utils.hpp"
@@ -82,7 +82,6 @@ glm::vec2 Game::Grid::GetCellCenter(glm::i32vec2 const cell) noexcept
 
 bool Game::Grid::TryDigging(glm::i32vec2 const pointInPx) noexcept
 {
-    return true;
     uint32_t const newCellIdx{ pointInPx.y / tileSideLength * m_dimsInCells.x + pointInPx.x / tileSideLength };
 
     // Updating current cell if changed

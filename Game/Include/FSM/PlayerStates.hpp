@@ -18,7 +18,6 @@ namespace Game::Player::State
             : StateBase{ dependencies }{}
 
     protected:
-        // true - digging, false - not digging
         [[nodiscard]] bool TryDigging() const noexcept;
     };
 
@@ -44,18 +43,10 @@ namespace Game::Player::State
     {
     public:
         explicit Digging(Dependencies const&) noexcept;
-        ~Digging() noexcept override;
-        Digging(Digging const&) noexcept = delete;
-        Digging(Digging&&) noexcept = delete;
-        Digging& operator=(Digging&&) noexcept = delete;
-        Digging& operator=(Digging const&) noexcept = delete;
 
         void OnEnter() noexcept override;
         StateType Update() noexcept override;
         void OnExit() noexcept override{};
-
-    private:
-        void Dig() const noexcept;
 
     };
 }

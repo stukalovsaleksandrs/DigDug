@@ -20,7 +20,7 @@ namespace Game
     public:
         struct Dependencies final
         {
-            Level const& level;
+            Level& level;
         };
 
         explicit PawnComponent(Engine::GameObject& owner, Dependencies const&) noexcept;
@@ -28,7 +28,7 @@ namespace Game
         void Update() noexcept override;
 
     protected:
-        Dependencies const m_dependencies;
+        Dependencies m_dependencies;
         Engine::MovementComponent& m_movementComponent;
         Engine::RenderComponent& m_renderComponent;
 

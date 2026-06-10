@@ -29,7 +29,7 @@ namespace Game
             Engine::AnimationComponent& animationComponent;
             Engine::MovementComponent& movementComponent;
             Engine::GameObject& owner;// GetWorldLocation is not const
-            Level const& level;
+            Level& level;
         };
         explicit StateBase(Dependencies const& dependencies) noexcept
             : m_dependencies{ dependencies }{}

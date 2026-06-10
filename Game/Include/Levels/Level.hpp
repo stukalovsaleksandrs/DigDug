@@ -26,7 +26,7 @@ namespace Game
         Level(Level const&) noexcept = delete;
         Level(Level&&) noexcept = delete;
 
-        void DigCircle(glm::vec2 centerPx) const noexcept;
+        bool TryDigging(glm::vec2 cellCenterPx) noexcept;
 
         // Given a px, gets a cell of this px and returns top left px of this cell
         glm::vec2 GetCellTopLeftFromCellCenter(glm::u32vec2 centerPx) const noexcept;
@@ -55,6 +55,7 @@ namespace Game
 
         void ParseCharacter(std::string_view line, glm::u32vec2 cell) const;
 
+        void DigCircle(glm::vec2 centerPx) const noexcept;
         void DigSquare(glm::vec2 topLeftPx, EU::Square::Corners corners = {}) const noexcept;
 
         void MaskInitialTunnels() const noexcept;

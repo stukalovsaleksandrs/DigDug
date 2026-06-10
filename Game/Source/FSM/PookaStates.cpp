@@ -13,19 +13,11 @@ Game::Pooka::PookaStateBase::PookaStateBase(Dependencies const& dependencies)
 Game::Pooka::WanderHorizontally::WanderHorizontally(Dependencies const& dependencies)
     : PookaStateBase{ dependencies }{}
 
-int m_stuckFrames{ 0 };
-static constexpr int k_stuckThreshold{ 5 };
 Game::StateType Game::Pooka::WanderHorizontally::Update() noexcept
 {
     glm::vec2 const currentLocation{ m_dependencies.owner.GetWorldLocation() };
     if (Engine::Utils::NearlyEqual(currentLocation, m_prevLocation))
-        ++m_stuckFrames;
-    else
-        m_stuckFrames = 0;
-
-    if (m_stuckFrames >= k_stuckThreshold)
     {
-        m_stuckFrames = 0;
         FlipDirection();
     }
     m_prevLocation = currentLocation;
@@ -38,23 +30,19 @@ Game::StateType Game::Pooka::WanderHorizontally::Update() noexcept
 void Game::Pooka::WanderHorizontally::OnEnter() noexcept
 {
     m_dependencies.animationComponent.ChangeAnimation(
-    SDL_FRect{0.f, 0.f,
-        static_cast<float>(tileSideLength),
-        static_cast<float>(tileSideLength)},
-    2
+        SDL_FRect{0.f, 0.f,
+            static_cast<float>(tileSideLength),
+            static_cast<float>(tileSideLength)},
+        2
     );
 }
 
 void Game::Pooka::WanderHorizontally::FlipDirection() noexcept
 {
     if (m_pCurrentCommand == &m_moveLeftCommand)
-    {
         m_pCurrentCommand = &m_moveRightCommand;
-    }
     else
-    {
         m_pCurrentCommand = &m_moveLeftCommand;
-    }
 }
 
 #pragma endregion Walking

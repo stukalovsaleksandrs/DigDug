@@ -13,12 +13,9 @@ namespace Game
     bool Player::State::PlayerStateBase::TryDigging() const noexcept
     {
         auto const worldPosition{m_dependencies.owner.GetWorldLocation()};
-        m_dependencies.level.DigCircle(
-        {
+        return m_dependencies.level.TryDigging(
             worldPosition + topLeftToCenterOffset
-        });
-        // TODO: Revive TryDigging in the grid
-        return true;
+        );
     }
 #pragma endregion PlayerStateBase
 
@@ -77,16 +74,6 @@ namespace Game
         : PlayerStateBase{dependencies}
     {}
 
-    Player::State::Digging::~Digging() noexcept
-    {}
-
-    void Player::State::Digging::Dig() const noexcept
-    {
-        // Digging a circle
-        static auto constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
-        m_dependencies.level.DigCircle(m_dependencies.owner.GetWorldLocation() + offset);
-    }
-
     void Player::State::Digging::OnEnter() noexcept
     {
         // TODO: Change sprite sheet view
@@ -94,10 +81,6 @@ namespace Game
 
     StateType Player::State::Digging::Update() noexcept
     {
-        // Digging
-        // Dig();
-
-        // Trying to switch state
         if (!(TryDigging() and IsMoving())) return typeid(Idle);
         return std::nullopt;
     }

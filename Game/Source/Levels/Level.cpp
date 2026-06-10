@@ -85,6 +85,16 @@ void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
     m_maskTexture.MaskCircle({centerPx, halfTileSideLength});
 }
 
+bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
+{
+    if (m_grid.TryDigging(cellCenterPx))
+    {
+        DigCircle(cellCenterPx);
+        return true;
+    }
+    return false;
+}
+
 glm::vec2 Game::Level::GetCellTopLeftFromCellCenter(glm::u32vec2 const centerPx) const noexcept
 {
     glm::i32vec2 const cell{ m_grid.GetCellFromPoint(centerPx) };
