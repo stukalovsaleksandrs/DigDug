@@ -3,10 +3,12 @@
 
 // Third-party
 #include "glm/vec2.hpp"
+#include <glm/ext/scalar_constants.hpp>
 // Standard
 #include <memory>
 #include <ranges>
 #include <string_view>
+#include <sstream>
 
 namespace Engine::Utils {
     struct Bounds final
@@ -47,9 +49,9 @@ namespace Engine::Utils {
     /********************
      * Comparisons
      ********************/
-    bool NearlyEqual(glm::vec2 lhs, glm::vec2 rhs);
-    bool NearlyEqual(float lhs, float rhs);
-    bool NearlyZero(float value);
+    bool NearlyEqual(glm::vec2 lhs, glm::vec2 rhs, float epsilon = glm::epsilon<float>());
+    bool NearlyEqual(float lhs, float rhs, float epsilon = glm::epsilon<float>());
+    bool NearlyZero(float value, float epsilon = glm::epsilon<float>());
 
     template<typename T, typename U>
     bool HaveSameType(const std::unique_ptr<T>&, const std::unique_ptr<U>&) {
@@ -70,7 +72,7 @@ consteval unsigned int MakeSDBMHash(char const* str, size_t len)
     return hash;
 }
 
-consteval unsigned int operator ""_h(const char * str, size_t len)
+consteval unsigned int operator ""_h(const char * str, size_t const len)
 {
     return MakeSDBMHash(str, len);
 }

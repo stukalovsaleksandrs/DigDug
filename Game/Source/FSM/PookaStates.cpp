@@ -16,7 +16,7 @@ Game::Pooka::WanderHorizontally::WanderHorizontally(Dependencies const& dependen
 Game::StateType Game::Pooka::WanderHorizontally::Update() noexcept
 {
     glm::vec2 const currentLocation{ m_dependencies.owner.GetWorldLocation() };
-    if (Engine::Utils::NearlyEqual(currentLocation, m_prevLocation))
+    if (Engine::Utils::NearlyEqual(currentLocation, m_prevLocation, 0.5f))
     {
         if (m_pCurrentCommand == &m_moveLeftCommand)
         {

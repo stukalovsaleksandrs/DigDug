@@ -8,8 +8,6 @@
 // Standard
 #include <filesystem>
 #include <print>
-#include <sstream>
-
 
 void Engine::Utils::Check(bool const result, std::string_view const message)
 {
@@ -53,17 +51,17 @@ void Engine::Utils::PrintSDLVersion()
  * Nearly(Equal/Zero)
  ************************/
 
-bool Engine::Utils::NearlyEqual(glm::vec2 const lhs, glm::vec2 const rhs)
+bool Engine::Utils::NearlyEqual(glm::vec2 const lhs, glm::vec2 const rhs, float const epsilon)
 {
-    return glm::distance2(lhs, rhs) < glm::epsilon<float>();
+    return glm::distance2(lhs, rhs) < epsilon * epsilon;
 }
 
-bool Engine::Utils::NearlyEqual(float const lhs, float const rhs)
+bool Engine::Utils::NearlyEqual(float const lhs, float const rhs, float const epsilon)
 {
-    return std::fabs(lhs - rhs) < glm::epsilon<float>();
+    return std::fabs(lhs - rhs) < epsilon * epsilon;
 }
 
-bool Engine::Utils::NearlyZero(float const value)
+bool Engine::Utils::NearlyZero(float const value, float const epsilon)
 {
-    return std::fabs(value) < glm::epsilon<float>();
+    return std::fabs(value) < epsilon * epsilon;
 }
