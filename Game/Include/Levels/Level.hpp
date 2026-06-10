@@ -5,25 +5,37 @@
 #include "Grid.hpp"
 // Engine
 #include "Engine/Rendering/Sprite.hpp"
-// Third-party
-#include <SDL3/SDL_render.h>
+#include "Engine/Scene/Scene.hpp"
 
 namespace Game
 {
     class Level final
     {
     public:
-        explicit Level(std::string_view path) noexcept;
+        struct Resources final
+        {
+            std::unique_ptr<Engine::Font> pFont;
+            std::unique_ptr<Engine::Sprite> pTaizoHoriSprite;
+            std::unique_ptr<Engine::Sprite> pGroundSprite;
+            std::unique_ptr<Engine::Sprite> pSkySprite;
+        };
 
-        void SetActive(bool active) const noexcept;
+        explicit Level(std::string_view path, Resources const& sharedResources) noexcept;
+        ~Level() noexcept;
+        Level& operator=(Level const&) noexcept = delete;
+        Level& operator=(Level&&) noexcept = delete;
+        Level(Level const&) noexcept = delete;
+        Level(Level&&) noexcept = delete;
 
-    void DigCircle(glm::vec2 centerPx) const noexcept;
+        void DigCircle(glm::vec2 centerPx) const noexcept;
 
-    // Given a px, gets a cell of this px and returns top left px of this cell
-    glm::vec2 GetCellTopLeft(glm::u32vec2 centerPx) const noexcept;
+        // Given a px, gets a cell of this px and returns top left px of this cell
+        glm::vec2 GetCellTopLeft(glm::u32vec2 centerPx) const noexcept;
+
+        void Update() noexcept;
 
     private:
-        SDL_Renderer* m_pSDLRenderer{};
+        Resources const& m_sharedResources;
 
         glm::u32vec2 m_characterSpawnCell{};
         std::vector<glm::u32vec2> m_pookaSpawnCells{},
@@ -38,13 +50,24 @@ namespace Game
 
         std::unordered_map<char, std::function<void(glm::i32vec2 cell)>> m_charToParsingFunc{};
 
-        void ParseFile(std::string_view path);
+        std::unique_ptr<Engine::Sprite> m_pPookaSprite{};
+
+        Engine::Scene m_scene;
+
+        void ParseFile(std::string_view path) const;
 
         void ParseCharacter(std::string_view line, glm::u32vec2 cell) const;
 
         void DigSquare(glm::vec2 topLeftPx, EU::Square::Corners corners = {}) const noexcept;
 
         void MaskInitialTunnels() const noexcept;
+
+        void SpawnBackground() noexcept;
+
+        void SpawnCharacter() noexcept;
+
+        void SpawnPookas() noexcept;
+        void SpawnPooka(glm::vec2 topLeft) noexcept;
     };
 }
 

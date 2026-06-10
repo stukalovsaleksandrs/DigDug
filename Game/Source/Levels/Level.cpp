@@ -1,13 +1,22 @@
 // Game
 #include "Levels/Level.hpp"
+#include "Levels/LevelManager.hpp"
+#include "Components/LivesDisplayComponent.hpp"
+#include "Components/PointDisplayComponent.hpp"
+#include "Components/AIComponent.hpp"
+#include "Components/PlayerComponent.hpp"
+#include "Components/LivesComponent.hpp"
 // Engine
 #include "Engine/Rendering/Renderer.hpp"
+#include "Engine/Components/MovementComponent.hpp"
+#include "Engine/Components/AnimationComponent.hpp"
 // Standard
 #include <format>
 #include <fstream>
 
-Game::Level::Level(std::string_view const path) noexcept
-    : m_maskTexture{ SDL_Color{255, 255, 255, 255}, windowData.logicalDims, SDL_BLENDMODE_MOD}
+Game::Level::Level(std::string_view const path, Resources const& sharedResources) noexcept
+    : m_sharedResources{ sharedResources }
+    , m_maskTexture{ SDL_Color{255, 255, 255, 255}, windowData.logicalDims, SDL_BLENDMODE_MOD}
     , m_charToParsingFunc{
         { '1', [this](glm::i32vec2 const cell)
         {
@@ -42,19 +51,31 @@ Game::Level::Level(std::string_view const path) noexcept
     }
 {
     ParseFile(path);
+
+    // Ground
+    {
+        auto& ground{m_scene.CreateGameObject({})};
+        ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_sharedResources.pGroundSprite.get()}, Engine::Renderer::Layer::background);
+    }
+
+    // Registering the tunnel digging render callback to the renderer
+    Engine::Renderer::GetInstance().RegisterFunction(m_renderTunnelsFunction, Engine::Renderer::Layer::background);
+
+    // Sky
+    {
+        auto& sky{m_scene.CreateGameObject({})};
+        sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
+    }
+
+    SpawnCharacter();
+
+    // Spawning Pookas
+    SpawnPookas();
 }
 
-void Game::Level::SetActive(bool const active) const noexcept
+Game::Level::~Level() noexcept
 {
-    if (active)
-    {
-        // Registering the tunnel digging render callback to the renderer
-        Engine::Renderer::GetInstance().RegisterFunction(m_renderTunnelsFunction, Engine::Renderer::Layer::background);
-    }
-    else
-    {
-        Engine::Renderer::GetInstance().UnregisterFunction(m_renderTunnelsFunction);
-    }
+    Engine::Renderer::GetInstance().UnregisterFunction(m_renderTunnelsFunction);
 }
 
 void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
@@ -63,10 +84,15 @@ void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
     m_maskTexture.MaskCircle({centerPx, halfTileSideLength});
 }
 
-glm::vec2 Game::Level::GetCellTopLeft(glm::u32vec2 const px) const noexcept
+glm::vec2 Game::Level::GetCellTopLeft(glm::u32vec2 const centerPx) const noexcept
 {
-    glm::i32vec2 const cell{ m_grid.PointToCell(px) };
+    glm::i32vec2 const cell{ m_grid.PointToCell(centerPx) };
     return m_grid.GetCellTopLeft(cell);
+}
+
+void Game::Level::Update() noexcept
+{
+    m_scene.Update();
 }
 
 [[nodiscard]] std::string_view GetExtension(std::string_view const path)
@@ -83,7 +109,7 @@ void ValidateExtension(std::string_view const path, std::string_view const exten
     }
 }
 
-void Game::Level::ParseFile(std::string_view const path)
+void Game::Level::ParseFile(std::string_view const path) const
 {
     // Validating file extension
     ValidateExtension(path, ".txt");
@@ -156,4 +182,100 @@ void Game::Level::MaskInitialTunnels() const noexcept
             DigSquare(Grid::GetCellTopLeft(cell), corners);
         }
     }
+}
+
+void Game::Level::SpawnCharacter() noexcept
+{
+    auto& character{m_scene.CreateGameObject({1.f, tileSideLength + 1})};
+
+    // Movement component
+    character.AddComponent<Engine::MovementComponent>(
+        Engine::MovementComponent::Dependencies{windowData, tileSideLength},
+        tileSideLength,
+        45.f
+    );
+
+    // Animation component
+    character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
+        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get(),
+            SDL_FRect{0.f, 0.f,
+            static_cast<float>(tileSideLength),
+            static_cast<float>(tileSideLength)}
+            },
+        .frameCount = 2,
+        .secPerFrame = 0.2f
+    });
+
+    // Player component(must be added after animation component)
+    auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
+
+    // Render component
+    auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
+        Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get()}
+    )};
+    characterRenderComponent.SetSpriteView({m_sharedResources.pTaizoHoriSprite.get(), SDL_FRect{0.f, 0.f,
+        static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
+
+    // Lives component
+    auto& livesComponent{character.AddComponent<LivesComponent>(2)};
+    livesComponent.subject.BindObserver(playerComponent);
+
+    // Lives display
+    {
+        auto& livesDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 10.f})};
+        livesDisplay.AddComponent<Engine::TextComponent>(" ", m_sharedResources.pFont.get()); // NOTE: Text must not be empty
+        auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
+        livesComponent.subject.BindObserver(livesDisplayComponent);
+    }
+
+    // Point display
+    {
+        auto& pointDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 20.f})};
+        pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_sharedResources.pFont.get());
+        auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
+        playerComponent.subject.BindObserver(pointDisplayComponent);
+    }
+}
+
+void Game::Level::SpawnPookas() noexcept
+{
+    for (glm::i32vec2 const cell: m_pookaSpawnCells)
+    {
+        SpawnPooka(GetCellTopLeft(cell));
+    }
+}
+
+void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
+{
+    auto& pooka{m_scene.CreateGameObject(topLeft)};
+
+    // Movement component
+    pooka.AddComponent<Engine::MovementComponent>(
+        Engine::MovementComponent::Dependencies{windowData, tileSideLength},
+        tileSideLength,
+        55.f
+    );
+
+    m_pPookaSprite = std::make_unique<Engine::Sprite>("Sprites/Pooka/Default.png");
+
+    // Animation component
+    pooka.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
+        .firstSpriteView = Engine::Sprite::View{m_pPookaSprite.get(),
+            SDL_FRect{0.f, 0.f,
+            static_cast<float>(tileSideLength),
+            static_cast<float>(tileSideLength)}
+            },
+        .frameCount = 2,
+        .secPerFrame = 0.3f
+    });
+
+    // Render component
+    auto& renderComponent{pooka.AddComponent<Engine::RenderComponent>(
+        Engine::Sprite::View{m_pPookaSprite.get()}
+    )};
+    renderComponent.SetSpriteView({m_pPookaSprite.get(), SDL_FRect{0.f, 0.f,
+        static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
+
+    // AI component
+    pooka.AddComponent<AIComponent>(PawnComponent::Dependencies{*this});
 }

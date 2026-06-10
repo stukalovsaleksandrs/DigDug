@@ -17,7 +17,7 @@ namespace Engine
 
 namespace Game
 {
-    class LevelManager;
+    class Level;
 #pragma region StateBase
 
     using StateType = std::optional<std::type_index>;
@@ -29,7 +29,7 @@ namespace Game
             Engine::AnimationComponent& animationComponent;
             Engine::MovementComponent& movementComponent;
             Engine::GameObject& owner;// GetWorldLocation is not const
-            LevelManager const& levelManager;
+            Level const& level;
         };
         explicit StateBase(Dependencies const& dependencies) noexcept
             : m_dependencies{ dependencies }{}

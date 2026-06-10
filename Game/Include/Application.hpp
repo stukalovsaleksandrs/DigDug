@@ -20,16 +20,13 @@ namespace Game
         void Update() override;
 
     private:
-        Engine::Scene scene;
         std::unique_ptr<Engine::Font> m_pFont{};
 
         std::unique_ptr<Engine::Sprite> m_pGroundSprite{};
         std::unique_ptr<Engine::Sprite> m_pSkySprite{};
         std::unique_ptr<Engine::Sprite> m_pTaizoHoriSprite{};
-        std::unique_ptr<Engine::Sprite> m_pPookaSprite{};
 
         std::unique_ptr<LevelManager> m_pLevelManager{};
-
     };
 }
 #endif// GAME_APPLICATION

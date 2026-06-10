@@ -1,14 +1,17 @@
 // Game
 #include "Levels/LevelManager.hpp"
+// Engine
+#include "Engine/Rendering/Font.hpp"
+// Standard
+#include <memory>
 
 Game::LevelManager::LevelManager(std::vector<std::string_view> const& paths)
-{
-    // Paring the files
-    m_levels.reserve(paths.size());
-    for (auto& path : paths)
-        m_levels.emplace_back(std::make_unique<Level>(path));
-
-    // Subscribing the first level's rendering function to the renderer
-    if (not m_levels.empty())
-         m_levels.front()->SetActive(true);
-}
+    : m_paths{ paths }// Parsed lazily on load
+    // Resources get reused in levels, so they are preloaded at startup
+    , m_resources{
+        .pFont = std::make_unique<Engine::Font>("Lingua.otf", 36),
+        .pTaizoHoriSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Default.png"),
+        .pGroundSprite = std::make_unique<Engine::Sprite>("Sprites/Background/Ground.png"),
+        .pSkySprite =  std::make_unique<Engine::Sprite>("Sprites/Background/Sky.png")
+    }
+{}

@@ -13,14 +13,14 @@ namespace Engine
 
 namespace Game
 {
-    class LevelManager;
+    class Level;
 
     class PawnComponent : public Engine::Component, public Engine::Observer
     {
     public:
         struct Dependencies final
         {
-            LevelManager const& levelManager;
+            Level const& level;
         };
 
         explicit PawnComponent(Engine::GameObject& owner, Dependencies const&) noexcept;

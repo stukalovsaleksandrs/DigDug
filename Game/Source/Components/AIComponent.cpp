@@ -14,7 +14,7 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
             .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
             .movementComponent = m_movementComponent,
             .owner = owner,
-            .levelManager = m_dependencies.levelManager
+            .level = m_dependencies.level
         };
         FSM::States states;
         states.emplace(typeid(Pooka::WanderHorizontally), std::make_unique<Pooka::WanderHorizontally>(stateDependencies));

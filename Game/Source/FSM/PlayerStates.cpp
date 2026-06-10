@@ -13,7 +13,7 @@ namespace Game
     bool Player::State::PlayerStateBase::TryDigging() const noexcept
     {
         auto const worldPosition{m_dependencies.owner.GetWorldLocation()};
-        m_dependencies.levelManager.GetCurrentLevel().DigCircle(
+        m_dependencies.level.DigCircle(
         {
             worldPosition + topLeftToCenterOffset
         });
@@ -84,8 +84,7 @@ namespace Game
     {
         // Digging a circle
         static auto constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
-        Level const& level{ m_dependencies.levelManager.GetCurrentLevel() };
-        level.DigCircle(m_dependencies.owner.GetWorldLocation() + offset);
+        m_dependencies.level.DigCircle(m_dependencies.owner.GetWorldLocation() + offset);
     }
 
     void Player::State::Digging::OnEnter() noexcept

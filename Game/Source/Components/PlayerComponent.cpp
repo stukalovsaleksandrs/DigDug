@@ -13,7 +13,7 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
                 .animationComponent = *owner.GetComponent<Engine::AnimationComponent>(),
                 .movementComponent = m_movementComponent,
                 .owner = owner,
-                .levelManager = m_dependencies.levelManager
+                .level = m_dependencies.level
             };
             // NOTE: Direct construction does not work since it requires copy contructors
             FSM::States states;

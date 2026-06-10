@@ -6,6 +6,7 @@
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/gtx/norm.inl"
 // Standard
+#include <filesystem>
 #include <print>
 #include <sstream>
 
@@ -17,7 +18,7 @@ void Engine::Utils::Check(bool const result, std::string_view const message)
 
 void Engine::Utils::ThrowSDLError(std::string_view const message)
 {
-    throw std::runtime_error(std::format("{}: {}", message, SDL_GetError()));
+    throw std::runtime_error(std::format("{}: {}. Current directory is {}", message, SDL_GetError(), std::filesystem::current_path().c_str()));
 }
 
 void Engine::Utils::LogSDLVersion(std::string_view const message, int const major, int const minor, int const patch)
