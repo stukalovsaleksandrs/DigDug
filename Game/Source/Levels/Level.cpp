@@ -28,24 +28,24 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
         }},
         { '2', [this](glm::i32vec2 const cell)
         {
-            m_pookaSpawnCells.push_back(cell);
+            m_pookaSpawnCells.emplace_back(cell);
             m_grid.SetAir(cell);
         }},
         {'3', [this](glm::i32vec2 const cell)
         {
-            m_flygarSpawnCells.push_back(cell);
+            m_flygarSpawnCells.emplace_back(cell);
             m_grid.SetAir(cell);
         }},
         {'*', [this](glm::i32vec2 const cell)
         {
-            m_rockSpawnCells.push_back(cell);
+            m_rockSpawnCells.emplace_back(cell);
         }},
         {'.', [](glm::i32vec2 const)
         {
             // grid is all ground by default
             // I do still need a callback, otherwise there'll be an exception
         }},
-        {' ', [this](glm::i32vec2 const cell)
+        {'-', [this](glm::i32vec2 const cell)
         {
             m_grid.SetAir(cell);
         }}
@@ -100,8 +100,9 @@ Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexc
 {
     return [this](glm::vec2 const topLeft)
     {
-        auto const cell{ m_grid.GetCellFromPoint(topLeft) };
-        return not m_grid.IsGround(cell);
+        auto const topLeftPointCell{ m_grid.GetCellFromPoint(topLeft) },
+            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{tileSideLength - 1, tileSideLength - 1}) };
+        return not (m_grid.IsGround(topLeftPointCell) || m_grid.IsGround(bottomRightPointCell));
     };
 }
 

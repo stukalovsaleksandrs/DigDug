@@ -41,32 +41,34 @@ void Engine::MovementComponent::Update() noexcept
 
     // Limiting player only to the screen borders
     if (auto const deltaPosition{ glm::normalize(m_direction) * m_pxPerSec * Timer::GetInstance().GetDeltaSec() };
-        IsWithinScreen(m_owner.GetWorldLocation() + deltaPosition) &&
-        m_canMovePred(m_owner.GetWorldLocation()))
+        IsWithinScreen(m_owner.GetWorldLocation() + deltaPosition))
     {
-        // Updating location
-        m_owner.SetLocalPosition(
-            m_owner.GetLocalLocation() + deltaPosition
-        );
-
-        // Firing event if direction changed
-        if (!Utils::NearlyEqual(m_prevDirection, m_direction) && !Utils::NearlyEqual(m_prevDirection, {}))
+        if (m_canMovePred(m_owner.GetWorldLocation() + deltaPosition))
         {
-            // Dispatching that direction changed in general
-            NotifyObservers(
-                Event{
-                    std::to_underlying(EventType::OnDirectionChanged)
-                }
+            // Updating location
+            m_owner.SetLocalPosition(
+                m_owner.GetLocalLocation() + deltaPosition
             );
 
-            // Dispatching whether the movement axis changed
-            if (Utils::NearlyZero(glm::dot(m_prevDirection, m_direction)))
+            // Firing event if direction changed
+            if (!Utils::NearlyEqual(m_prevDirection, m_direction) && !Utils::NearlyEqual(m_prevDirection, {}))
             {
+                // Dispatching that direction changed in general
                 NotifyObservers(
                     Event{
-                        std::to_underlying(EventType::OnMovementAxisChanged)
+                        std::to_underlying(EventType::OnDirectionChanged)
                     }
                 );
+
+                // Dispatching whether the movement axis changed
+                if (Utils::NearlyZero(glm::dot(m_prevDirection, m_direction)))
+                {
+                    NotifyObservers(
+                        Event{
+                            std::to_underlying(EventType::OnMovementAxisChanged)
+                        }
+                    );
+                }
             }
         }
     }

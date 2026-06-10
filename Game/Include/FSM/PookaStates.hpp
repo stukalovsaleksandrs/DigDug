@@ -25,8 +25,10 @@ namespace Game::Pooka
     private:
         Engine::MoveCommand m_moveLeftCommand{ m_dependencies.movementComponent, glm::vec2{-1.f, 0.f} };
         Engine::MoveCommand m_moveRightCommand{ m_dependencies.movementComponent, glm::vec2{1.f, 0.f} };
-        Engine::MoveCommand* m_pCurrentCommand{ &m_moveLeftCommand };// Not ref. since I couldn't assign to it for some reason
+        Engine::MoveCommand* m_pCurrentCommand{ &m_moveRightCommand };// Not ref. since I couldn't assign to it for some reason
         glm::vec2 m_prevLocation{};
+
+        void FlipDirection() noexcept;
     };
 
     class WanderVertically final : public PookaStateBase
