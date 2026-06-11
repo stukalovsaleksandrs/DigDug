@@ -1,3 +1,6 @@
+// #define ENABLE_DEBUG_RENDERING
+#define GLM_ENABLE_EXPERIMENTAL
+
 // Game
 #include "FSM/AIStates.hpp"
 #include "Utils.hpp"
@@ -5,7 +8,6 @@
 // Engine
 #include "Engine/Components/AnimationComponent.hpp"
 // Third-party
-#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/glm.hpp"
 #include "glm/gtx/norm.hpp"
 // Standard
@@ -209,7 +211,6 @@ Game::StateType Game::AI::Chase::Update() noexcept
     {
         m_dependencies.movementComponent.Enable();
         glm::vec2 const normDir{ normalize(npcToTarget) };
-        std::println("Norm dir: {}, {}", normDir.x, normDir.y);
         m_dependencies.movementComponent.AddDirection(
             normDir
         );
@@ -232,11 +233,13 @@ void Game::AI::Chase::OnExit() noexcept
 
 void Game::AI::Chase::DebugRender() const noexcept
 {
+#ifdef ENABLE_DEBUG_RENDERING
     if (m_path.empty()) return;
     Engine::Renderer::GetInstance().RenderSquare(
         Engine::Utils::Square{m_dependencies.level.GetGrid().GetCellTopLeft(m_path.at(m_currentTargetIdx)),
         tileSideLength},
         SDL_FColor{0, 255, 0, 255}
     );
+#endif// ENABLE_DEBUG_RENDERING
 }
 #pragma endregion Chase

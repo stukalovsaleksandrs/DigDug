@@ -20,6 +20,7 @@ namespace Engine
         Component& operator=(Component const&) noexcept = delete;
         Component(Component&&) noexcept = delete;
         Component& operator=(Component&&) noexcept = delete;
+        void SetActive(bool const active) noexcept{ m_active = active; };
 
         virtual void Update() noexcept {};
 
@@ -27,6 +28,7 @@ namespace Engine
 
     protected:
         GameObject& m_owner;
+        bool m_active{ true };
 
     };
     template<typename DerivedComponentType>

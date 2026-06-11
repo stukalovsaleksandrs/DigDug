@@ -13,6 +13,7 @@ Engine::GameObject::GameObject(Scene& scene, glm::vec2 const localPosition) noex
  *******************************************/
 
 void Engine::GameObject::Update() {
+    if (not m_active) return;
     DeleteMarkedComponents();
 
     // Updating components
@@ -32,6 +33,13 @@ void Engine::GameObject::MarkForDeletion() noexcept
 bool Engine::GameObject::IsMarkedForDeletion() const noexcept
 {
     return m_markedForDeletion;
+}
+
+void Engine::GameObject::SetActive(bool const active) noexcept
+{
+    m_active = active;
+    for (const auto& [pComponent, _]: m_components)
+        pComponent->SetActive(active);
 }
 
 /*******************************************

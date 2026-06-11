@@ -38,18 +38,21 @@ void Engine::HierarchyElement::SetParent(HierarchyElement& newParent, bool const
     }
     else
     {
-        if (keepWorldPosition)
+        if (m_pOwnerGameObject)
         {
-            m_pOwnerGameObject->SetLocalPosition(m_pOwnerGameObject->GetWorldLocation() - newParent.m_pOwnerGameObject->GetWorldLocation());
+            if (keepWorldPosition)
+            {
+                m_pOwnerGameObject->SetLocalPosition(m_pOwnerGameObject->GetWorldLocation() - newParent.m_pOwnerGameObject->GetWorldLocation());
+            }
+            m_pOwnerGameObject->SetPositionDirty();
         }
-        m_pOwnerGameObject->SetPositionDirty();
     }
-    m_pOwnerGameObject->UpdateWorldPosition();
+    if (m_pOwnerGameObject) m_pOwnerGameObject->UpdateWorldPosition();
     // 3. Removing ourselves from the old parent and adding to the new one
     if (m_pParentHierarchyElement)
     {
         // Moving from a game object to a game object
-        newParent.AddChild(m_pParentHierarchyElement->RemoveChild(this->m_pOwnerGameObject));
+        if (m_pOwnerGameObject) newParent.AddChild(m_pParentHierarchyElement->RemoveChild(this->m_pOwnerGameObject));
     }
     else if (m_pParentHierarchyElement)// pNewParent = nullptr()
     {

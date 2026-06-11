@@ -31,6 +31,7 @@ Engine::RenderComponent::~RenderComponent()
 }
 
 void Engine::RenderComponent::Render() const noexcept {
+    if (not m_active) return;
     assert(m_spriteView.pSprite && "Texture is not set");
     auto const& topLeft{ m_owner.GetWorldLocation() };
     if (m_spriteView.srcRect.w > 0.f && m_spriteView.srcRect.h > 0.f)
@@ -59,6 +60,16 @@ void Engine::RenderComponent::Render() const noexcept {
 void Engine::RenderComponent::SetSpriteView(Sprite::View const& spriteView) noexcept
 {
     m_spriteView = spriteView;
+}
+
+void Engine::RenderComponent::SetSrcRect(SDL_FRect const& srcRect) noexcept
+{
+    m_spriteView.srcRect = srcRect;
+}
+
+void Engine::RenderComponent::SetSrcWidth(float width) noexcept
+{
+    m_spriteView.srcRect.w = width;
 }
 
 glm::vec2 Engine::RenderComponent::GetSpriteViewDims() const noexcept

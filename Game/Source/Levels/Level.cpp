@@ -6,6 +6,7 @@
 #include "Components/AIComponent.hpp"
 #include "Components/PlayerComponent.hpp"
 #include "Components/LivesComponent.hpp"
+#include "Components/PumpComponent.hpp"
 // Engine
 #include "Engine/Rendering/Renderer.hpp"
 #include "Engine/Components/MovementComponent.hpp"
@@ -68,10 +69,11 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
         sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
     }
 
-    SpawnPlayer();
 
-    // Spawning Pookas
+    // Spawning
+    SpawnPlayer();
     SpawnPookas();
+    SpawnPump();
 }
 
 Game::Level::~Level() noexcept
@@ -97,12 +99,31 @@ bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
 
 glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
 {
-    return m_grid.GetCellFromPoint(m_player->GetWorldLocation() + glm::vec2{1.f, 1.f});
+    return m_grid.GetCellFromPoint(m_pPlayer->GetWorldLocation() + glm::vec2{1.f, 1.f});
 }
 
 void Game::Level::Update() noexcept
 {
     m_scene.Update();
+}
+
+void Game::Level::EnablePump() const noexcept
+{
+    m_pPump->SetActive(true);
+}
+
+void Game::Level::SpawnPump() noexcept
+{
+    if (m_pPumpComponent) return;// No pump spamming
+    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, m_pPlayer->GetWorldLocation());
+
+    m_pPump->AddComponent<Engine::RenderComponent>(
+        Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }
+    );
+
+    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>();
+
+    m_pPump->SetActive(false);
 }
 
 Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexcept
@@ -206,17 +227,17 @@ void Game::Level::MaskInitialTunnels() const noexcept
 
 void Game::Level::SpawnPlayer() noexcept
 {
-    m_player = &m_scene.CreateGameObject({1.f, tileSideLength + 1});
+    m_pPlayer = &m_scene.CreateGameObject({1.f, tileSideLength + 1});
 
     // Movement component
-    m_player->AddComponent<Engine::MovementComponent>(
+    m_pPlayer->AddComponent<Engine::MovementComponent>(
         Engine::MovementComponent::Dependencies{windowData, tileSideLength},
         tileSideLength,
         45.f
     );
 
     // Animation component
-    m_player->AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
+    m_pPlayer->AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
         .firstSpriteView = Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get(),
             SDL_FRect{0.f, 0.f,
             static_cast<float>(tileSideLength),
@@ -227,17 +248,17 @@ void Game::Level::SpawnPlayer() noexcept
     });
 
     // Player component(must be added after animation component)
-    auto& playerComponent{m_player->AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
+    auto& playerComponent{m_pPlayer->AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
 
     // Render component
-    auto& characterRenderComponent{m_player->AddComponent<Engine::RenderComponent>(
+    auto& characterRenderComponent{m_pPlayer->AddComponent<Engine::RenderComponent>(
         Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get()}
     )};
     characterRenderComponent.SetSpriteView({m_sharedResources.pTaizoHoriSprite.get(), SDL_FRect{0.f, 0.f,
         static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
 
     // Lives component
-    auto& livesComponent{m_player->AddComponent<LivesComponent>(2)};
+    auto& livesComponent{m_pPlayer->AddComponent<LivesComponent>(2)};
     livesComponent.BindObserver(playerComponent);
 
     // Lives display

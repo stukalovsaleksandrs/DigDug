@@ -2,9 +2,6 @@
 #include "Utils.hpp"
 #include "Application.hpp"
 // Engine
-#include "Engine/Scene/Scene.hpp"
-#include "Engine/Components/MovementComponent.hpp"
-#include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Sound/SoundServiceLocator.hpp"
 #include "Engine/Rendering/Sprite.hpp"
 // Standard
@@ -42,8 +39,6 @@ Game::Application::Application()
     // Don't move to the header, has to be added to rendering after the ground
     // TODO: Actually move to header
     m_pLevelManager = std::make_unique<LevelManager>(std::vector<std::string_view>{"Levels/Level1.txt"});
-
-
 
 }
 

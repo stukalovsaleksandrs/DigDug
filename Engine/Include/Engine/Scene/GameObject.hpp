@@ -44,6 +44,8 @@ namespace Engine
         void MarkForDeletion() noexcept;
         [[nodiscard]] bool IsMarkedForDeletion() const noexcept;
 
+        void SetActive(bool const active) noexcept;;
+
         /*******************************************
          * Components
          *******************************************/
@@ -166,6 +168,8 @@ namespace Engine
         bool m_positionIsDirty{};
 
         Scene& m_scene;
+
+        bool m_active{ true };
 
         // Removes all the components with the deletion flag set
         void DeleteMarkedComponents() noexcept;

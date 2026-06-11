@@ -1,9 +1,12 @@
 // Game
 #include "Components/PlayerComponent.hpp"
 #include "Commands.hpp"
+#include "Levels/Level.hpp"
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Components/AnimationComponent.hpp"
+// Standard
+#include <print>
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
     : PawnComponent{owner, dependencies}
@@ -92,9 +95,7 @@ void Game::PlayerComponent::AddPoints(uint32_t const points) noexcept
     if (m_points == 5) NotifyObservers(m_onCollected5Points);
 }
 
-void Game::PlayerComponent::Attack()
+void Game::PlayerComponent::Attack() const
 {
-    // s
-
-    // When enemy arrives at the location, and then the path is of length 0, then disable the movement component
+    m_dependencies.level.EnablePump();
 }

@@ -6,15 +6,15 @@ void Engine::Scene::Update()
     hierarchyElement.DeleteMarkedGameObjects();
 }
 
-Engine::GameObject& Engine::Scene::CreateGameObject(glm::vec2 const localPosition) noexcept
+Engine::GameObject& Engine::Scene::CreateGameObject(glm::vec2 const worldTopLeft) noexcept
 {
-    return *hierarchyElement.AddChild( std::make_unique<GameObject>(*this, localPosition));
+    return *hierarchyElement.AddChild( std::make_unique<GameObject>(*this, worldTopLeft));
 }
 
-Engine::GameObject& Engine::Scene::CreateGameObject(GameObject& parent, glm::vec2 const localPosition,
-    bool const keepWorldPosition) noexcept
+Engine::GameObject& Engine::Scene::CreateGameObject(GameObject& parent, glm::vec2 const worldTopLeft,
+    bool const keepWorldLocation) noexcept
 {
-    auto& gameObject{ CreateGameObject(localPosition) };
-    gameObject.hierarchyElement.SetParent(parent.hierarchyElement, keepWorldPosition);
+    auto& gameObject{ CreateGameObject(worldTopLeft) };
+    gameObject.hierarchyElement.SetParent(parent.hierarchyElement, keepWorldLocation);
     return gameObject;
 }

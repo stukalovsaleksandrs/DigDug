@@ -10,13 +10,17 @@
 
 namespace Game
 {
+    class PumpComponent;
+
     class Level final
     {
     public:
         struct Resources final
         {
             std::unique_ptr<Engine::Font> pFont;
-            std::unique_ptr<Engine::Sprite> pTaizoHoriSprite, pPookaSprite, pGroundSprite, pSkySprite;
+            std::unique_ptr<Engine::Sprite> pTaizoHoriSprite, pPookaSprite,
+                pGroundSprite, pSkySprite,
+                pPumpSprite;
         };
 
         explicit Level(std::string_view path, Resources const& sharedResources) noexcept;
@@ -35,16 +39,23 @@ namespace Game
 
         void Update() noexcept;
 
+        void EnablePump() const noexcept;
+
     private:
         Resources const& m_sharedResources;
 
         glm::u32vec2 m_playerSpawnCell{};
         std::vector<glm::u32vec2> m_pookaSpawnCells{},
             m_flygarSpawnCells{}, m_rockSpawnCells{};
+
         Grid m_grid;
+
         Engine::Sprite m_maskTexture;
 
-        Engine::GameObject* m_player{};
+        Engine::GameObject* m_pPlayer{};
+
+        Engine::GameObject* m_pPump{};
+        PumpComponent* m_pPumpComponent{};
 
         std::function<void()> m_renderTunnelsFunction{ [this]
         {
@@ -66,6 +77,7 @@ namespace Game
         void SpawnPlayer() noexcept;
         void SpawnPookas() noexcept;
         void SpawnPooka(glm::vec2 topLeft) noexcept;
+        void SpawnPump() noexcept;
 
         Engine::MovementComponent::CanMovePred GetCanMovePred() const noexcept;
     };

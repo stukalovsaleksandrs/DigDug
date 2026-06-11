@@ -35,7 +35,7 @@ namespace Game
         [[nodiscard]] uint32_t GetPoints() const noexcept{ return m_points; };
         void AddPoints(uint32_t points) noexcept;
 
-        void Attack();
+        void Attack() const;
 
     private:
         uint32_t m_points{};
@@ -45,7 +45,7 @@ namespace Game
         Engine::Action m_keyboardDown{SDL_SCANCODE_S, Engine::InputType::held};
         Engine::Action m_keyboardRight{SDL_SCANCODE_D, Engine::InputType::held};
         Engine::Action m_keyboardPointAction{SDL_SCANCODE_P, Engine::InputType::released};
-        Engine::Action m_keyboardAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
+        Engine::Action m_keyboardAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::held};
 
         Engine::Action m_gamepadUp{SDL_GAMEPAD_BUTTON_DPAD_UP, Engine::InputType::held};
         Engine::Action m_gamepadLeft{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Engine::InputType::held};
@@ -56,6 +56,7 @@ namespace Game
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
 
         FSM m_playerStateMachine;
+
     };
 }
 

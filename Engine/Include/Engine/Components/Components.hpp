@@ -36,6 +36,8 @@ namespace Engine
 
         void Render() const noexcept;
         void SetSpriteView(Sprite::View const&) noexcept;
+        void SetSrcRect(SDL_FRect const&) noexcept;
+        void SetSrcWidth(float width) noexcept;
         [[nodiscard]] glm::vec2 GetSpriteViewDims() const noexcept;
         void SetFlipMode(SDL_FlipMode const flipMode){ m_flipMode = flipMode; };
         void SetRotation(float const degrees){ m_degrees = degrees; };
