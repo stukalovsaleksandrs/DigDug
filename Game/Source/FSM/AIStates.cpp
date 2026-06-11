@@ -11,6 +11,7 @@
 // Standard
 #include <queue>
 #include <set>
+#include <print>
 
 #pragma region StateBase
 Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
@@ -188,9 +189,9 @@ Game::StateType Game::AI::Chase::Update() noexcept
     // Moving towards the current cell
     Grid const& grid{ m_dependencies.level.GetGrid() };
     // Switching the target cell if we've arrived
-    Cell const currentTarget{ m_path.at(m_currentTargetIdx) };
-    if (glm::vec2 const npcToTarget{ grid.GetCellTopLeft(currentTarget) - m_dependencies.owner.GetWorldLocation() };
-        Engine::Utils::NearlyZero(glm::length2(npcToTarget), 1.f))
+    Cell const currentTargetCell{ m_path.at(m_currentTargetIdx) };
+    if (glm::vec2 const npcToTarget{ static_cast<glm::vec2>(grid.GetCellCenter(currentTargetCell) - grid.GetCellCenter(grid.GetCellFromPoint(m_dependencies.owner.GetWorldLocation()))) };
+        Engine::Utils::NearlyZero(glm::length2(npcToTarget)))
     {
         // Last cell -> generating a new path
         if (m_currentTargetIdx == m_path.size() - 1)
@@ -205,8 +206,10 @@ Game::StateType Game::AI::Chase::Update() noexcept
     }
     else
     {
-       m_dependencies.movementComponent.AddDirection(
-            normalize(npcToTarget)
+        glm::vec2 const normDir{ normalize(npcToTarget) };
+        std::println("Norm dir: {}, {}", normDir.x, normDir.y);
+        m_dependencies.movementComponent.AddDirection(
+            normDir
         );
     }
 
@@ -216,10 +219,22 @@ Game::StateType Game::AI::Chase::Update() noexcept
 void Game::AI::Chase::OnEnter() noexcept
 {
     m_path = TryFindingPathToPlayer();
+    Engine::Renderer::GetInstance().RegisterFunction(m_debugRenderFunction);
 }
 
 void Game::AI::Chase::OnExit() noexcept
 {
     m_currentTargetIdx = 0;
+    Engine::Renderer::GetInstance().UnregisterFunction(m_debugRenderFunction);
+}
+
+void Game::AI::Chase::DebugRender() const noexcept
+{
+    if (m_path.empty()) return;
+    Engine::Renderer::GetInstance().RenderSquare(
+        Engine::Utils::Square{m_dependencies.level.GetGrid().GetCellTopLeft(m_path.at(m_currentTargetIdx)),
+        tileSideLength},
+        SDL_FColor{0, 0, 255, 255}
+    );
 }
 #pragma endregion Chase

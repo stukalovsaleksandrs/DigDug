@@ -62,10 +62,18 @@ namespace Game::AI
         StateType Update() noexcept override;
         void OnEnter() noexcept override;
         void OnExit() noexcept override;
+        void DebugRender() const noexcept;
 
     private:
         Path m_path;
         uint32_t m_currentTargetIdx{};
+
+        std::function<void()> m_debugRenderFunction{
+            [this]
+            {
+                DebugRender();
+            }
+        };
     };
 
 }

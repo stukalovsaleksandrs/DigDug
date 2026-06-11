@@ -23,15 +23,15 @@ Game::Grid::Grid()
     std::ranges::fill(m_isGround, true);
 
     // Registering rendering callback
-    m_renderer.RegisterFunction(m_renderFunction);
+    m_renderer.RegisterFunction(m_debugRenderFunction);
 }
 
 Game::Grid::~Grid() noexcept
 {
-    m_renderer.UnregisterFunction(m_renderFunction);
+    m_renderer.UnregisterFunction(m_debugRenderFunction);
 }
 
-void Game::Grid::Render() const
+void Game::Grid::DebugRender() const
 {
 #ifdef ENABLE_DEBUG_DRAWING
     for (int32_t const row : std::ranges::views::iota(0, m_dimsInCells.y) )
@@ -49,8 +49,9 @@ void Game::Grid::Render() const
             };
 
             m_renderer.RenderSquare(
-                Engine::Utils::Square{topLeft,
-                tileSideLength
+                Engine::Utils::Square{
+                    topLeft,
+                    tileSideLength
             }, color
             );
         }

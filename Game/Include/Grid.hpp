@@ -25,7 +25,8 @@ namespace Game
         Grid& operator=(Grid const&) noexcept = delete;
         Grid& operator=(Grid &&) noexcept = delete;
 
-        void Render() const;
+        void DebugRender() const;
+
         // Returns the location(in cells) of the cell the input point(in pixels) is in
         [[nodiscard]] glm::i32vec2 GetCellFromPoint(glm::vec2 point) const noexcept;
 
@@ -57,7 +58,7 @@ namespace Game
         glm::i32vec2 m_dimsInPx{ windowData.logicalDims  };
         glm::i32vec2 m_dimsInCells{ m_dimsInPx.x / tileSideLength, m_dimsInPx.y / tileSideLength };
         Engine::Renderer& m_renderer;
-        std::function<void()> m_renderFunction{ [this]{ Render(); } };
+        std::function<void()> m_debugRenderFunction{ [this]{ DebugRender(); } };
 
         // Array representing 2D grid of bools communicating whether each cell is ground or not
         std::vector<bool> m_isGround{ };
