@@ -122,7 +122,7 @@ void Game::Level::SpawnPump() noexcept
         Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }
     );
 
-    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>();
+    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>(*m_pPlayer->GetComponent<Engine::RenderComponent>());
 
     m_pPump->SetActive(false);
 }

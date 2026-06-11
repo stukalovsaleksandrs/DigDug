@@ -60,7 +60,7 @@ void Game::PawnComponent::Update() noexcept
     m_movementComponent.Enable();
 }
 
-void Game::PawnComponent::ProcessSpriteOrientation(glm::vec2 const direction) const noexcept
+void Game::PawnComponent::ProcessSpriteOrientation(glm::vec2 const direction) noexcept
 {
     // Flipping
     SDL_FlipMode flipMode{};

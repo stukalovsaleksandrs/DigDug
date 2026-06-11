@@ -50,7 +50,7 @@ namespace Game
         bool m_rotate{};
 
         // Flips and/or rotates the sprite depending on direction
-        void ProcessSpriteOrientation(glm::vec2 direction) const noexcept;
+        void ProcessSpriteOrientation(glm::vec2 direction) noexcept;
 
         // Lerps player location to the middle of the cell the player is currently in
         void ConstrainMovementToGrid() noexcept;

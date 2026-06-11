@@ -56,7 +56,6 @@ namespace Game
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };
 
         FSM m_playerStateMachine;
-
     };
 }
 
