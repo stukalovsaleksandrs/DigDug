@@ -21,10 +21,10 @@ void Game::LivesComponent::TakeDamage() noexcept
 {
     if (!m_lives) return;// Corpses do not care about damage
     --m_lives;
-    subject.NotifyObservers(m_onDamageTaken);
+    NotifyObservers(m_onDamageTaken);
     if (!m_lives)// Just died
     {
-        subject.NotifyObservers(m_onDiedEvent);
+        NotifyObservers(m_onDiedEvent);
         return;
     }
     std::println("Took damage, lives: {}", m_lives);

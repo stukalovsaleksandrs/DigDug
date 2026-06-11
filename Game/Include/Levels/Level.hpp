@@ -28,21 +28,23 @@ namespace Game
 
         bool TryDigging(glm::vec2 cellCenterPx) noexcept;
 
-        // Given a px, gets a cell of this px and returns top left px of this cell
-        [[nodiscard]] glm::vec2 GetCellTopLeftFromCellCenter(glm::u32vec2 centerPx) const noexcept;
-
         [[nodiscard]] Grid const& GetGrid() const noexcept { return m_grid; };
+        [[nodiscard]] Grid& GetGrid() noexcept { return m_grid; };
+
+        [[nodiscard]] glm::u32vec2 GetPlayerCell() const noexcept;
 
         void Update() noexcept;
 
     private:
         Resources const& m_sharedResources;
 
-        glm::u32vec2 m_characterSpawnCell{};
+        glm::u32vec2 m_playerSpawnCell{};
         std::vector<glm::u32vec2> m_pookaSpawnCells{},
             m_flygarSpawnCells{}, m_rockSpawnCells{};
         Grid m_grid;
         Engine::Sprite m_maskTexture;
+
+        Engine::GameObject* m_player{};
 
         std::function<void()> m_renderTunnelsFunction{ [this]
         {
@@ -54,15 +56,14 @@ namespace Game
         Engine::Scene m_scene;
 
         void ParseFile(std::string_view path) const;
-
-        void ParseCharacter(std::string_view line, glm::u32vec2 cell) const;
+        void ParsePlayer(std::string_view line, glm::u32vec2 cell) const;
 
         void DigCircle(glm::vec2 centerPx) const noexcept;
         void DigSquare(glm::vec2 topLeftPx, EU::Square::Corners corners = {}) const noexcept;
 
         void MaskInitialTunnels() const noexcept;
 
-        void SpawnCharacter() noexcept;
+        void SpawnPlayer() noexcept;
         void SpawnPookas() noexcept;
         void SpawnPooka(glm::vec2 topLeft) noexcept;
 

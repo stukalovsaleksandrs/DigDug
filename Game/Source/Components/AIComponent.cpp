@@ -18,8 +18,13 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
             .level = m_dependencies.level
         };
         FSM::States states;
-        states.emplace(typeid(AI::WanderHorizontally), std::make_unique<AI::WanderHorizontally>(stateDependencies));
-        states.emplace(typeid(AI::WanderVertically), std::make_unique<AI::WanderVertically>(stateDependencies));
+        auto addState{[&]<typename StateType>()
+        {
+            states.emplace(typeid(StateType), std::make_unique<StateType>(stateDependencies));
+        }};
+        addState.operator()<AI::WanderHorizontally>();
+        addState.operator()<AI::WanderVertically>();
+        addState.operator()<AI::Chase>();
         return std::pair{std::move(states), states.at(SelectInitialState()).get()};
     }() }
 {}

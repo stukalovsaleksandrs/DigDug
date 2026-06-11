@@ -46,9 +46,7 @@ namespace Engine::Utils {
 
     void PrintSDLVersion();
 
-    /********************
-     * Comparisons
-     ********************/
+#pragma region Comparors
     bool NearlyEqual(glm::vec2 lhs, glm::vec2 rhs, float epsilon = glm::epsilon<float>());
     bool NearlyEqual(float lhs, float rhs, float epsilon = glm::epsilon<float>());
     bool NearlyZero(float value, float epsilon = glm::epsilon<float>());
@@ -58,11 +56,28 @@ namespace Engine::Utils {
     bool HaveSameType(const std::unique_ptr<T>&, const std::unique_ptr<U>&) {
         return std::is_same_v<T, U>;
     }
+
+    struct StrictWeakComparor_i32vec2
+    {
+        bool operator()(glm::i32vec2 const lhs, glm::i32vec2 const rhs) const
+        {
+            if (lhs.x != rhs.x) return lhs.x < rhs.x;
+            return lhs.y < rhs.y;
+        }
+    };
+
+    struct Hash_i32vec2
+    {
+        bool operator()(glm::i32vec2 const v) const
+        {
+            return std::hash<uint32_t>()(v.x) ^ std::hash<uint32_t>()(v.y);
+        }
+    };
+
+#pragma endregion Comparors
 }
 
-/********************
- * SDBM hashing
- ********************/
+#pragma region SDBM
 consteval unsigned int MakeSDBMHash(char const* str, size_t len)
 {
     unsigned int hash{};
@@ -77,5 +92,6 @@ consteval unsigned int operator ""_h(const char * str, size_t const len)
 {
     return MakeSDBMHash(str, len);
 }
+#pragma endregion SDBM
 
 #endif// ENGINE_UTILS

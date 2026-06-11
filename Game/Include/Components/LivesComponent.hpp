@@ -9,13 +9,9 @@
 
 namespace Game
 {
-    // TODO: Just move all of this to PlayerComponent
-
-    class LivesComponent : public Engine::Component
+    class LivesComponent : public Engine::Component, public Engine::Subject
     {
     public:
-        Engine::Subject subject;
-
         explicit LivesComponent(Engine::GameObject& owner, uint32_t lives) noexcept;
 
         void TakeDamage() noexcept;

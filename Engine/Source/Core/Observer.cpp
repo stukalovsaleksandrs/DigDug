@@ -12,7 +12,7 @@ Engine::Observer::~Observer() noexcept
     // Unsubscribing the observer from the subjects
     for (auto const pSubject: m_pSubjects)
     {
-        pSubject->RemoveObserver(*this);
+        pSubject->UnbindObserver(*this);
     }
 }
 
@@ -33,7 +33,7 @@ void Engine::Subject::BindObserver(Observer& observer) noexcept
     m_pObservers.push_back(&observer);
 }
 
-void Engine::Subject::RemoveObserver(Observer& observer) noexcept
+void Engine::Subject::UnbindObserver(Observer& observer) noexcept
 {
     if (m_pObservers.empty()) return;
     // NOTE: Just std::erase does not work for Emscripten

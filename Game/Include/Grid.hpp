@@ -15,11 +15,11 @@ namespace Engine
 
 namespace Game
 {
-    class Grid final
+    class Grid final : public Engine::Subject
     {
     public:
         explicit Grid();
-        ~Grid() noexcept;
+        ~Grid() noexcept override;
         Grid(Grid const&) noexcept = delete;
         Grid(Grid &&) noexcept = delete;
         Grid& operator=(Grid const&) noexcept = delete;
@@ -29,10 +29,15 @@ namespace Game
         // Returns the location(in cells) of the cell the input point(in pixels) is in
         [[nodiscard]] glm::i32vec2 GetCellFromPoint(glm::vec2 point) const noexcept;
 
+        // Given a px, gets a cell of this px and returns top left px of this cell
+        [[nodiscard]] glm::vec2 GetCellTopLeftFromCellCenter(glm::u32vec2 centerPx) const noexcept;
+
         // Returns the location(in pixels) of the top left corner of the input cell(in cells)
         [[nodiscard]] glm::vec2 GetCellTopLeft(glm::i32vec2 cell) const noexcept;
 
         [[nodiscard]] glm::vec2 GetCellCenter(glm::i32vec2 cell) const noexcept;
+
+        [[nodiscard]] glm::i32vec2 GetDimsInCells() const noexcept { return m_dimsInCells; }
 
         // Returns whether the point is in the ground and preserves the current location
         bool TryDigging(glm::i32vec2 pointInPx) noexcept;
@@ -47,6 +52,8 @@ namespace Game
         }
 
     private:
+        Engine::Event m_gridChangedEvent{ std::to_underlying(EventType::OnGridChanged) };
+
         glm::i32vec2 m_dimsInPx{ windowData.logicalDims  };
         glm::i32vec2 m_dimsInCells{ m_dimsInPx.x / tileSideLength, m_dimsInPx.y / tileSideLength };
         Engine::Renderer& m_renderer;

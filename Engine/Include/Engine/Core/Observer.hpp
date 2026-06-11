@@ -62,8 +62,10 @@ namespace Engine
     public:
         virtual ~Subject() noexcept;
         void BindObserver(Observer& observer) noexcept;
-        void RemoveObserver(Observer& observer) noexcept;
+        void UnbindObserver(Observer& observer) noexcept;
 
+    protected:
+        Subject() noexcept = default;
         void NotifyObservers(Event event) const noexcept;
 
     private:

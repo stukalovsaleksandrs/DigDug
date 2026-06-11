@@ -87,6 +87,6 @@ void Game::PlayerComponent::UnbindInput() const noexcept
 void Game::PlayerComponent::AddPoints(uint32_t const points) noexcept
 {
     m_points += points;
-    subject.NotifyObservers(m_onPointsIncreased);
-    if (m_points == 5) subject.NotifyObservers(m_onCollected5Points);
+    NotifyObservers(m_onPointsIncreased);
+    if (m_points == 5) NotifyObservers(m_onCollected5Points);
 }

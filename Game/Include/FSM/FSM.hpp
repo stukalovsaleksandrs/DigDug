@@ -34,7 +34,7 @@ namespace Game
         explicit StateBase(Dependencies const& dependencies) noexcept
             : m_dependencies{ dependencies }{}
         virtual ~StateBase() = default;
-        virtual StateType Update() noexcept = 0;
+        [[nodiscard]] virtual StateType Update() noexcept = 0;
         virtual void OnEnter() noexcept = 0;
         virtual void OnExit() noexcept = 0;
 

@@ -3,7 +3,7 @@
 
 // Game
 #include "Utils.hpp"
-#include "../FSM/PlayerStates.hpp"
+#include "FSM/PlayerStates.hpp"
 #include "Grid.hpp"
 // Engine
 #include "PawnComponent.hpp"
@@ -17,11 +17,9 @@ namespace Engine
 
 namespace Game
 {
-    class PlayerComponent final : public PawnComponent
+    class PlayerComponent final : public PawnComponent, public Engine::Subject
     {
     public:
-        Engine::Subject subject;
-
         explicit PlayerComponent(Engine::GameObject& owner, Dependencies const&) noexcept;
         ~PlayerComponent() noexcept override;
         PlayerComponent(PlayerComponent&&) noexcept = delete;

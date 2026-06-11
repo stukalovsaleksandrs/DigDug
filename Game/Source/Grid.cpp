@@ -1,4 +1,4 @@
-//#define ENABLE_DEBUG_DRAWING
+#define ENABLE_DEBUG_DRAWING
 
 // Game
 #include "Utils.hpp"
@@ -74,6 +74,13 @@ glm::vec2 Game::Grid::GetCellTopLeft(glm::i32vec2 const cell) const noexcept
     };
 }
 
+glm::vec2 Game::Grid::GetCellTopLeftFromCellCenter(glm::u32vec2 const centerPx) const noexcept
+{
+    glm::i32vec2 const cell{ GetCellFromPoint(centerPx) };
+    return GetCellTopLeft(cell);
+}
+
+
 glm::vec2 Game::Grid::GetCellCenter(glm::i32vec2 const cell) const noexcept
 {
     static glm::vec2 constexpr offset{ 0.5f * glm::vec2{tileSideLength, tileSideLength} };
@@ -88,7 +95,12 @@ bool Game::Grid::TryDigging(glm::i32vec2 const pointInPx) noexcept
     if (newCellIdx != m_currentCellIdx)
     {
         // NOTE: 0 is unreachable(top left)
-        if (m_currentCellIdx != 0) m_isGround.at(m_currentCellIdx) = false;
+        if (m_currentCellIdx != 0)
+        {
+            m_isGround.at(m_currentCellIdx) = false;
+            // Broadcasting an event that a cell was dug
+            NotifyObservers(m_gridChangedEvent);
+        }
         m_currentCellIdx = newCellIdx;
     }
 

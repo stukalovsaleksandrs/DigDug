@@ -20,10 +20,10 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
     , m_charToParsingFunc{
         { '1', [this](glm::i32vec2 const cell)
         {
-            if (m_characterSpawnCell != glm::u32vec2{})
+            if (m_playerSpawnCell != glm::u32vec2{})
                 throw std::runtime_error{ std::format("A file has multiple character spawn points") };
 
-            m_characterSpawnCell = cell;
+            m_playerSpawnCell = cell;
             m_grid.SetAir(cell);
         }},
         { '2', [this](glm::i32vec2 const cell)
@@ -68,7 +68,7 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
         sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
     }
 
-    SpawnCharacter();
+    SpawnPlayer();
 
     // Spawning Pookas
     SpawnPookas();
@@ -95,10 +95,9 @@ bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
     return false;
 }
 
-glm::vec2 Game::Level::GetCellTopLeftFromCellCenter(glm::u32vec2 const centerPx) const noexcept
+glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
 {
-    glm::i32vec2 const cell{ m_grid.GetCellFromPoint(centerPx) };
-    return m_grid.GetCellTopLeft(cell);
+    return m_grid.GetCellFromPoint(m_player->GetWorldLocation());
 }
 
 void Game::Level::Update() noexcept
@@ -147,7 +146,7 @@ void Game::Level::ParseFile(std::string_view const path) const
         for (uint32_t const col : std::ranges::views::iota(0u, line.size()))
         {
             glm::u32vec2 const cell{ col, row };
-            ParseCharacter(line, cell);
+            ParsePlayer(line, cell);
         }
         ++row;
     }
@@ -155,7 +154,7 @@ void Game::Level::ParseFile(std::string_view const path) const
     MaskInitialTunnels();
 }
 
-void Game::Level::ParseCharacter(std::string_view const line, glm::u32vec2 const cell) const
+void Game::Level::ParsePlayer(std::string_view const line, glm::u32vec2 const cell) const
 {
     char const c{ line.at(cell.x) };
     m_charToParsingFunc.at(c)(cell);
@@ -205,19 +204,19 @@ void Game::Level::MaskInitialTunnels() const noexcept
     }
 }
 
-void Game::Level::SpawnCharacter() noexcept
+void Game::Level::SpawnPlayer() noexcept
 {
-    auto& character{m_scene.CreateGameObject({1.f, tileSideLength + 1})};
+    m_player = &m_scene.CreateGameObject({1.f, tileSideLength + 1});
 
     // Movement component
-    character.AddComponent<Engine::MovementComponent>(
+    m_player->AddComponent<Engine::MovementComponent>(
         Engine::MovementComponent::Dependencies{windowData, tileSideLength},
         tileSideLength,
         45.f
     );
 
     // Animation component
-    character.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
+    m_player->AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
         .firstSpriteView = Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get(),
             SDL_FRect{0.f, 0.f,
             static_cast<float>(tileSideLength),
@@ -228,25 +227,25 @@ void Game::Level::SpawnCharacter() noexcept
     });
 
     // Player component(must be added after animation component)
-    auto& playerComponent{character.AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
+    auto& playerComponent{m_player->AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
 
     // Render component
-    auto& characterRenderComponent{character.AddComponent<Engine::RenderComponent>(
+    auto& characterRenderComponent{m_player->AddComponent<Engine::RenderComponent>(
         Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get()}
     )};
     characterRenderComponent.SetSpriteView({m_sharedResources.pTaizoHoriSprite.get(), SDL_FRect{0.f, 0.f,
         static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
 
     // Lives component
-    auto& livesComponent{character.AddComponent<LivesComponent>(2)};
-    livesComponent.subject.BindObserver(playerComponent);
+    auto& livesComponent{m_player->AddComponent<LivesComponent>(2)};
+    livesComponent.BindObserver(playerComponent);
 
     // Lives display
     {
         auto& livesDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 10.f})};
         livesDisplay.AddComponent<Engine::TextComponent>(" ", m_sharedResources.pFont.get()); // NOTE: Text must not be empty
         auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
-        livesComponent.subject.BindObserver(livesDisplayComponent);
+        livesComponent.BindObserver(livesDisplayComponent);
     }
 
     // Point display
@@ -254,7 +253,7 @@ void Game::Level::SpawnCharacter() noexcept
         auto& pointDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 20.f})};
         pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_sharedResources.pFont.get());
         auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
-        playerComponent.subject.BindObserver(pointDisplayComponent);
+        playerComponent.BindObserver(pointDisplayComponent);
     }
 }
 
