@@ -20,7 +20,7 @@ Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
 Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() noexcept// BFS
 {
     Cell startCell{  m_dependencies.level.GetGrid().GetCellFromPoint(m_dependencies.owner.GetWorldLocation())  };
-    Cell const targetCell{ m_dependencies.level.GetPlayerCell() };
+    Cell const targetCell{ m_dependencies.level.GetPlayerCell()};
     // Pending
     std::queue<Cell> pending;
     pending.emplace(startCell);
@@ -58,7 +58,7 @@ Game::AI::AIStateBase::Path Game::AI::AIStateBase::ReconstructPath(CellMap const
         currentCell = parents.at(currentCell);
     }
 
-    // path.push_back(startCell);
+    path.push_back(startCell);
 
     std::ranges::reverse(path);
 
@@ -190,7 +190,7 @@ Game::StateType Game::AI::Chase::Update() noexcept
     Grid const& grid{ m_dependencies.level.GetGrid() };
     // Switching the target cell if we've arrived
     Cell const currentTargetCell{ m_path.at(m_currentTargetIdx) };
-    if (glm::vec2 const npcToTarget{ static_cast<glm::vec2>(grid.GetCellCenter(currentTargetCell) - grid.GetCellCenter(grid.GetCellFromPoint(m_dependencies.owner.GetWorldLocation()))) };
+    if (glm::vec2 const npcToTarget{ grid.GetCellCenter(currentTargetCell) - grid.GetCellCenter(grid.GetCellFromPoint(m_dependencies.owner.GetWorldLocation() + glm::vec2{1, 1})) };
         Engine::Utils::NearlyZero(glm::length2(npcToTarget)))
     {
         // Last cell -> generating a new path
@@ -234,7 +234,7 @@ void Game::AI::Chase::DebugRender() const noexcept
     Engine::Renderer::GetInstance().RenderSquare(
         Engine::Utils::Square{m_dependencies.level.GetGrid().GetCellTopLeft(m_path.at(m_currentTargetIdx)),
         tileSideLength},
-        SDL_FColor{0, 0, 255, 255}
+        SDL_FColor{0, 255, 0, 255}
     );
 }
 #pragma endregion Chase

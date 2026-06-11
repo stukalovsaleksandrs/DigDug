@@ -97,7 +97,7 @@ bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
 
 glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
 {
-    return m_grid.GetCellFromPoint(m_player->GetWorldLocation());
+    return m_grid.GetCellFromPoint(m_player->GetWorldLocation() + glm::vec2{1.f, 1.f});
 }
 
 void Game::Level::Update() noexcept
@@ -109,8 +109,8 @@ Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexc
 {
     return [this](glm::vec2 const topLeft)
     {
-        auto const topLeftPointCell{ m_grid.GetCellFromPoint(topLeft) },
-            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{tileSideLength - 1, tileSideLength - 1}) };
+        auto const topLeftPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{1.f, 1.f}) },
+            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{tileSideLength - 1.f, tileSideLength - 1.f}) };
         return not (m_grid.IsGround(topLeftPointCell) || m_grid.IsGround(bottomRightPointCell));
     };
 }

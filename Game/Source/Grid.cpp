@@ -7,6 +7,7 @@
 #include "Engine/Rendering/Renderer.hpp"
 // Standard
 #include <ranges>
+#include <print>
 
 Game::Grid::Grid()
     : m_renderer{ Engine::Renderer::GetInstance() }
@@ -100,6 +101,7 @@ bool Game::Grid::TryDigging(glm::i32vec2 const pointInPx) noexcept
         {
             m_isGround.at(m_currentCellIdx) = false;
             // Broadcasting an event that a cell was dug
+            std::println("Notified");
             NotifyObservers(m_gridChangedEvent);
         }
         m_currentCellIdx = newCellIdx;
