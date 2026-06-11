@@ -184,6 +184,7 @@ Game::StateType Game::AI::Chase::Update() noexcept
     if (m_path.empty())
     {
         m_path = TryFindingPathToPlayer();
+        m_dependencies.movementComponent.Disable();
         return std::nullopt;
     }
     // Moving towards the current cell
@@ -206,6 +207,7 @@ Game::StateType Game::AI::Chase::Update() noexcept
     }
     else
     {
+        m_dependencies.movementComponent.Enable();
         glm::vec2 const normDir{ normalize(npcToTarget) };
         std::println("Norm dir: {}, {}", normDir.x, normDir.y);
         m_dependencies.movementComponent.AddDirection(

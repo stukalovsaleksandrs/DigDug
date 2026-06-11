@@ -34,3 +34,15 @@ void Game::PointCommand::Execute() noexcept
 {
     m_playerComponent.AddPoints(1);
 }
+
+#pragma region AttackCommand
+
+Game::AttackCommand::AttackCommand(PlayerComponent& playerComponent)
+    : m_playerComponent{ playerComponent }{}
+
+void Game::AttackCommand::Execute() noexcept
+{
+    m_playerComponent.Attack();
+}
+
+#pragma endregion AttackCommand

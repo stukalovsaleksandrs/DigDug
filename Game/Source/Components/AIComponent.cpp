@@ -7,7 +7,7 @@
 #include "FSM/AIStates.hpp"
 
 Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& dependencies)
-    : PawnComponent{owner, dependencies}
+    : PawnComponent{owner, dependencies, false}
     , m_movementComponent{ *owner.GetComponent<Engine::MovementComponent>() }
     , m_pookaFSM{ [&]
     {

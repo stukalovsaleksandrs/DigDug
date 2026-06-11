@@ -55,6 +55,7 @@ void Game::PlayerComponent::BindInput() noexcept
     inputManager.Bind(m_keyboardLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
     inputManager.Bind(m_keyboardDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
     inputManager.Bind(m_keyboardRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
+    inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(*this));
     inputManager.Bind(m_keyboardPointAction, std::make_unique<PointCommand>(*this));
 
     // Gamepad
@@ -89,4 +90,11 @@ void Game::PlayerComponent::AddPoints(uint32_t const points) noexcept
     m_points += points;
     NotifyObservers(m_onPointsIncreased);
     if (m_points == 5) NotifyObservers(m_onCollected5Points);
+}
+
+void Game::PlayerComponent::Attack()
+{
+    // s
+
+    // When enemy arrives at the location, and then the path is of length 0, then disable the movement component
 }

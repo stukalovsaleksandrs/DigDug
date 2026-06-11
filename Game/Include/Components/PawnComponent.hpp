@@ -23,7 +23,7 @@ namespace Game
             Level& level;
         };
 
-        explicit PawnComponent(Engine::GameObject& owner, Dependencies const&) noexcept;
+        explicit PawnComponent(Engine::GameObject& owner, Dependencies const&, bool faceOrientation = true) noexcept;
         void OnNotify(Engine::Event event, const Engine::Subject& caller) noexcept override;
         void Update() noexcept override;
 
@@ -46,6 +46,8 @@ namespace Game
             glm::vec2 m_srcLocation{}, m_dstLocation{};
             bool m_active{};
         } m_locationLerpData;
+
+        bool m_faceOrientation{};
 
         // Flips and/or rotates the sprite depending on direction
         void ProcessSpriteOrientation(glm::vec2 direction) const noexcept;

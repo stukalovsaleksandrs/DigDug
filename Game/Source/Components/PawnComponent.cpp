@@ -14,11 +14,12 @@
 // Standard
 #include <print>
 
-Game::PawnComponent::PawnComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
+Game::PawnComponent::PawnComponent(Engine::GameObject& owner, Dependencies const& dependencies, bool faceOrientation) noexcept
     : Component{ owner }
     , m_dependencies{ dependencies }
     , m_movementComponent{*owner.GetComponent<Engine::MovementComponent>()}
     , m_renderComponent{*owner.GetComponent<Engine::RenderComponent>()}
+    , m_faceOrientation{ faceOrientation }
 {
     m_movementComponent.BindObserver(*this);
 }
@@ -61,6 +62,8 @@ void Game::PawnComponent::Update() noexcept
 
 void Game::PawnComponent::ProcessSpriteOrientation(glm::vec2 const direction) const noexcept
 {
+    if (not m_faceOrientation) return;
+
     // Flipping
     SDL_FlipMode flipMode{};
     if (direction.x < 0.f) flipMode = SDL_FLIP_HORIZONTAL;

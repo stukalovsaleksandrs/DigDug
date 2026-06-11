@@ -27,7 +27,6 @@ namespace Game
     /*******************************************
      * Point command
      *******************************************/
-    // TODO: Fix the crash when player is dead
     class PointCommand final : public Engine::Command
     {
     public:
@@ -38,6 +37,19 @@ namespace Game
         PlayerComponent& m_playerComponent;
 
     };
+
+#pragma region AttackCommand
+    class AttackCommand final : public Engine::Command
+    {
+    public:
+        explicit AttackCommand(PlayerComponent& playerComponent);
+        void Execute() noexcept override;
+
+    private:
+        PlayerComponent& m_playerComponent;
+
+    };
+#pragma endregion AttackCommand
 }
 
 #endif// GAME_COMMANDS
