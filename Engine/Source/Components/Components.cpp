@@ -67,7 +67,7 @@ void Engine::RenderComponent::SetSrcRect(SDL_FRect const& srcRect) noexcept
     m_spriteView.srcRect = srcRect;
 }
 
-void Engine::RenderComponent::SetSrcWidth(float width) noexcept
+void Engine::RenderComponent::SetSrcWidth(float const width) noexcept
 {
     m_spriteView.srcRect.w = width;
 }

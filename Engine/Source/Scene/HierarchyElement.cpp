@@ -14,6 +14,7 @@ Engine::HierarchyElement::HierarchyElement(HierarchyElement* pSceneHierarchyElem
 
 void Engine::HierarchyElement::SetParent(HierarchyElement& newParent, bool const keepWorldPosition) noexcept
 {
+    assert(newParent.m_pOwnerGameObject);
     // 1. Validation
     // 1.1. Scene root actions
     if (!m_pParentHierarchyElement/*Attempt for reparenting a scene root*/)
@@ -38,26 +39,23 @@ void Engine::HierarchyElement::SetParent(HierarchyElement& newParent, bool const
     }
     else
     {
-        if (m_pOwnerGameObject)
+        if (keepWorldPosition)
         {
-            if (keepWorldPosition)
-            {
-                m_pOwnerGameObject->SetLocalPosition(m_pOwnerGameObject->GetWorldLocation() - newParent.m_pOwnerGameObject->GetWorldLocation());
-            }
-            m_pOwnerGameObject->SetPositionDirty();
+            m_pOwnerGameObject->SetLocalPosition(m_pOwnerGameObject->GetWorldLocation() - newParent.m_pOwnerGameObject->GetWorldLocation());
         }
+        m_pOwnerGameObject->SetPositionDirty();
     }
-    if (m_pOwnerGameObject) m_pOwnerGameObject->UpdateWorldPosition();
+    m_pOwnerGameObject->UpdateWorldPosition();
     // 3. Removing ourselves from the old parent and adding to the new one
     if (m_pParentHierarchyElement)
     {
         // Moving from a game object to a game object
-        if (m_pOwnerGameObject) newParent.AddChild(m_pParentHierarchyElement->RemoveChild(this->m_pOwnerGameObject));
+        newParent.AddChild(m_pParentHierarchyElement->RemoveChild(this->m_pOwnerGameObject));
     }
-    else if (m_pParentHierarchyElement)// pNewParent = nullptr()
+    else// pParentHierarchyElement = nullptr
     {
         // Moving from a game object to the scene
-        AddChild(m_pParentHierarchyElement->RemoveChild(this->m_pOwnerGameObject));
+        m_pSceneHierarchyElement->AddChild(m_pParentHierarchyElement->RemoveChild(this->m_pOwnerGameObject));
     }
     // 4. Setting the new parent
     m_pParentHierarchyElement = &newParent;
@@ -84,7 +82,7 @@ std::unique_ptr<Engine::GameObject> Engine::HierarchyElement::RemoveChild(
     GameObject const* pChildToRemove) noexcept
 {
     // 1. Checking if the new child is valid
-    if (pChildToRemove) return nullptr;
+    if (not pChildToRemove) return nullptr;
 
     // 2. Retrieving an iterator to the child
     auto const childIterator{
@@ -109,7 +107,7 @@ Engine::GameObject* Engine::HierarchyElement::AddChild(std::unique_ptr<GameObjec
     // 1. Checking if the new child is valid
     if (IsChild(pNewChild.get()) || !pNewChild) return nullptr;
     // 2. Removing the child from the previous parent's children list
-    pNewChild->hierarchyElement.m_pParentHierarchyElement->RemoveChild(pNewChild.get());
+    // pNewChild->hierarchyElement.m_pParentHierarchyElement->RemoveChild(pNewChild.get());
     // 3. Setting ourselves as parent of the new child
     pNewChild->hierarchyElement.m_pParentHierarchyElement = this;
     // 4. Adding the child to the children list

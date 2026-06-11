@@ -20,7 +20,7 @@ namespace Game
 
     private:
         Engine::RenderComponent& m_renderComponent;
-        float const m_lifetimeSec{ 1.f }, m_pxPerSec{ 50.f };
+        float const m_pxPerSec{ 100.f };
         float const m_maxWidthPx{};
         float m_currentWidthPx{};
     };

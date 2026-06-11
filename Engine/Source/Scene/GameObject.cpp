@@ -1,7 +1,7 @@
 #include "Scene/Scene.hpp"
 
 Engine::GameObject::GameObject(Scene& scene, glm::vec2 const localPosition) noexcept
-    : hierarchyElement(&scene.hierarchyElement, nullptr)
+    : hierarchyElement(&scene.hierarchyElement, this)
       , m_localPosition{ localPosition }
       , m_scene(scene)
 {

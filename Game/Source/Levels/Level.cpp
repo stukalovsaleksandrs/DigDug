@@ -14,6 +14,7 @@
 // Standard
 #include <format>
 #include <fstream>
+#include <print>
 
 Game::Level::Level(std::string_view const path, Resources const& sharedResources) noexcept
     : m_sharedResources{ sharedResources }
@@ -115,7 +116,7 @@ void Game::Level::EnablePump() const noexcept
 void Game::Level::SpawnPump() noexcept
 {
     if (m_pPumpComponent) return;// No pump spamming
-    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, m_pPlayer->GetWorldLocation());
+    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * tileSideLength, 0.f});
 
     m_pPump->AddComponent<Engine::RenderComponent>(
         Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }

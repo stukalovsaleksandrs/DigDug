@@ -17,7 +17,11 @@ void Game::PumpComponent::Update() noexcept
 {
     if (not m_active) return;
     m_currentWidthPx += m_pxPerSec * Engine::Timer::GetInstance().GetDeltaSec();
-    m_renderComponent.SetSrcWidth(m_currentWidthPx);
+    m_renderComponent.SetSrcRect(SDL_FRect{
+        m_maxWidthPx - m_currentWidthPx, 0.f,
+        m_currentWidthPx,
+        m_renderComponent.GetSpriteViewDims().y,
+    });
 
     if (m_currentWidthPx >= m_maxWidthPx)
     {
