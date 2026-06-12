@@ -54,7 +54,7 @@ Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() cons
     return {};
 }
 
-Game::StateType Game::AI::AIStateBase::ProcessGameAction(EventType const type) noexcept
+Game::StateType Game::AI::AIStateBase::ProcessGameEvent(EventType const type) noexcept
 {
     switch (type)
     {
@@ -63,7 +63,7 @@ Game::StateType Game::AI::AIStateBase::ProcessGameAction(EventType const type) n
     default:
         break;
     }
-    return StateBase::ProcessGameAction(type);
+    return StateBase::ProcessGameEvent(type);
 }
 
 Game::AI::AIStateBase::Path Game::AI::AIStateBase::ReconstructPath(CellMap const& parents, Cell const startCell, Cell const endCell) noexcept

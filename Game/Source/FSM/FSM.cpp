@@ -35,6 +35,6 @@ void Game::FSM::OnNotify(Engine::Event const event, Engine::Subject const&) noex
 void Game::FSM::ProcessGameAction(EventType const type) noexcept
 {
     TryChangingState(
-        m_pCurrentState->ProcessGameAction(type)
+        m_pCurrentState->ProcessGameEvent(type)
     );
 }

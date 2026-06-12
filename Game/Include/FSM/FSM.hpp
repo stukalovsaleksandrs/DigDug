@@ -30,7 +30,7 @@ namespace Game
         [[nodiscard]] virtual StateType Update() noexcept{ return std::nullopt; }
         virtual void OnEnter() noexcept{}
         virtual void OnExit() noexcept{}
-        [[nodiscard]] virtual StateType ProcessGameAction(EventType) noexcept{ return std::nullopt; }
+        [[nodiscard]] virtual StateType ProcessGameEvent(EventType) noexcept{ return std::nullopt; }
     };
 
 #pragma endregion StateBase

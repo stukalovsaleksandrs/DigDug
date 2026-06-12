@@ -26,7 +26,7 @@ namespace Game::Player::State
             FSM& fsm;// For Attack()
         };
         explicit PlayerStateBase(Dependencies const& dependencies);
-        [[nodiscard]] StateType ProcessGameAction(EventType type) noexcept override;
+        [[nodiscard]] StateType ProcessGameEvent(EventType type) noexcept override;
 
     protected:
         Dependencies m_dependencies;
@@ -109,6 +109,7 @@ namespace Game::Player::State
         [[nodiscard]] StateType Update() noexcept override;
         void OnEnter() noexcept override;
         void OnExit() noexcept override;
+        [[nodiscard]] StateType ProcessGameEvent(EventType type) noexcept override;
 
     private:
         PumpComponent& m_pumpComponent;

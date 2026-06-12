@@ -26,7 +26,7 @@ namespace Game::AI
 
         explicit AIStateBase(Dependencies const& dependencies);
         [[nodiscard]] Path TryFindingPathToPlayer() const noexcept;
-        [[nodiscard]] StateType ProcessGameAction(EventType) noexcept override;
+        [[nodiscard]] StateType ProcessGameEvent(EventType) noexcept override;
 
     protected:
         Dependencies m_dependencies;

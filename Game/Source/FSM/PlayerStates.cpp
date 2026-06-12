@@ -88,7 +88,7 @@ namespace Game
         inputManager.Unbind(m_gamepadAttackAction);
     }
 
-    StateType Player::State::PlayerStateBase::ProcessGameAction(EventType const type) noexcept
+    StateType Player::State::PlayerStateBase::ProcessGameEvent(EventType const type) noexcept
     {
         switch (type)
         {
@@ -96,7 +96,7 @@ namespace Game
             return typeid(Throw);
         default: ;
         }
-        return StateBase::ProcessGameAction(type);
+        return StateBase::ProcessGameEvent(type);
     }
 
 #pragma endregion PlayerStateBase
@@ -273,6 +273,18 @@ namespace Game
         BindAttackInput();
         m_movementComponent.SetActive(true);
         m_pumpComponent.SetActive(false);
+    }
+
+    StateType Player::State::Pump::ProcessGameEvent(EventType const type) noexcept
+    {
+        switch (type)
+        {
+        case EventType::OnEnemyDied:
+            return typeid(Idle);
+        default:
+            break;
+        }
+        return PlayerStateBase::ProcessGameEvent(type);
     }
 #pragma endregion Pump
 
