@@ -20,7 +20,7 @@ namespace Game
             std::unique_ptr<Engine::Font> pFont;
             std::unique_ptr<Engine::Sprite> pTaizoHoriSprite, pPookaSprite,
                 pGroundSprite, pSkySprite,
-                pPumpHorizontalSprite, pPumpVerticalSprite;
+                pPumpSprite;
         };
 
         explicit Level(std::string_view path, Resources const& sharedResources) noexcept;

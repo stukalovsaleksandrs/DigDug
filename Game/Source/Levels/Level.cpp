@@ -119,10 +119,10 @@ void Game::Level::SpawnPump() noexcept
     m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * tileSideLength, 0.f});
 
     m_pPump->AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{ m_sharedResources.pPumpHorizontalSprite.get() }
+        Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }
     );
 
-    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>(*m_pPlayer->GetComponent<Engine::RenderComponent>(), *m_sharedResources.pPumpHorizontalSprite, *m_sharedResources.pPumpVerticalSprite);
+    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>(*m_pPlayer->GetComponent<Engine::RenderComponent>());
 
     m_pPump->SetActive(false);
 }

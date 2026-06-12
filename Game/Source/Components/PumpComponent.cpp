@@ -8,13 +8,11 @@
 // Standard
 #include <print>
 
-Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent,
-    Engine::Sprite & pumpHorizontalSprite, Engine::Sprite & pumpVerticalSprite)
+Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent)
     : Component{ owner }
     , m_renderComponent{ *owner.GetComponent<Engine::RenderComponent>() }
     , m_playerRenderComponent{ playerRenderComponent }
     , m_maxWidthPx{ m_renderComponent.GetSpriteViewDims().x }
-    , m_pumpHorizontalSprite{ pumpHorizontalSprite }, m_pumpVerticalSprite{ pumpVerticalSprite }
 {
     m_renderComponent.SetSrcWidth(0.f);
 }
@@ -78,7 +76,6 @@ void Game::PumpComponent::OnEnable() noexcept
     // Horizontal
     if (Engine::Utils::NearlyZero(settings.degrees, 1.f))
     {
-        m_renderComponent.SetSpriteView(Engine::Sprite::View{ &m_pumpHorizontalSprite });
         if (settings.flipMode != SDL_FLIP_HORIZONTAL)
             m_owner.SetLocalPosition({0.5f * tileSideLength, 0.f});
     }

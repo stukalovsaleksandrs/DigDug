@@ -14,7 +14,6 @@ Game::LevelManager::LevelManager(std::vector<std::string_view> const& paths)
         .pPookaSprite = std::make_unique<Engine::Sprite>("Sprites/Pooka/Default.png"),
         .pGroundSprite = std::make_unique<Engine::Sprite>("Sprites/Background/Ground.png"),
         .pSkySprite =  std::make_unique<Engine::Sprite>("Sprites/Background/Sky.png"),
-        .pPumpHorizontalSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Pump_Horizontal.png"),
-        .pPumpVerticalSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Pump_Vertical.png")
+        .pPumpSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Pump.png"),
     }
 {}
