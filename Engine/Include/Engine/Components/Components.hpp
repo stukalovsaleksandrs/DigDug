@@ -26,7 +26,11 @@ namespace Engine
      *******************************************/
 
     class RenderComponent final : public Component {
+        Sprite::View m_spriteView;
+
     public:
+        glm::vec2 dstDims{};
+
         explicit RenderComponent(GameObject& owner, Sprite::View const&, Renderer::Layer layer = Renderer::Layer::foreground) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
@@ -39,6 +43,7 @@ namespace Engine
         void SetSrcRect(SDL_FRect const&) noexcept;
         void SetSrcWidth(float width) noexcept;
         [[nodiscard]] glm::vec2 GetSpriteViewDims() const noexcept;
+        [[nodiscard]] glm::vec2 GetSpriteDims() const noexcept{ return m_spriteView.pSprite->GetDims(); };
         void SetFlipMode(SDL_FlipMode const flipMode){ m_flipMode = flipMode; }
         void SetRotation(float const degrees){ m_degrees = degrees; }
 
@@ -47,7 +52,6 @@ namespace Engine
         void SetSettings(Settings const& settings) noexcept{ m_flipMode = settings.flipMode; m_degrees = settings.degrees; }
 
     private:
-        Sprite::View m_spriteView;
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
         SDL_FlipMode m_flipMode{};
         float m_degrees{};

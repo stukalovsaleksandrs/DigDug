@@ -33,16 +33,30 @@ void Game::PumpComponent::Update() noexcept
         m_renderComponent.SetSrcRect(SDL_FRect{
             m_maxWidthPx - m_currentWidthPx, 0.f,
             m_currentWidthPx,
-            m_renderComponent.GetSpriteViewDims().y,
+            m_renderComponent.GetSpriteDims().y,
         });
+
+        m_renderComponent.dstDims.x = m_currentWidthPx;
     }
     else
     {
-        // m_owner.SetLocalPosition(glm::vec2{-tileSideLength, 0.f});
+        m_renderComponent.SetSrcRect(SDL_FRect{
+            m_maxWidthPx - m_currentWidthPx, 0.f,
+            m_currentWidthPx,
+            m_renderComponent.GetSpriteDims().y,
+        });
+
+        float constexpr absOffset{static_cast<float>(tileSideLength)};
+        float yOffset{ absOffset };
+        if (settings.degrees < 0.f) yOffset *= -1;
+        m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx / m_maxWidthPx * tileSideLength + 3, yOffset});
+
+        m_renderComponent.dstDims = {
+            m_currentWidthPx,
+            m_renderComponent.GetSpriteDims().y
+        };
     }
 
-
-    // std::println("{}", m_currentDegrees);
 
     if (m_currentWidthPx >= m_maxWidthPx)
     {
@@ -70,17 +84,10 @@ void Game::PumpComponent::OnEnable() noexcept
     }
     else// Vertical
     {
-        float y{};
         float constexpr absOffset{static_cast<float>(tileSideLength)};
-        if (settings.degrees > 0.f)// Bottom
-        {
-            y = 1.5f * absOffset;
-        }
-        else// Top
-        {
-            y = - 1.5f * absOffset;
-        }
-        m_owner.SetLocalPosition(glm::vec2{-absOffset, y});
+        float yOffset{1.5f * absOffset};
+        if (settings.degrees < 0.f) yOffset *= -1;
+        m_owner.SetLocalPosition(glm::vec2{-absOffset, yOffset});
     }
 }
 

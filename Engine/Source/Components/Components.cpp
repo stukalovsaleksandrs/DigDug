@@ -20,6 +20,7 @@ Engine::RenderComponent::RenderComponent(GameObject &owner,
     Sprite::View const& spriteView, Renderer::Layer const layer) noexcept
     : Component{owner}
     , m_spriteView{ spriteView }
+    , dstDims{ glm::vec2{spriteView.srcRect.w, spriteView.srcRect.h} }
 {
     Renderer::GetInstance().RegisterFunction(m_renderFunction, layer);
     SetSpriteView({spriteView});
@@ -41,8 +42,8 @@ void Engine::RenderComponent::Render() const noexcept {
             m_spriteView.srcRect,
             {
                 topLeft.x, topLeft.y,
-                m_spriteView.srcRect.w,
-                m_spriteView.srcRect.h
+                dstDims.x,
+                dstDims.y
             },
             m_degrees,
             m_flipMode
