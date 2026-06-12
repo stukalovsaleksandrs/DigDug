@@ -12,6 +12,7 @@ namespace Game
     class AIComponent final : public PawnComponent
     {
     public:
+
         explicit AIComponent(Engine::GameObject& owner, Dependencies const&);
         void Update() noexcept override;
 

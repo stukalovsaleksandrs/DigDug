@@ -17,7 +17,10 @@
 
 #pragma region StateBase
 Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
-    : StateBase{ dependencies } {}
+    : m_dependencies{ dependencies }
+    , m_movementComponent{ *dependencies.owner.GetComponent<Engine::MovementComponent>() }
+    , m_animationComponent{ *dependencies.owner.GetComponent<Engine::AnimationComponent>() }
+{}
 
 Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() noexcept// BFS
 {

@@ -11,7 +11,7 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
     , m_movementComponent{ *owner.GetComponent<Engine::MovementComponent>() }
     , m_pookaFSM{ [&]
     {
-        StateBase::Dependencies const stateDependencies{
+        AI::AIStateBase::Dependencies const stateDependencies{
             .owner = owner,
             .level = m_dependencies.level
         };

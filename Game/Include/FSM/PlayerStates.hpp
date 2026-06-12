@@ -18,10 +18,19 @@ namespace Game::Player::State
     class PlayerStateBase : public StateBase
     {
     public:
+        struct Dependencies final
+        {
+            Engine::GameObject& owner;// GetWorldLocation is not const
+            Level& level;
+            PlayerComponent& playerComponent;
+        };
         explicit PlayerStateBase(Dependencies const& dependencies);
 
     protected:
+        Dependencies m_dependencies;
         PlayerComponent* m_pPlayerComponent{};
+        Engine::MovementComponent& m_movementComponent;
+        Engine::AnimationComponent& m_animationComponent;
 
         Engine::Action m_keyboardUp{SDL_SCANCODE_W, Engine::InputType::held};
         Engine::Action m_keyboardLeft{SDL_SCANCODE_A, Engine::InputType::held};
@@ -34,10 +43,11 @@ namespace Game::Player::State
         Engine::Action m_gamepadLeft{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Engine::InputType::held};
         Engine::Action m_gamepadDown{SDL_GAMEPAD_BUTTON_DPAD_DOWN, Engine::InputType::held};
         Engine::Action m_gamepadRight{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Engine::InputType::held};
+        Engine::Action m_gamepadAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::held};
 
         [[nodiscard]] bool TryDigging() const noexcept;
-        void BindInput(PlayerComponent&) const noexcept;
-        void UnbindInput() const noexcept;
+        void BindAllInput(PlayerComponent&) const noexcept;
+        void UnbindAllInput() const noexcept;
     };
 
     class Idle final : public PlayerStateBase
@@ -77,6 +87,10 @@ namespace Game::Player::State
         [[nodiscard]] StateType Update() noexcept override;
         void OnEnter() noexcept override;
         void OnExit() noexcept override;
+
+    private:
+        void BindAttackInput() const noexcept;
+        void UnbindAttackInput() const noexcept;
     };
 
     class Dying final : public PlayerStateBase

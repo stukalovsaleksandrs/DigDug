@@ -17,8 +17,19 @@ namespace Game::AI
         using CellMap = std::unordered_map<Cell, Cell, Engine::Utils::Hash_i32vec2>;
         using Path = std::vector<glm::i32vec2>;
 
+        struct Dependencies final
+        {
+            Engine::GameObject& owner;// GetWorldLocation is not const
+            Level& level;
+        };
+
         explicit AIStateBase(Dependencies const& dependencies);
         [[nodiscard]] Path TryFindingPathToPlayer() noexcept;
+
+    protected:
+        Dependencies m_dependencies;
+        Engine::MovementComponent& m_movementComponent;
+        Engine::AnimationComponent& m_animationComponent;
 
     private:
         [[nodiscard]] Path ReconstructPath(CellMap const& parents, Cell startCell, Cell endCell) noexcept;

@@ -6,9 +6,10 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
     : PawnComponent{owner, dependencies}
     , m_playerStateMachine{
         [&]{
-            StateBase::Dependencies const stateDependencies{
+            Player::State::PlayerStateBase::Dependencies const stateDependencies{
                 .owner = owner,
-                .level = m_dependencies.level
+                .level = m_dependencies.level,
+                .playerComponent = *this
             };
             // NOTE: Direct construction does not work since it requires copy contructors
             FSM::States states;

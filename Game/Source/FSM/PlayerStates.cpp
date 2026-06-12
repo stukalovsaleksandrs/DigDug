@@ -12,7 +12,9 @@ namespace Game
 {
 #pragma region PlayerStateBase
     Player::State::PlayerStateBase::PlayerStateBase(Dependencies const& dependencies)
-        : StateBase{ dependencies }
+        : m_dependencies{ dependencies }
+        , m_movementComponent{ *m_dependencies.owner.GetComponent<Engine::MovementComponent>() }
+        , m_animationComponent{ *m_dependencies.owner.GetComponent<Engine::AnimationComponent>() }
     {}
 
     bool Player::State::PlayerStateBase::TryDigging() const noexcept
@@ -23,7 +25,7 @@ namespace Game
         );
     }
 
-    void Player::State::PlayerStateBase::BindInput(PlayerComponent& playerComponent) const noexcept
+    void Player::State::PlayerStateBase::BindAllInput(PlayerComponent& playerComponent) const noexcept
     {
         auto makeMoveCommand{
             [this](glm::vec2 direction)
@@ -48,13 +50,12 @@ namespace Game
         inputManager.Bind(m_gamepadLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
         inputManager.Bind(m_gamepadDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
         inputManager.Bind(m_gamepadRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
+        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(playerComponent));
     }
 
-    void Player::State::PlayerStateBase::UnbindInput() const noexcept
+    void Player::State::PlayerStateBase::UnbindAllInput() const noexcept
     {
         Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
-
-        // TODO: RAII
 
         // Keyboard
         inputManager.Unbind(m_keyboardUp);
@@ -75,7 +76,7 @@ namespace Game
     Player::State::Idle::Idle(Dependencies const& dependencies, PlayerComponent& playerComponent) noexcept
         : PlayerStateBase{dependencies}
     {
-        BindInput(playerComponent);
+        BindAllInput(playerComponent);
     }
 
     void Player::State::Idle::OnEnter() noexcept
@@ -91,7 +92,7 @@ namespace Game
 
     StateType Player::State::Idle::Update() noexcept
     {
-        if (IsMoving()) return typeid(Walking);
+        if (m_movementComponent.IsMoving()) return typeid(Walking);
         return std::nullopt;
     }
 #pragma endregion Idle
@@ -137,7 +138,7 @@ namespace Game
 
     StateType Player::State::Digging::Update() noexcept
     {
-        if (!(TryDigging() and IsMoving())) return typeid(Idle);
+        if (!(TryDigging() and m_movementComponent.IsMoving())) return typeid(Idle);
         return std::nullopt;
     }
 
@@ -152,11 +153,25 @@ namespace Game
 
     void Player::State::Attacking::OnEnter() noexcept
     {
-
+        BindAttackInput();
     }
 
     void Player::State::Attacking::OnExit() noexcept
     {
+    }
+
+    void Player::State::Attacking::BindAttackInput() const noexcept
+    {
+        auto& inputManager{ Engine::InputManager::GetInstance() };
+        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.playerComponent));
+        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.playerComponent));
+    }
+
+    void Player::State::Attacking::UnbindAttackInput() const noexcept
+    {
+        auto& inputManager{ Engine::InputManager::GetInstance() };
+        inputManager.Unbind(m_keyboardAttackAction);
+        inputManager.Unbind(m_gamepadAttackAction);
     }
 
 #pragma endregion Attacking
@@ -168,7 +183,7 @@ namespace Game
 
     void Player::State::Dying::OnExit() noexcept
     {
-        UnbindInput();
+        UnbindAllInput();
     }
 #pragma endregion Dying
 
