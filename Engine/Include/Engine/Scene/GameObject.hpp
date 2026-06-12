@@ -7,6 +7,7 @@
 // Third-party
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 // Standard
 #include <memory>
 #include <optional>
@@ -44,7 +45,7 @@ namespace Engine
         void MarkForDeletion() noexcept;
         [[nodiscard]] bool IsMarkedForDeletion() const noexcept;
 
-        void SetActive(bool const active) noexcept;;
+        void SetActive(bool active) noexcept;;
 
         /*******************************************
          * Components
