@@ -58,8 +58,6 @@ void Game::PumpComponent::Update() noexcept
         };
     }
 
-
-
     if (m_currentWidthPx >= m_maxWidthPx)
     {
         SetActive(false);

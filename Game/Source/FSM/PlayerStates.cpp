@@ -23,7 +23,7 @@ namespace Game
         );
     }
 
-    void Player::State::PlayerStateBase::BindMovementInput() noexcept
+    void Player::State::PlayerStateBase::BindInput(PlayerComponent& playerComponent) const noexcept
     {
         auto makeMoveCommand{
             [this](glm::vec2 direction)
@@ -41,8 +41,7 @@ namespace Game
         inputManager.Bind(m_keyboardLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
         inputManager.Bind(m_keyboardDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
         inputManager.Bind(m_keyboardRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
-        m_pPlayerComponent = m_dependencies.owner.GetComponent<PlayerComponent>();
-        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(*m_pPlayerComponent));
+        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(playerComponent));
 
         // Gamepad
         inputManager.Bind(m_gamepadUp, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
@@ -51,7 +50,7 @@ namespace Game
         inputManager.Bind(m_gamepadRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
     }
 
-    void Player::State::PlayerStateBase::UnbindMovementInput() const noexcept
+    void Player::State::PlayerStateBase::UnbindInput() const noexcept
     {
         Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
 
@@ -73,8 +72,11 @@ namespace Game
 #pragma endregion PlayerStateBase
 
 #pragma region Idle
-    Player::State::Idle::Idle(Dependencies const& dependencies) noexcept
-        : PlayerStateBase{dependencies}{}
+    Player::State::Idle::Idle(Dependencies const& dependencies, PlayerComponent& playerComponent) noexcept
+        : PlayerStateBase{dependencies}
+    {
+        BindInput(playerComponent);
+    }
 
     void Player::State::Idle::OnEnter() noexcept
     {
@@ -120,6 +122,7 @@ namespace Game
 
         return std::nullopt;
     }
+
 #pragma endregion Walking
 
 #pragma region Digging
@@ -139,5 +142,34 @@ namespace Game
     }
 
 #pragma endregion Digging
+
+#pragma region Attacking
+
+    StateType Player::State::Attacking::Update() noexcept
+    {
+        return std::nullopt;
+    }
+
+    void Player::State::Attacking::OnEnter() noexcept
+    {
+
+    }
+
+    void Player::State::Attacking::OnExit() noexcept
+    {
+    }
+
+#pragma endregion Attacking
+
+#pragma region Dying
+    Player::State::Dying::Dying(Dependencies const& dependencies) noexcept
+        : PlayerStateBase{dependencies}
+    {}
+
+    void Player::State::Dying::OnExit() noexcept
+    {
+        UnbindInput();
+    }
+#pragma endregion Dying
 
 }

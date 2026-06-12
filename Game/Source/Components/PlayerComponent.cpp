@@ -1,12 +1,6 @@
 // Game
 #include "Components/PlayerComponent.hpp"
-#include "Commands.hpp"
 #include "Levels/Level.hpp"
-// Engine
-#include "Engine/Components/MovementComponent.hpp"
-#include "Engine/Components/AnimationComponent.hpp"
-// Standard
-#include <print>
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
     : PawnComponent{owner, dependencies}
@@ -18,7 +12,7 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
             };
             // NOTE: Direct construction does not work since it requires copy contructors
             FSM::States states;
-            states.emplace(typeid(Player::State::Idle), std::make_unique<Player::State::Idle>(stateDependencies));
+            states.emplace(typeid(Player::State::Idle), std::make_unique<Player::State::Idle>(stateDependencies, *this));
             states.emplace(typeid(Player::State::Walking), std::make_unique<Player::State::Walking>(stateDependencies));
             states.emplace(typeid(Player::State::Digging), std::make_unique<Player::State::Digging>(stateDependencies));
             // Returning the states and setting the idle state as the default one
