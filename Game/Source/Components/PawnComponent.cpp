@@ -87,7 +87,7 @@ void Game::PawnComponent::ConstrainMovementToGrid() noexcept
 
 glm::vec2 Game::PawnComponent::GetCurrentCellTopLeft() const noexcept
 {
-    return m_dependencies.level.GetGrid().GetCellTopLeftFromCellCenter(m_owner.GetWorldLocation() + 0.5f * glm::vec2{i32tileSideLength});
+    return m_dependencies.level.GetGrid().GetCellTopLeftFromCellCenter(m_owner.GetWorldLocation() + 0.5f * glm::vec2{i32tileSideLengthPx});
 }
 
  #pragma region LocationLerpData

@@ -26,6 +26,7 @@ namespace Game::Player::State
             FSM& fsm;// For Attack()
         };
         explicit PlayerStateBase(Dependencies const& dependencies);
+        [[nodiscard]] StateType ProcessGameAction(EventType type) noexcept override;
 
     protected:
         Dependencies m_dependencies;
@@ -52,8 +53,6 @@ namespace Game::Player::State
         void UnbindAllInput() const noexcept;
         void BindAttackInput() const noexcept;
         void UnbindAttackInput() const noexcept;
-
-        [[nodiscard]] StateType ProcessGameAction(GameAction) noexcept override;
     };
 
     class Idle final : public PlayerStateBase

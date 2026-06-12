@@ -3,6 +3,7 @@
 
 // Game
 #include "Grid.hpp"
+#include "FSM/FSM.hpp"
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Rendering/Sprite.hpp"
@@ -24,6 +25,7 @@ namespace Game
                 pGroundSprite, pSkySprite,
                 pPumpSprite;
         };
+        Resources const& sharedResources;
 
         explicit Level(std::string_view path, Resources const& sharedResources) noexcept;
         ~Level() noexcept;
@@ -37,16 +39,14 @@ namespace Game
         [[nodiscard]] Grid const& GetGrid() const noexcept { return m_grid; }
         [[nodiscard]] Grid& GetGrid() noexcept { return m_grid; }
         [[nodiscard]] PumpComponent& GetPumpComponent() noexcept;
-
         [[nodiscard]] glm::u32vec2 GetPlayerCell() const noexcept;
+        [[nodiscard]] FSM& GetPlayerFSM() const noexcept;
 
         [[nodiscard]] std::vector<Engine::RenderComponent*> GetEnemyRenderComponents() noexcept;
 
         void Update() noexcept;
 
     private:
-        Resources const& m_sharedResources;
-
         glm::u32vec2 m_playerSpawnCell{};
         std::vector<glm::u32vec2> m_pookaSpawnCells{},
             m_flygarSpawnCells{}, m_rockSpawnCells{};

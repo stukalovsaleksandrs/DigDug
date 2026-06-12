@@ -42,7 +42,7 @@ Game::AttackCommand::AttackCommand(FSM& fsm)
 
 void Game::AttackCommand::Execute() noexcept
 {
-    m_fsm.ProcessGameAction(GameAction::Attack);
+    m_fsm.ProcessGameAction(EventType::OnThrow);
 }
 
 #pragma endregion AttackCommand

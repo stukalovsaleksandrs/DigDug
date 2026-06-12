@@ -4,12 +4,12 @@
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
     : PawnComponent{owner, dependencies}
-    , m_playerStateMachine{
+    , m_playerFSM{
         [&]{
             Player::State::PlayerStateBase::Dependencies const stateDependencies{
                 .owner = owner,
                 .level = m_dependencies.level,
-                .fsm = m_playerStateMachine
+                .fsm = m_playerFSM
             };
             // NOTE: Direct construction does not work since it requires copy contructors
             FSM::States states;
@@ -32,7 +32,7 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
 void Game::PlayerComponent::Update() noexcept
 {
     PawnComponent::Update();
-    m_playerStateMachine.Update();
+    m_playerFSM.Update();
 }
 
 void Game::PlayerComponent::AddPoints(uint32_t const points) noexcept

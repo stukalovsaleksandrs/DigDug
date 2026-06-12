@@ -15,8 +15,8 @@ Game::Grid::Grid()
 {
     // Validating input
     assert(
-        m_dimsInPx.x % i32tileSideLength == 0
-        && m_dimsInPx.y % i32tileSideLength == 0
+        m_dimsInPx.x % i32tileSideLengthPx == 0
+        && m_dimsInPx.y % i32tileSideLengthPx == 0
         && "Window dimensions are not divisible by the cell side length"
     );
 
@@ -52,7 +52,7 @@ void Game::Grid::DebugRender() const
             m_renderer.RenderSquare(
                 Engine::Utils::Square{
                     topLeft,
-                    i32tileSideLength
+                    i32tileSideLengthPx
             }, color
             );
         }
@@ -63,16 +63,16 @@ void Game::Grid::DebugRender() const
 glm::i32vec2 Game::Grid::GetCellFromPoint(glm::vec2 const point) const noexcept
 {
     return {
-        static_cast<int>(point.x / static_cast<float>(i32tileSideLength)),
-        static_cast<int>(point.y / static_cast<float>(i32tileSideLength))
+        static_cast<int>(point.x / static_cast<float>(i32tileSideLengthPx)),
+        static_cast<int>(point.y / static_cast<float>(i32tileSideLengthPx))
     };
 }
 
 glm::vec2 Game::Grid::GetCellTopLeft(glm::i32vec2 const cell) const noexcept
 {
     return {
-        static_cast<float>(cell.x * i32tileSideLength),
-        static_cast<float>(cell.y * i32tileSideLength),
+        static_cast<float>(cell.x * i32tileSideLengthPx),
+        static_cast<float>(cell.y * i32tileSideLengthPx),
     };
 }
 
@@ -85,13 +85,13 @@ glm::vec2 Game::Grid::GetCellTopLeftFromCellCenter(glm::u32vec2 const centerPx) 
 
 glm::vec2 Game::Grid::GetCellCenter(glm::i32vec2 const cell) const noexcept
 {
-    static glm::vec2 constexpr offset{ 0.5f * glm::vec2{i32tileSideLength, i32tileSideLength} };
+    static glm::vec2 constexpr offset{ 0.5f * glm::vec2{i32tileSideLengthPx, i32tileSideLengthPx} };
     return GetCellTopLeft(cell) + offset;
 }
 
 bool Game::Grid::TryDigging(glm::i32vec2 const pointInPx) noexcept
 {
-    uint32_t const newCellIdx{ pointInPx.y / i32tileSideLength * m_dimsInCells.x + pointInPx.x / i32tileSideLength };
+    uint32_t const newCellIdx{ pointInPx.y / i32tileSideLengthPx * m_dimsInCells.x + pointInPx.x / i32tileSideLengthPx };
 
     // Updating current cell if changed
     if (newCellIdx != m_currentCellIdx)

@@ -88,15 +88,15 @@ namespace Game
         inputManager.Unbind(m_gamepadAttackAction);
     }
 
-    StateType Player::State::PlayerStateBase::ProcessGameAction(GameAction const action) noexcept
+    StateType Player::State::PlayerStateBase::ProcessGameAction(EventType const type) noexcept
     {
-        switch (action)
+        switch (type)
         {
-        case GameAction::Attack:
+        case EventType::OnThrow:
             return typeid(Throw);
         default: ;
         }
-        return StateBase::ProcessGameAction(action);
+        return StateBase::ProcessGameAction(type);
     }
 
 #pragma endregion PlayerStateBase
@@ -111,10 +111,10 @@ namespace Game
     void Player::State::Idle::OnEnter() noexcept
     {
         // Just using the first frame statically
-        m_animationComponent.ChangeAnimation(
+        m_animationComponent.ChangeSource(
             SDL_FRect{0.f, 0.f,
-                static_cast<float>(i32tileSideLength),
-                static_cast<float>(i32tileSideLength)},
+                static_cast<float>(i32tileSideLengthPx),
+                static_cast<float>(i32tileSideLengthPx)},
             1, 0.f
         );
     }
@@ -132,10 +132,10 @@ namespace Game
 
     void Player::State::Walk::OnEnter() noexcept
     {
-        m_animationComponent.ChangeAnimation(
+        m_animationComponent.ChangeSource(
             SDL_FRect{0.f, 0.f,
-                static_cast<float>(i32tileSideLength),
-                static_cast<float>(i32tileSideLength)},
+                static_cast<float>(i32tileSideLengthPx),
+                static_cast<float>(i32tileSideLengthPx)},
             2, 0.1f
         );
     }
@@ -259,10 +259,10 @@ namespace Game
     {
         PlayerStateBase::OnEnter();
         // Playing pumping animation
-        m_animationComponent.ChangeAnimation(
-            SDL_FRect{2 * ftileSideLength, 0.f,
-                ftileSideLength,
-                ftileSideLength},
+        m_animationComponent.ChangeSource(
+            SDL_FRect{2 * ftileSideLengthPx, 0.f,
+                ftileSideLengthPx,
+                ftileSideLengthPx},
             2, 0.3f
         );
     }

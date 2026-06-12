@@ -3,11 +3,6 @@
 // Engine
 #include "Engine/InputManager.hpp"
 
-Game::StateType Game::StateBase::ProcessGameAction(GameAction) noexcept
-{
-    return std::nullopt;
-}
-
 Game::FSM::FSM(std::pair<States&&, StateBase*> const& data) noexcept
     : m_states{ std::move(data.first) }
     , m_pCurrentState{ data.second }
@@ -23,13 +18,6 @@ void Game::FSM::Update() noexcept
     );
 }
 
-void Game::FSM::ProcessGameAction(GameAction const action) noexcept
-{
-    TryChangingState(
-        m_pCurrentState->ProcessGameAction(action)
-    );
-}
-
 void Game::FSM::TryChangingState(StateType const stateType)
 {
     if (!stateType.has_value()) return;
@@ -37,4 +25,16 @@ void Game::FSM::TryChangingState(StateType const stateType)
     m_pCurrentState->OnExit();
     m_pCurrentState = StatesAt(stateType.value());
     m_pCurrentState->OnEnter();
+}
+
+void Game::FSM::OnNotify(Engine::Event const event, Engine::Subject const&) noexcept
+{
+    ProcessGameAction(static_cast<EventType>(event.id));
+}
+
+void Game::FSM::ProcessGameAction(EventType const type) noexcept
+{
+    TryChangingState(
+        m_pCurrentState->ProcessGameAction(type)
+    );
 }

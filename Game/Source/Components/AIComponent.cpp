@@ -23,7 +23,9 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
         addState.operator()<AI::WanderHorizontally>();
         addState.operator()<AI::WanderVertically>();
         addState.operator()<AI::Chase>();
-        addState.operator()<AI::Caught>();
+        auto pPumped{ std::make_unique<AI::Pumped>(stateDependencies) };
+        pPumped->BindObserver(m_dependencies.level.GetPlayerFSM());
+        states.emplace(typeid(AI::Pumped), std::move(pPumped));
         return std::pair{std::move(states), states.at(SelectInitialState()).get()};
     }() }
 {}
@@ -37,7 +39,7 @@ void Game::AIComponent::Update() noexcept
 
 void Game::AIComponent::OnCaught() noexcept
 {
-    m_fsm.ProcessGameAction(GameAction::Caught);
+    m_fsm.ProcessGameAction(EventType::OnCaught);
 }
 
 std::type_index Game::AIComponent::SelectInitialState() const noexcept

@@ -29,7 +29,7 @@ void Game::PumpComponent::Update() noexcept
         Engine::Utils::NearlyZero(degrees, 1.f))
     {
         if (flipMode == SDL_FLIP_HORIZONTAL)
-            m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx + 0.5f * i32tileSideLength, 0.f});
+            m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx + 0.5f * i32tileSideLengthPx, 0.f});
 
         m_renderComponent.SetSrcRect(SDL_FRect{
             m_maxWidthPx - m_currentWidthPx, 0.f,
@@ -47,10 +47,10 @@ void Game::PumpComponent::Update() noexcept
             m_renderComponent.GetSpriteDims().y,
         });
 
-        float constexpr absOffset{static_cast<float>(i32tileSideLength)};
+        float constexpr absOffset{static_cast<float>(i32tileSideLengthPx)};
         float yOffset{ absOffset };
         if (degrees < 0.f) yOffset *= -1;
-        m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx / m_maxWidthPx * i32tileSideLength + 3, yOffset});
+        m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx / m_maxWidthPx * i32tileSideLengthPx + 3, yOffset});
 
         m_renderComponent.dstDims = {
             m_currentWidthPx,
@@ -74,11 +74,11 @@ void Game::PumpComponent::OnEnable() noexcept
     if (Engine::Utils::NearlyZero(settings.degrees, 1.f))
     {
         if (settings.flipMode != SDL_FLIP_HORIZONTAL)
-            m_owner.SetLocalPosition({0.5f * i32tileSideLength, 0.f});
+            m_owner.SetLocalPosition({0.5f * i32tileSideLengthPx, 0.f});
     }
     else// Vertical
     {
-        float constexpr absOffset{static_cast<float>(i32tileSideLength)};
+        float constexpr absOffset{static_cast<float>(i32tileSideLengthPx)};
         float yOffset{1.5f * absOffset};
         if (settings.degrees < 0.f) yOffset *= -1;
         m_owner.SetLocalPosition(glm::vec2{-absOffset, yOffset});

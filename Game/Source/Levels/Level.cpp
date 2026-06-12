@@ -17,7 +17,7 @@
 #include <print>
 
 Game::Level::Level(std::string_view const path, Resources const& sharedResources) noexcept
-    : m_sharedResources{ sharedResources }
+    : sharedResources{ sharedResources }
     , m_maskTexture{ SDL_Color{255, 255, 255, 255}, windowData.logicalDims, SDL_BLENDMODE_MOD}
     , m_charToParsingFunc{
         { '1', [this](glm::i32vec2 const cell)
@@ -58,7 +58,7 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
     // Ground
     {
         auto& ground{m_scene.CreateGameObject({})};
-        ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_sharedResources.pGroundSprite.get()}, Engine::Renderer::Layer::background);
+        ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pGroundSprite.get()}, Engine::Renderer::Layer::background);
     }
 
     // Registering the tunnel digging render callback to the renderer
@@ -67,7 +67,7 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
     // Sky
     {
         auto& sky{m_scene.CreateGameObject({})};
-        sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{m_sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
+        sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
     }
 
 
@@ -84,7 +84,7 @@ Game::Level::~Level() noexcept
 
 void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
 {
-    static float constexpr radius{ 0.5f * i32tileSideLength };
+    static float constexpr radius{ 0.5f * i32tileSideLengthPx };
     m_maskTexture.MaskCircle({centerPx, radius});
 }
 
@@ -109,6 +109,11 @@ glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
     return m_grid.GetCellFromPoint(m_pPlayer->GetWorldLocation() + glm::vec2{1.f, 1.f});
 }
 
+Game::FSM& Game::Level::GetPlayerFSM() const noexcept
+{
+    return m_pPlayer->GetComponent<PlayerComponent>()->GetFSM();
+}
+
 std::vector<Engine::RenderComponent*> Game::Level::GetEnemyRenderComponents() noexcept
 {
     std::vector<Engine::RenderComponent*> renderComponents{};
@@ -131,10 +136,10 @@ void Game::Level::Update() noexcept
 void Game::Level::SpawnPump() noexcept
 {
     if (m_pPump) return;
-    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * i32tileSideLength, 0.f});
+    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * i32tileSideLengthPx, 0.f});
 
     m_pPump->AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }
+        Engine::Sprite::View{ sharedResources.pPumpSprite.get() }
     );
 
     m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>(
@@ -150,7 +155,7 @@ Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexc
     return [this](glm::vec2 const topLeft)
     {
         auto const topLeftPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{1.f, 1.f}) },
-            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{i32tileSideLength - 1.f, i32tileSideLength - 1.f}) };
+            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{i32tileSideLengthPx - 1.f, i32tileSideLengthPx - 1.f}) };
         return not (m_grid.IsGround(topLeftPointCell) || m_grid.IsGround(bottomRightPointCell));
     };
 }
@@ -204,7 +209,7 @@ void Game::Level::DigSquare(glm::vec2 const topLeftPx, EU::Square::Corners const
 {
     m_maskTexture.MaskSquare({
         topLeftPx,
-        static_cast<float>(i32tileSideLength),
+        static_cast<float>(i32tileSideLengthPx),
         corners
     });
 }
@@ -212,8 +217,8 @@ void Game::Level::DigSquare(glm::vec2 const topLeftPx, EU::Square::Corners const
 void Game::Level::MaskInitialTunnels() const noexcept
 {
     glm::i32vec2 const dims{
-        static_cast<int32_t>(windowData.logicalDims.x) / i32tileSideLength,
-        static_cast<int32_t>(windowData.logicalDims.y) / i32tileSideLength
+        static_cast<int32_t>(windowData.logicalDims.x) / i32tileSideLengthPx,
+        static_cast<int32_t>(windowData.logicalDims.y) / i32tileSideLengthPx
     };
 
     for (int32_t row{}; row < dims.y; ++row)
@@ -246,21 +251,21 @@ void Game::Level::MaskInitialTunnels() const noexcept
 
 void Game::Level::SpawnPlayer() noexcept
 {
-    m_pPlayer = &m_scene.CreateGameObject({1.f, ftileSideLength + 1.f});
+    m_pPlayer = &m_scene.CreateGameObject({1.f, ftileSideLengthPx + 1.f});
 
     // Movement component
     m_pPlayer->AddComponent<Engine::MovementComponent>(
-        Engine::MovementComponent::Dependencies{windowData, i32tileSideLength},
-        i32tileSideLength,
+        Engine::MovementComponent::Dependencies{windowData, i32tileSideLengthPx},
+        i32tileSideLengthPx,
         45.f
     );
 
     // Animation component
     m_pPlayer->AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
-        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pTaizoHoriDefaultSprite.get(),
+        .firstSpriteView = Engine::Sprite::View{sharedResources.pTaizoHoriDefaultSprite.get(),
             SDL_FRect{0.f, 0.f,
-            static_cast<float>(i32tileSideLength),
-            static_cast<float>(i32tileSideLength)}
+            static_cast<float>(i32tileSideLengthPx),
+            static_cast<float>(i32tileSideLengthPx)}
             },
         .frameCount = 2,
         .secPerFrame = 0.1f
@@ -271,10 +276,10 @@ void Game::Level::SpawnPlayer() noexcept
 
     // Render component
     auto& characterRenderComponent{m_pPlayer->AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{m_sharedResources.pTaizoHoriDefaultSprite.get()}
+        Engine::Sprite::View{sharedResources.pTaizoHoriDefaultSprite.get()}
     )};
-    characterRenderComponent.SetSpriteView({m_sharedResources.pTaizoHoriDefaultSprite.get(), SDL_FRect{0.f, 0.f,
-        static_cast<float>(i32tileSideLength), static_cast<float>(i32tileSideLength)}});
+    characterRenderComponent.SetSpriteView({sharedResources.pTaizoHoriDefaultSprite.get(), SDL_FRect{0.f, 0.f,
+        static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}});
 
     // Lives component
     auto& livesComponent{m_pPlayer->AddComponent<LivesComponent>(2)};
@@ -283,7 +288,7 @@ void Game::Level::SpawnPlayer() noexcept
     // Lives display
     {
         auto& livesDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 10.f})};
-        livesDisplay.AddComponent<Engine::TextComponent>(" ", m_sharedResources.pFont.get()); // NOTE: Text must not be empty
+        livesDisplay.AddComponent<Engine::TextComponent>(" ", sharedResources.pFont.get()); // NOTE: Text must not be empty
         auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
         livesComponent.BindObserver(livesDisplayComponent);
     }
@@ -291,7 +296,7 @@ void Game::Level::SpawnPlayer() noexcept
     // Point display
     {
         auto& pointDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 20.f})};
-        pointDisplay.AddComponent<Engine::TextComponent>("Points ", m_sharedResources.pFont.get());
+        pointDisplay.AddComponent<Engine::TextComponent>("Points ", sharedResources.pFont.get());
         auto& pointDisplayComponent{pointDisplay.AddComponent<PointDisplayComponent>(playerComponent)};
         playerComponent.BindObserver(pointDisplayComponent);
     }
@@ -311,18 +316,18 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
 
     // Movement component
     pooka.AddComponent<Engine::MovementComponent>(
-        Engine::MovementComponent::Dependencies{windowData, i32tileSideLength},
-        i32tileSideLength,
+        Engine::MovementComponent::Dependencies{windowData, i32tileSideLengthPx},
+        i32tileSideLengthPx,
         55.f,
         GetCanMovePred()
     );
 
     // Animation component
     pooka.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
-        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pPookaDefaultSprite.get(),
+        .firstSpriteView = Engine::Sprite::View{sharedResources.pPookaDefaultSprite.get(),
             SDL_FRect{0.f, 0.f,
-            static_cast<float>(i32tileSideLength),
-            static_cast<float>(i32tileSideLength)}
+            static_cast<float>(i32tileSideLengthPx),
+            static_cast<float>(i32tileSideLengthPx)}
             },
         .frameCount = 2,
         .secPerFrame = 0.3f
@@ -330,10 +335,10 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
 
     // Render component
     auto& renderComponent{pooka.AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{m_sharedResources.pPookaDefaultSprite.get()}
+        Engine::Sprite::View{sharedResources.pPookaDefaultSprite.get()}
     )};
-    renderComponent.SetSpriteView({m_sharedResources.pPookaDefaultSprite.get(), SDL_FRect{0.f, 0.f,
-        static_cast<float>(i32tileSideLength), static_cast<float>(i32tileSideLength)}});
+    renderComponent.SetSpriteView({sharedResources.pPookaDefaultSprite.get(), SDL_FRect{0.f, 0.f,
+        static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}});
 
     // AI component
     pooka.AddComponent<AIComponent>(PawnComponent::Dependencies{*this});

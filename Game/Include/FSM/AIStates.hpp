@@ -5,6 +5,7 @@
 #include "FSM.hpp"
 // Engine
 #include "Engine/Commands.hpp"
+#include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Core/Observer.hpp"
 #include "Engine/Utils/Utils.hpp"
 
@@ -25,13 +26,12 @@ namespace Game::AI
 
         explicit AIStateBase(Dependencies const& dependencies);
         [[nodiscard]] Path TryFindingPathToPlayer() const noexcept;
+        [[nodiscard]] StateType ProcessGameAction(EventType) noexcept override;
 
     protected:
         Dependencies m_dependencies;
         Engine::MovementComponent& m_movementComponent;
         Engine::AnimationComponent& m_animationComponent;
-
-        StateType ProcessGameAction(GameAction) noexcept override;
 
     private:
         [[nodiscard]] static Path ReconstructPath(CellMap const& parents, Cell startCell, Cell endCell) noexcept;
@@ -88,13 +88,19 @@ namespace Game::AI
         };
     };
 
-    class Caught final : public AIStateBase
+    class Pumped final : public AIStateBase, public Subject
     {
     public:
-        explicit Caught(Dependencies const& dependencies)
-            : AIStateBase{dependencies} {}
-    };
+        explicit Pumped(Dependencies const& dependencies);
 
+        [[nodiscard]] StateType Update() noexcept override;
+        void OnEnter() noexcept override;
+
+    private:
+        uint32_t const m_frameCount{ 4 };
+        float const m_secPerFrame{ 0.75f };
+        float m_currentSec{};
+    };
 }
 
 #endif// GAME_AI_FSM

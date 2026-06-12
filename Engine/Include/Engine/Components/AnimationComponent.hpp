@@ -24,7 +24,8 @@ namespace Engine
         };
         explicit AnimationComponent(GameObject& owner, Data const&) noexcept;
         void Update() noexcept override;
-        void ChangeAnimation(SDL_FRect srcRect, uint32_t frameCount, float secPerFrame) noexcept;
+        void ChangeSource(SDL_FRect srcRect, uint32_t frameCount, float secPerFrame) noexcept;
+        void ChangeAnimation(Data const& data) noexcept;;
 
     private:
         Data m_data;
@@ -33,7 +34,7 @@ namespace Engine
         RenderComponent& m_ownerRenderComponent;
         std::vector<Sprite::View> m_frames;
 
-        void SetFrameSpriteViews();
+        void SetSpriteViews();
     };
 }
 

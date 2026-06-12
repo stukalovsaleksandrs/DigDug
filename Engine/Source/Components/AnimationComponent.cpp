@@ -15,11 +15,12 @@ Engine::AnimationComponent::AnimationComponent(GameObject& owner, Data const& da
           m_owner.AddComponent<RenderComponent>(data.firstSpriteView)
       }
 {
-    SetFrameSpriteViews();
+    SetSpriteViews();
 }
 
 void Engine::AnimationComponent::Update() noexcept
 {
+    if (not m_active) return;
     Component::Update();
     if (m_data.frameCount < 1 || Utils::NearlyZero(m_data.secPerFrame)) return;
     if (m_currentSec >= m_data.secPerFrame)
@@ -41,18 +42,24 @@ void Engine::AnimationComponent::Update() noexcept
     m_currentSec += Timer::GetInstance().GetDeltaSec();
 }
 
-void Engine::AnimationComponent::ChangeAnimation(SDL_FRect const srcRect, uint32_t const frameCount, float const secPerFrame) noexcept
+void Engine::AnimationComponent::ChangeSource(SDL_FRect const srcRect, uint32_t const frameCount, float const secPerFrame) noexcept
 {
     m_data.firstSpriteView.srcRect = srcRect;
     m_data.frameCount = frameCount;
-    SetFrameSpriteViews();
+    SetSpriteViews();
     m_ownerRenderComponent.SetSpriteView(m_data.firstSpriteView);
     m_currentFrameIdx = 0;
     m_currentSec = 0.f;
     m_data.secPerFrame = secPerFrame;
 }
 
-void Engine::AnimationComponent::SetFrameSpriteViews()
+void Engine::AnimationComponent::ChangeAnimation(Data const& data) noexcept
+{
+    m_data = data;
+    SetSpriteViews();
+}
+
+void Engine::AnimationComponent::SetSpriteViews()
 {
     m_frames.clear();
     m_frames.reserve(m_data.frameCount);

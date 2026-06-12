@@ -15,6 +15,8 @@
 #include <set>
 #include <print>
 
+#include "Engine/Utils/Timer.hpp"
+
 #pragma region StateBase
 Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
     : m_dependencies{ dependencies }
@@ -52,16 +54,16 @@ Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() cons
     return {};
 }
 
-Game::StateType Game::AI::AIStateBase::ProcessGameAction(GameAction const gameAction) noexcept
+Game::StateType Game::AI::AIStateBase::ProcessGameAction(EventType const type) noexcept
 {
-    switch (gameAction)
+    switch (type)
     {
-    case GameAction::Caught:
-        return typeid(Caught);
+    case EventType::OnCaught:
+        return typeid(Pumped);
     default:
         break;
     }
-    return StateBase::ProcessGameAction(gameAction);
+    return StateBase::ProcessGameAction(type);
 }
 
 Game::AI::AIStateBase::Path Game::AI::AIStateBase::ReconstructPath(CellMap const& parents, Cell const startCell, Cell const endCell) noexcept
@@ -143,10 +145,10 @@ template<typename Direction>
 void Game::AI::Wander<Direction>::OnEnter() noexcept
 {
     // Changing animation
-    m_animationComponent.ChangeAnimation(
+    m_animationComponent.ChangeSource(
         SDL_FRect{0.f, 0.f,
-            static_cast<float>(i32tileSideLength),
-            static_cast<float>(i32tileSideLength)},
+            ftileSideLengthPx,
+            ftileSideLengthPx},
         2, 0.2f
     );
 
@@ -252,9 +254,51 @@ void Game::AI::Chase::DebugRender() const noexcept
     if (m_path.empty()) return;
     Engine::Renderer::GetInstance().RenderSquare(
         Engine::Utils::Square{m_dependencies.level.GetGrid().GetCellTopLeft(m_path.at(m_currentTargetIdx)),
-        i32tileSideLength},
+        i32tileSideLengthPx},
         SDL_FColor{0, 255, 0, 255}
     );
 #endif// ENABLE_DEBUG_RENDERING
 }
 #pragma endregion Chase
+
+#pragma region Pumped
+Game::AI::Pumped::Pumped(Dependencies const& dependencies)
+    : AIStateBase{dependencies}{}
+float firstInit{true};
+void Game::AI::Pumped::OnEnter() noexcept
+{
+    AIStateBase::OnEnter();
+    Engine::Sprite::View const view{
+        m_dependencies.level.sharedResources.pPookaPumpedSprite.get(),
+        SDL_FRect{ 0.f, 0.f, 32.f, 32.f }
+    };
+    m_animationComponent.ChangeAnimation({
+        .firstSpriteView = view,
+        .frameCount = m_frameCount,
+        .secPerFrame = m_secPerFrame
+    });
+    auto& owner{ m_animationComponent.GetOwner() };
+    auto& renderComponent{ *owner.GetComponent<Engine::RenderComponent>() };
+    renderComponent.dstDims = glm::vec2{32.f, 32.f};
+    renderComponent.SetSpriteView(view);
+    auto const ownerWorldLocation{ owner.GetWorldLocation() };
+    owner.SetLocalPosition(glm::vec2{ownerWorldLocation.x - ftileSideLengthPx, ownerWorldLocation.y - 0.5f * ftileSideLengthPx});
+}
+
+Game::StateType Game::AI::Pumped::Update() noexcept
+{
+    m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
+    if (m_currentSec >= m_secPerFrame * m_frameCount)
+    {
+        // Notifying the player character
+        NotifyObservers(EventType::OnEnemyDied);
+
+        // Deleting the enemy
+        m_animationComponent.SetActive(false);
+        m_dependencies.owner.GetComponent<Engine::RenderComponent>()->SetActive(false);
+        m_dependencies.owner.MarkForDeletion();
+    }
+    return StateBase::Update();
+}
+
+#pragma endregion Pumped

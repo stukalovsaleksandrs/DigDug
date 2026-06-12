@@ -22,22 +22,21 @@ namespace Game
 {
     class Level;
 #pragma region StateBase
-
     using StateType = std::optional<std::type_index>;
     class StateBase
     {
     public:
         virtual ~StateBase() = default;
         [[nodiscard]] virtual StateType Update() noexcept{ return std::nullopt; }
-        [[nodiscard]] virtual StateType ProcessGameAction(GameAction) noexcept;
         virtual void OnEnter() noexcept{}
         virtual void OnExit() noexcept{}
+        [[nodiscard]] virtual StateType ProcessGameAction(EventType) noexcept{ return std::nullopt; }
     };
 
 #pragma endregion StateBase
 
 #pragma region FSM
-    class FSM final
+    class FSM final : public Engine::Observer
     {
     public:
         using States = std::unordered_map<std::type_index, std::unique_ptr<StateBase>>;
@@ -45,7 +44,9 @@ namespace Game
         // NOTE: Not using a struct since using one results when moving the first argument
         explicit FSM(std::pair<States&&, StateBase*> const&) noexcept;
         void Update() noexcept;
-        void ProcessGameAction(GameAction) noexcept;
+        void OnNotify(Engine::Event, Engine::Subject const&) noexcept override;
+
+        void ProcessGameAction(EventType) noexcept;
 
     private:
         States m_states;
@@ -57,6 +58,7 @@ namespace Game
         {
             return m_states.at(typeIdx).get();
         }
+
     };
 #pragma endregion FSM
 }

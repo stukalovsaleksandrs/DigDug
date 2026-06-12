@@ -11,12 +11,12 @@
 
 namespace Game
 {
-    uint32_t constexpr i32tileSideLength{ 16 };// in px
-    float constexpr ftileSideLength{ static_cast<float>(i32tileSideLength) };
+    uint32_t constexpr i32tileSideLengthPx{ 16 };// in px
+    float constexpr ftileSideLengthPx{ static_cast<float>(i32tileSideLengthPx) };
 
     Engine::Window::Data const windowData( { 224, 288 }, 3.f );
 
-    glm::vec2 constexpr topLeftToCenterOffset{ 0.5f * glm::vec2{ ftileSideLength, ftileSideLength } };
+    glm::vec2 constexpr topLeftToCenterOffset{ 0.5f * glm::vec2{ ftileSideLengthPx, ftileSideLengthPx } };
 
     namespace EU = Engine::Utils;
 
@@ -27,7 +27,9 @@ namespace Game
         OnDied = "OnDied"_h,
         OnDamageTaken = "OnDamageTaken"_h,
         OnGridChanged = "OnGridChanged"_h,
-        OnAttack = "OnAttacked"_h,
+        OnThrow = "OnAttack"_h,
+        OnEnemyDied = "OnEnemyDied"_h,
+        OnCaught = "OnCaught"_h,
     };
 
     class Subject : public Engine::Subject
@@ -37,11 +39,6 @@ namespace Game
         {
             Engine::Subject::NotifyObservers(Engine::Event{ std::to_underlying(type) });
         }
-    };
-
-    enum class GameAction : uint8_t
-    {
-        Attack, Caught
     };
 
     enum class SoundName
