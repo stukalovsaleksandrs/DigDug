@@ -70,7 +70,7 @@ glm::vec2 Engine::GameObject::GetWorldLocation() noexcept
 void Engine::GameObject::SetPositionDirty() noexcept
 {
     m_positionIsDirty = true;
-    for (auto const& pChild : hierarchyElement.GetChildrenGameObjects())
+    for (auto const& pChild : hierarchyElement.GetChildren())
     {
         pChild->SetPositionDirty();
     }

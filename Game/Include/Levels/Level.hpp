@@ -37,6 +37,8 @@ namespace Game
 
         [[nodiscard]] glm::u32vec2 GetPlayerCell() const noexcept;
 
+        [[nodiscard]] std::vector<Engine::RenderComponent*> GetEnemyRenderComponents() noexcept;
+
         void Update() noexcept;
 
         void EnablePump() const noexcept;

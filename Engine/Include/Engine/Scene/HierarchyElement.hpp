@@ -35,7 +35,7 @@ namespace Engine
         GameObject* AddChild(std::unique_ptr<GameObject>&&) noexcept;
 
         [[nodiscard]] GameObject* GetOwnerGameObject() noexcept;
-        [[nodiscard]] std::vector<std::unique_ptr<GameObject>>& GetChildrenGameObjects() noexcept;
+        [[nodiscard]] std::vector<std::unique_ptr<GameObject>>& GetChildren() noexcept;
 
         void UpdateChildren() const noexcept;
 

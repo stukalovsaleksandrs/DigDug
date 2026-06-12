@@ -121,7 +121,7 @@ Engine::GameObject* Engine::HierarchyElement::GetOwnerGameObject() noexcept
     return m_pOwnerGameObject;
 }
 
-std::vector<std::unique_ptr<Engine::GameObject>>& Engine::HierarchyElement::GetChildrenGameObjects() noexcept
+std::vector<std::unique_ptr<Engine::GameObject>>& Engine::HierarchyElement::GetChildren() noexcept
 {
     return m_pChildren;
 }

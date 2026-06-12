@@ -8,10 +8,11 @@
 // Standard
 #include <print>
 
-Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent)
+Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent, Level const& level)
     : Component{ owner }
     , m_renderComponent{ *owner.GetComponent<Engine::RenderComponent>() }
     , m_playerRenderComponent{ playerRenderComponent }
+    , m_level{ level }
     , m_maxWidthPx{ m_renderComponent.GetSpriteViewDims().x }
 {
     m_renderComponent.SetSrcWidth(0.f);
@@ -54,7 +55,6 @@ void Game::PumpComponent::Update() noexcept
             m_renderComponent.GetSpriteDims().y
         };
     }
-
 
     if (m_currentWidthPx >= m_maxWidthPx)
     {

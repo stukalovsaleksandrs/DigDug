@@ -103,6 +103,20 @@ glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
     return m_grid.GetCellFromPoint(m_pPlayer->GetWorldLocation() + glm::vec2{1.f, 1.f});
 }
 
+std::vector<Engine::RenderComponent*> Game::Level::GetEnemyRenderComponents() noexcept
+{
+    std::vector<Engine::RenderComponent*> renderComponents{};
+    for (auto const& gameObject: m_scene.hierarchyElement.GetChildren())
+    {
+        if (gameObject->TryGettingComponent<AIComponent>().has_value())
+        {
+            renderComponents.emplace_back(gameObject->GetComponent<Engine::RenderComponent>());
+        }
+    }
+
+    return renderComponents;
+}
+
 void Game::Level::Update() noexcept
 {
     m_scene.Update();
@@ -122,7 +136,10 @@ void Game::Level::SpawnPump() noexcept
         Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }
     );
 
-    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>(*m_pPlayer->GetComponent<Engine::RenderComponent>());
+    m_pPumpComponent = &m_pPump->AddComponent<PumpComponent>(
+        *m_pPlayer->GetComponent<Engine::RenderComponent>(),
+        *this
+    );
 
     m_pPump->SetActive(false);
 }
