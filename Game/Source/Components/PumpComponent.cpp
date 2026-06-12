@@ -8,7 +8,9 @@
 // Standard
 #include <print>
 
-Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent, Level const& level)
+#include "Levels/Level.hpp"
+
+Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent, Level & level)
     : Component{ owner }
     , m_renderComponent{ *owner.GetComponent<Engine::RenderComponent>() }
     , m_playerRenderComponent{ playerRenderComponent }
@@ -56,6 +58,8 @@ void Game::PumpComponent::Update() noexcept
         };
     }
 
+
+
     if (m_currentWidthPx >= m_maxWidthPx)
     {
         SetActive(false);
@@ -86,11 +90,13 @@ void Game::PumpComponent::OnEnable() noexcept
         if (settings.degrees < 0.f) yOffset *= -1;
         m_owner.SetLocalPosition(glm::vec2{-absOffset, yOffset});
     }
+
+    // Getting enemies
+    m_enemyRenderComponents = m_level.GetEnemyRenderComponents();
 }
 
 void Game::PumpComponent::OnDisable() noexcept
 {
     Component::OnDisable();
     m_renderComponent.SetActive(false);
-
 }

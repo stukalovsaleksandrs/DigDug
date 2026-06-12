@@ -100,9 +100,9 @@ std::vector<Game::AI::AIStateBase::Cell> Game::AI::AIStateBase::GetNeighbors(Cel
 template<typename Direction>
 Game::AI::Wander<Direction>::Wander(Dependencies const& dependencies)
     : AIStateBase{ dependencies }
-    , m_moveCommand1{ dependencies.movementComponent,
+    , m_moveCommand1{ m_movementComponent,
         std::is_same_v<Direction, Horizontal> ? glm::vec2{-1.f, 0.f} : glm::vec2{0.f, 1.f} }
-    , m_moveCommand2{ dependencies.movementComponent,
+    , m_moveCommand2{ m_movementComponent,
         std::is_same_v<Direction, Horizontal> ? glm::vec2{1.f, 0.f} : glm::vec2{0.f, -1.f} }
     , m_pCurrentCommand{ &m_moveCommand2 }  // Start moving positive direction
 {}
@@ -128,7 +128,7 @@ template<typename Direction>
 void Game::AI::Wander<Direction>::OnEnter() noexcept
 {
     // Changing animation
-    m_dependencies.animationComponent.ChangeAnimation(
+    m_animationComponent.ChangeAnimation(
         SDL_FRect{0.f, 0.f,
             static_cast<float>(tileSideLength),
             static_cast<float>(tileSideLength)},
@@ -186,7 +186,7 @@ Game::StateType Game::AI::Chase::Update() noexcept
     if (m_path.empty())
     {
         m_path = TryFindingPathToPlayer();
-        m_dependencies.movementComponent.Disable();
+        m_movementComponent.Disable();
         return std::nullopt;
     }
     // Moving towards the current cell
@@ -209,9 +209,9 @@ Game::StateType Game::AI::Chase::Update() noexcept
     }
     else
     {
-        m_dependencies.movementComponent.Enable();
+        m_movementComponent.Enable();
         glm::vec2 const normDir{ normalize(npcToTarget) };
-        m_dependencies.movementComponent.AddDirection(
+        m_movementComponent.AddDirection(
             normDir
         );
     }

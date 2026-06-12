@@ -24,15 +24,12 @@ namespace Game
     class StateBase
     {
     public:
-        struct Dependencies final
+        struct Dependencies
         {
-            Engine::AnimationComponent& animationComponent;
-            Engine::MovementComponent& movementComponent;
             Engine::GameObject& owner;// GetWorldLocation is not const
             Level& level;
         };
-        explicit StateBase(Dependencies const& dependencies) noexcept
-            : m_dependencies{ dependencies }{}
+        explicit StateBase(Dependencies const& dependencies) noexcept;
         virtual ~StateBase() = default;
         [[nodiscard]] virtual StateType Update() noexcept = 0;
         virtual void OnEnter() noexcept = 0;
@@ -40,6 +37,8 @@ namespace Game
 
     protected:
         Dependencies m_dependencies;
+        Engine::MovementComponent& m_movementComponent;
+        Engine::AnimationComponent& m_animationComponent;
 
         [[nodiscard]] bool IsMoving() const noexcept;
     };

@@ -20,7 +20,7 @@ namespace Game
         explicit PumpComponent(
             Engine::GameObject& owner,
             Engine::RenderComponent const& playerRenderComponent,
-            Level const&
+            Level&
         );
 
         void Update() noexcept override;
@@ -28,14 +28,15 @@ namespace Game
     private:
         Engine::RenderComponent& m_renderComponent;
         Engine::RenderComponent const& m_playerRenderComponent;
-        Level const& m_level;
+        Level& m_level;
         float const m_pxPerSec{ 100.f };
         float const m_maxWidthPx{};
         float m_currentWidthPx{};
 
+        std::vector<Engine::RenderComponent*> m_enemyRenderComponents{};
+
         void OnEnable() noexcept override;
         void OnDisable() noexcept override;
-
     };
 
 }
