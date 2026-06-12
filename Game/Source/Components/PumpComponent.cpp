@@ -1,5 +1,6 @@
 // Game
 #include "Components/PumpComponent.hpp"
+#include "Levels/Level.hpp"
 // Engine
 #include "Utils.hpp"
 #include "Engine/Components/Components.hpp"
@@ -8,7 +9,6 @@
 // Standard
 #include <print>
 
-#include "Levels/Level.hpp"
 
 Game::PumpComponent::PumpComponent(Engine::GameObject& owner, Engine::RenderComponent const& playerRenderComponent, Level & level)
     : Component{ owner }
@@ -25,10 +25,10 @@ void Game::PumpComponent::Update() noexcept
     if (not m_active) return;
     m_currentWidthPx += m_pxPerSec * Engine::Timer::GetInstance().GetDeltaSec();
 
-    auto const settings{m_renderComponent.GetSettings()};
-    if (Engine::Utils::NearlyZero(settings.degrees, 1.f))
+    if (auto const [flipMode, degrees]{m_renderComponent.GetSettings()};
+        Engine::Utils::NearlyZero(degrees, 1.f))
     {
-        if (settings.flipMode == SDL_FLIP_HORIZONTAL)
+        if (flipMode == SDL_FLIP_HORIZONTAL)
             m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx + 0.5f * tileSideLength, 0.f});
 
         m_renderComponent.SetSrcRect(SDL_FRect{
@@ -49,18 +49,13 @@ void Game::PumpComponent::Update() noexcept
 
         float constexpr absOffset{static_cast<float>(tileSideLength)};
         float yOffset{ absOffset };
-        if (settings.degrees < 0.f) yOffset *= -1;
+        if (degrees < 0.f) yOffset *= -1;
         m_owner.SetLocalPosition(glm::vec2{-m_currentWidthPx / m_maxWidthPx * tileSideLength + 3, yOffset});
 
         m_renderComponent.dstDims = {
             m_currentWidthPx,
             m_renderComponent.GetSpriteDims().y
         };
-    }
-
-    if (m_currentWidthPx >= m_maxWidthPx)
-    {
-        SetActive(false);
     }
 }
 

@@ -32,16 +32,15 @@ namespace Game
 
         bool TryDigging(glm::vec2 cellCenterPx) noexcept;
 
-        [[nodiscard]] Grid const& GetGrid() const noexcept { return m_grid; };
-        [[nodiscard]] Grid& GetGrid() noexcept { return m_grid; };
+        [[nodiscard]] Grid const& GetGrid() const noexcept { return m_grid; }
+        [[nodiscard]] Grid& GetGrid() noexcept { return m_grid; }
+        [[nodiscard]] PumpComponent& GetPumpComponent() noexcept;
 
         [[nodiscard]] glm::u32vec2 GetPlayerCell() const noexcept;
 
         [[nodiscard]] std::vector<Engine::RenderComponent*> GetEnemyRenderComponents() noexcept;
 
         void Update() noexcept;
-
-        void EnablePump() const noexcept;
 
     private:
         Resources const& m_sharedResources;

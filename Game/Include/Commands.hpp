@@ -42,11 +42,11 @@ namespace Game
     class AttackCommand final : public Engine::Command
     {
     public:
-        explicit AttackCommand(PlayerComponent& playerComponent);
-        void Execute() noexcept override;
+        explicit AttackCommand(FSM&);
+        auto Execute() noexcept -> void override;
 
     private:
-        PlayerComponent& m_playerComponent;
+        FSM& m_fsm;
 
     };
 #pragma endregion AttackCommand

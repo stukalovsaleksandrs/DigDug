@@ -39,12 +39,12 @@ bool Engine::InputManager::ProcessInput()
     return true;
 }
 
-void Engine::InputManager::Bind(Action const& action, std::unique_ptr<Command> pCommand)
+void Engine::InputManager::Bind(InputAction const& action, std::unique_ptr<Command> pCommand)
 {
     m_actionToCommand[action] = std::move(pCommand);
 }
 
-void Engine::InputManager::Unbind(Action const& action)
+void Engine::InputManager::Unbind(InputAction const& action)
 {
     m_actionToCommand.erase(action);
 }
@@ -73,7 +73,7 @@ void Engine::InputManager::ProcessPressing()
     }
 }
 
-void Engine::InputManager::ExecuteIfExists(Action const& action) const
+void Engine::InputManager::ExecuteIfExists(InputAction const& action) const
 {
     if (m_actionToCommand.contains(action))
     {

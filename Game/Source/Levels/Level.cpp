@@ -84,8 +84,8 @@ Game::Level::~Level() noexcept
 
 void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
 {
-    static float constexpr halfTileSideLength{ 0.5f * tileSideLength };
-    m_maskTexture.MaskCircle({centerPx, halfTileSideLength});
+    static float constexpr radius{ 0.5f * tileSideLength };
+    m_maskTexture.MaskCircle({centerPx, radius});
 }
 
 bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
@@ -96,6 +96,12 @@ bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
         return true;
     }
     return false;
+}
+
+Game::PumpComponent& Game::Level::GetPumpComponent() noexcept
+{
+    if (not m_pPump) SpawnPump();
+    return *m_pPumpComponent;
 }
 
 glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
@@ -122,14 +128,9 @@ void Game::Level::Update() noexcept
     m_scene.Update();
 }
 
-void Game::Level::EnablePump() const noexcept
-{
-    m_pPump->SetActive(true);
-}
-
 void Game::Level::SpawnPump() noexcept
 {
-    if (m_pPumpComponent) return;// No pump spamming
+    if (m_pPump) return;
     m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * tileSideLength, 0.f});
 
     m_pPump->AddComponent<Engine::RenderComponent>(
@@ -141,7 +142,7 @@ void Game::Level::SpawnPump() noexcept
         *this
     );
 
-    m_pPump->SetActive(false);
+    // m_pPump->SetActive(false);
 }
 
 Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexcept

@@ -9,6 +9,7 @@
 
 namespace Game
 {
+    class PumpComponent;
     class PlayerComponent;
     class LevelManager;
 }
@@ -22,7 +23,7 @@ namespace Game::Player::State
         {
             Engine::GameObject& owner;// GetWorldLocation is not const
             Level& level;
-            PlayerComponent& playerComponent;
+            FSM& fsm;// For Attack()
         };
         explicit PlayerStateBase(Dependencies const& dependencies);
 
@@ -32,31 +33,35 @@ namespace Game::Player::State
         Engine::MovementComponent& m_movementComponent;
         Engine::AnimationComponent& m_animationComponent;
 
-        Engine::Action m_keyboardUp{SDL_SCANCODE_W, Engine::InputType::held};
-        Engine::Action m_keyboardLeft{SDL_SCANCODE_A, Engine::InputType::held};
-        Engine::Action m_keyboardDown{SDL_SCANCODE_S, Engine::InputType::held};
-        Engine::Action m_keyboardRight{SDL_SCANCODE_D, Engine::InputType::held};
-        Engine::Action m_keyboardPointAction{SDL_SCANCODE_P, Engine::InputType::released};
-        Engine::Action m_keyboardAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::held};
+        Engine::InputAction m_keyboardUp{SDL_SCANCODE_W, Engine::InputType::held};
+        Engine::InputAction m_keyboardLeft{SDL_SCANCODE_A, Engine::InputType::held};
+        Engine::InputAction m_keyboardDown{SDL_SCANCODE_S, Engine::InputType::held};
+        Engine::InputAction m_keyboardRight{SDL_SCANCODE_D, Engine::InputType::held};
+        Engine::InputAction m_keyboardPointAction{SDL_SCANCODE_P, Engine::InputType::released};
+        Engine::InputAction m_keyboardAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
 
-        Engine::Action m_gamepadUp{SDL_GAMEPAD_BUTTON_DPAD_UP, Engine::InputType::held};
-        Engine::Action m_gamepadLeft{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Engine::InputType::held};
-        Engine::Action m_gamepadDown{SDL_GAMEPAD_BUTTON_DPAD_DOWN, Engine::InputType::held};
-        Engine::Action m_gamepadRight{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Engine::InputType::held};
-        Engine::Action m_gamepadAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::held};
+        Engine::InputAction m_gamepadUp{SDL_GAMEPAD_BUTTON_DPAD_UP, Engine::InputType::held};
+        Engine::InputAction m_gamepadLeft{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Engine::InputType::held};
+        Engine::InputAction m_gamepadDown{SDL_GAMEPAD_BUTTON_DPAD_DOWN, Engine::InputType::held};
+        Engine::InputAction m_gamepadRight{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Engine::InputType::held};
+        Engine::InputAction m_gamepadAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
 
         [[nodiscard]] bool TryDigging() const noexcept;
-        void BindAllInput(PlayerComponent&) const noexcept;
+
+        void BindAllInput(FSM&) const noexcept;
         void UnbindAllInput() const noexcept;
+
+        [[nodiscard]] StateType ProcessGameAction(GameAction) noexcept override;
     };
 
     class Idle final : public PlayerStateBase
     {
     public:
-        explicit Idle(Dependencies const&, PlayerComponent&) noexcept;
+        explicit Idle(Dependencies const&) noexcept;
         void OnEnter() noexcept override;
         void OnExit() noexcept override{}
         StateType Update() noexcept override;
+
     };
 
     class Walking final : public PlayerStateBase
@@ -81,14 +86,17 @@ namespace Game::Player::State
     class Attacking final : public PlayerStateBase
     {
     public:
-        explicit Attacking(Dependencies const& dependencies)
-            : PlayerStateBase(dependencies){}
+        explicit Attacking(Dependencies const& dependencies, PumpComponent& );
 
         [[nodiscard]] StateType Update() noexcept override;
         void OnEnter() noexcept override;
         void OnExit() noexcept override;
 
     private:
+        PumpComponent& m_pumpComponent;
+        float const m_durationSec{ 0.35f };// How long does attacking state last
+        float m_currentSec{};
+
         void BindAttackInput() const noexcept;
         void UnbindAttackInput() const noexcept;
     };

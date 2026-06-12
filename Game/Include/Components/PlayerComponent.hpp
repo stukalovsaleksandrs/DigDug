@@ -8,7 +8,6 @@
 // Engine
 #include "PawnComponent.hpp"
 #include "Engine/Core/Observer.hpp"
-#include "Engine/InputManager.hpp"
 
 namespace Engine
 {
@@ -27,11 +26,8 @@ namespace Game
         [[nodiscard]] uint32_t GetPoints() const noexcept{ return m_points; };
         void AddPoints(uint32_t points) noexcept;
 
-        void Attack() const;
-
     private:
         uint32_t m_points{};
-
 
         Engine::Event m_onPointsIncreased{ std::to_underlying(EventType::OnPointsIncreased) };
         Engine::Event m_onCollected5Points{ std::to_underlying(EventType::OnCollected5Points) };

@@ -2,7 +2,9 @@
 #define GAME_PUMP_COMPONENT
 
 // Engine
+#include "Utils.hpp"
 #include "Engine/Components/ComponentBase.hpp"
+#include "Engine/Core/Observer.hpp"
 #include "Engine/Rendering/Sprite.hpp"
 
 namespace Engine
@@ -25,13 +27,18 @@ namespace Game
 
         void Update() noexcept override;
 
+        // How long will the pump take to play the entire animation
+        void SetDuration(float const seconds)
+        {
+            m_pxPerSec = m_maxWidthPx / seconds;
+        }
+
     private:
         Engine::RenderComponent& m_renderComponent;
         Engine::RenderComponent const& m_playerRenderComponent;
         Level& m_level;
-        float const m_pxPerSec{ 100.f };
         float const m_maxWidthPx{};
-        float m_currentWidthPx{};
+        float m_pxPerSec{}, m_currentWidthPx{};
 
         std::vector<Engine::RenderComponent*> m_enemyRenderComponents{};
 

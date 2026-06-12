@@ -57,7 +57,6 @@ void Game::PawnComponent::Update() noexcept
     {
         m_owner.SetLocalPosition(lerpedLocation.value());
     }
-    m_movementComponent.Enable();
 }
 
 void Game::PawnComponent::ProcessSpriteOrientation(glm::vec2 const direction) noexcept
@@ -81,8 +80,9 @@ void Game::PawnComponent::ConstrainMovementToGrid() noexcept
     float const distance{ glm::length(dstTopLeft - m_owner.GetWorldLocation()) };// in px
     float const lerpSec{ distance / m_movementComponent.GetPxPerSec() };
 
-    m_movementComponent.Disable();
+    m_movementComponent.SetActive(false);
     m_locationLerpData.Reset(srcTopLeft, dstTopLeft, lerpSec);
+    m_movementComponent.SetActive(true);
 }
 
 glm::vec2 Game::PawnComponent::GetCurrentCellTopLeft() const noexcept

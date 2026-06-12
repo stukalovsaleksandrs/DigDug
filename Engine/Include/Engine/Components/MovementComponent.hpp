@@ -29,8 +29,7 @@ namespace Engine
         [[nodiscard]] bool IsMoving() const noexcept;
         [[nodiscard]] float GetPxPerSec() const noexcept{ return m_pxPerSec; };
         void SetCanMoveDiagonally(bool const canMoveDiagonally) noexcept{ m_canMoveDiagonally = canMoveDiagonally; };
-        void Enable() noexcept{ m_disabled = false; }
-        void Disable() noexcept{ m_disabled = true; }
+        void SetActive(bool const active) noexcept{ m_disabled = not active; }
 
     private:
         Dependencies m_dependencies;

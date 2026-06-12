@@ -1,5 +1,6 @@
 // Game
 #include "Commands.hpp"
+#include "FSM/FSM.hpp"
 
 /*******************************************
  * Die command
@@ -26,7 +27,6 @@ void Game::TakeDamageCommand::Execute() noexcept
  *******************************************/
 
 Game::PointCommand::PointCommand(PlayerComponent& playerComponent)
-
     : m_playerComponent(playerComponent)
 {}
 
@@ -37,12 +37,12 @@ void Game::PointCommand::Execute() noexcept
 
 #pragma region AttackCommand
 
-Game::AttackCommand::AttackCommand(PlayerComponent& playerComponent)
-    : m_playerComponent{ playerComponent }{}
+Game::AttackCommand::AttackCommand(FSM& fsm)
+    : m_fsm{ fsm }{}
 
 void Game::AttackCommand::Execute() noexcept
 {
-    m_playerComponent.Attack();
+    m_fsm.ProcessGameAction(GameAction::Attack);
 }
 
 #pragma endregion AttackCommand

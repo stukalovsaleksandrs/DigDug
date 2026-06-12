@@ -1,8 +1,12 @@
 // Game
 #include "FSM/FSM.hpp"
 // Engine
-#include "Engine/Components/MovementComponent.hpp"
-#include "Engine/Components/AnimationComponent.hpp"
+#include "Engine/InputManager.hpp"
+
+Game::StateType Game::StateBase::ProcessGameAction(GameAction) noexcept
+{
+    return std::nullopt;
+}
 
 Game::FSM::FSM(std::pair<States&&, StateBase*> const& data) noexcept
     : m_states{ std::move(data.first) }
@@ -16,6 +20,13 @@ void Game::FSM::Update() noexcept
 {
     TryChangingState(
         m_pCurrentState->Update()
+    );
+}
+
+void Game::FSM::ProcessGameAction(GameAction const action) noexcept
+{
+    TryChangingState(
+        m_pCurrentState->ProcessGameAction(action)
     );
 }
 

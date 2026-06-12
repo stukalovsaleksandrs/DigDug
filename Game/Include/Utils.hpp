@@ -26,6 +26,21 @@ namespace Game
         OnDied = "OnDied"_h,
         OnDamageTaken = "OnDamageTaken"_h,
         OnGridChanged = "OnGridChanged"_h,
+        OnAttack = "OnAttacked"_h,
+    };
+
+    class Subject : public Engine::Subject
+    {
+    public:
+        void NotifyObservers(EventType const type) const noexcept
+        {
+            Engine::Subject::NotifyObservers(Engine::Event{ std::to_underlying(type) });
+        }
+    };
+
+    enum class GameAction : uint8_t
+    {
+        Attack
     };
 
     enum class SoundName

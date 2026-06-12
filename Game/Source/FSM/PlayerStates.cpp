@@ -3,10 +3,12 @@
 #include "Commands.hpp"
 #include "FSM/PlayerStates.hpp"
 #include "Levels/LevelManager.hpp"
+#include "Components/PumpComponent.hpp"
 // Engine
 #include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Scene/GameObject.hpp"
+#include "Engine/Utils/Timer.hpp"
 
 namespace Game
 {
@@ -25,7 +27,7 @@ namespace Game
         );
     }
 
-    void Player::State::PlayerStateBase::BindAllInput(PlayerComponent& playerComponent) const noexcept
+    void Player::State::PlayerStateBase::BindAllInput(FSM& fsm) const noexcept
     {
         auto makeMoveCommand{
             [this](glm::vec2 direction)
@@ -38,19 +40,18 @@ namespace Game
         };
 
         Engine::InputManager& inputManager{ Engine::InputManager::GetInstance() };
-        //// Keyboard
+        // Keyboard
         inputManager.Bind(m_keyboardUp, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
         inputManager.Bind(m_keyboardLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
         inputManager.Bind(m_keyboardDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
         inputManager.Bind(m_keyboardRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
-        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(playerComponent));
-
+        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(fsm));
         // Gamepad
         inputManager.Bind(m_gamepadUp, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
         inputManager.Bind(m_gamepadLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
         inputManager.Bind(m_gamepadDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
         inputManager.Bind(m_gamepadRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
-        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(playerComponent));
+        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(fsm));
     }
 
     void Player::State::PlayerStateBase::UnbindAllInput() const noexcept
@@ -62,7 +63,6 @@ namespace Game
         inputManager.Unbind(m_keyboardLeft);
         inputManager.Unbind(m_keyboardDown);
         inputManager.Unbind(m_keyboardRight);
-        inputManager.Unbind(m_keyboardPointAction);
 
         // Gamepad
         inputManager.Unbind(m_gamepadUp);
@@ -70,13 +70,25 @@ namespace Game
         inputManager.Unbind(m_gamepadDown);
         inputManager.Unbind(m_gamepadRight);
     }
+
+    StateType Player::State::PlayerStateBase::ProcessGameAction(GameAction const action) noexcept
+    {
+        switch (action)
+        {
+        case GameAction::Attack:
+            return typeid(Attacking);
+        default: ;
+        }
+        return StateBase::ProcessGameAction(action);
+    }
+
 #pragma endregion PlayerStateBase
 
 #pragma region Idle
-    Player::State::Idle::Idle(Dependencies const& dependencies, PlayerComponent& playerComponent) noexcept
+    Player::State::Idle::Idle(Dependencies const& dependencies) noexcept
         : PlayerStateBase{dependencies}
     {
-        BindAllInput(playerComponent);
+        BindAllInput(dependencies.fsm);
     }
 
     void Player::State::Idle::OnEnter() noexcept
@@ -145,26 +157,43 @@ namespace Game
 #pragma endregion Digging
 
 #pragma region Attacking
+    Player::State::Attacking::Attacking(Dependencies const& dependencies, PumpComponent& pumpComponent)
+        : PlayerStateBase{ dependencies }
+        , m_pumpComponent{ pumpComponent }
+    {
+        m_pumpComponent.SetDuration(m_durationSec);
+        m_pumpComponent.SetActive(false);
+    }
 
     StateType Player::State::Attacking::Update() noexcept
     {
+        m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
+
+        if (m_currentSec > m_durationSec) return typeid(Idle);
+
         return std::nullopt;
     }
 
     void Player::State::Attacking::OnEnter() noexcept
     {
-        BindAttackInput();
+        m_pumpComponent.SetActive(true);
+        UnbindAttackInput();
+        m_movementComponent.SetActive(false);
+        m_currentSec = 0.f;
     }
 
     void Player::State::Attacking::OnExit() noexcept
     {
+        BindAttackInput();
+        m_movementComponent.SetActive(true);
+        m_pumpComponent.SetActive(false);
     }
 
     void Player::State::Attacking::BindAttackInput() const noexcept
     {
         auto& inputManager{ Engine::InputManager::GetInstance() };
-        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.playerComponent));
-        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.playerComponent));
+        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
+        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
     }
 
     void Player::State::Attacking::UnbindAttackInput() const noexcept

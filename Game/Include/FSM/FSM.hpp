@@ -1,6 +1,8 @@
 #ifndef GAME_FSM
 #define GAME_FSM
 
+// Game
+#include "Utils.hpp"
 // Engine
 #include "Engine/Scene/GameObject.hpp"
 // Standard
@@ -11,6 +13,7 @@
 
 namespace Engine
 {
+    struct InputAction;
     class MovementComponent;
     class AnimationComponent;
 }
@@ -25,9 +28,10 @@ namespace Game
     {
     public:
         virtual ~StateBase() = default;
-        [[nodiscard]] virtual StateType Update() noexcept = 0;
-        virtual void OnEnter() noexcept = 0;
-        virtual void OnExit() noexcept = 0;
+        [[nodiscard]] virtual StateType Update() noexcept{ return std::nullopt; }
+        [[nodiscard]] virtual StateType ProcessGameAction(GameAction) noexcept;
+        virtual void OnEnter() noexcept{}
+        virtual void OnExit() noexcept{}
     };
 
 #pragma endregion StateBase
@@ -41,6 +45,7 @@ namespace Game
         // NOTE: Not using a struct since using one results when moving the first argument
         explicit FSM(std::pair<States&&, StateBase*> const&) noexcept;
         void Update() noexcept;
+        void ProcessGameAction(GameAction) noexcept;
 
     private:
         States m_states;
