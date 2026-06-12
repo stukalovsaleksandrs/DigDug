@@ -190,7 +190,7 @@ namespace Game
         {
             std::println("Current time: {}/{}", m_currentSec, m_durationSec);
 
-            m_pumpComponent.Pause();
+            m_pumpComponent.SetPaused(true);
 
              return result;
         }
@@ -272,6 +272,7 @@ namespace Game
         PlayerStateBase::OnExit();
         BindAttackInput();
         m_movementComponent.SetActive(true);
+        m_pumpComponent.SetPaused(false);
         m_pumpComponent.SetActive(false);
     }
 

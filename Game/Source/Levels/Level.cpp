@@ -251,7 +251,7 @@ void Game::Level::MaskInitialTunnels() const noexcept
 
 void Game::Level::SpawnPlayer() noexcept
 {
-    m_pPlayer = &m_scene.CreateGameObject({1.f, ftileSideLengthPx + 1.f});
+    m_pPlayer = &m_scene.CreateGameObject(m_grid.GetCellTopLeft(m_playerSpawnCell));
 
     // Movement component
     m_pPlayer->AddComponent<Engine::MovementComponent>(

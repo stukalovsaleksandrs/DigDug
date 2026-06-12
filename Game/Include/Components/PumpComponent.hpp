@@ -45,7 +45,8 @@ namespace Game
             };
         }
 
-        void Pause() noexcept{ m_paused = true; };
+        // Same as SetActive, but does not call callbacks
+        void SetPaused(bool const paused) noexcept{ m_paused = paused; }
 
     private:
         Engine::RenderComponent& m_renderComponent;
