@@ -18,10 +18,11 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
                 states.emplace(typeid(StateType), std::make_unique<StateType>(stateDependencies));
             }};
             addState.operator()<Player::State::Idle>();
-            addState.operator()<Player::State::Walking>();
-            addState.operator()<Player::State::Digging>();
-            states.emplace(typeid(Player::State::Attacking), std::make_unique<Player::State::Attacking>(stateDependencies, dependencies.level.GetPumpComponent()));
-            addState.operator()<Player::State::Dying>();
+            addState.operator()<Player::State::Walk>();
+            addState.operator()<Player::State::Dig>();
+            states.emplace(typeid(Player::State::Throw), std::make_unique<Player::State::Throw>(stateDependencies, dependencies.level.GetPumpComponent()));
+            addState.operator()<Player::State::Pump>();
+            addState.operator()<Player::State::Die>();
             // Returning the states and setting the idle state as the default one
             return std::make_pair(std::move(states), states.at(typeid(Player::State::Idle)).get());
         }()

@@ -9,7 +9,7 @@
 Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& dependencies)
     : PawnComponent{owner, dependencies, false}
     , m_movementComponent{ *owner.GetComponent<Engine::MovementComponent>() }
-    , m_pookaFSM{ [&]
+    , m_fsm{ [&]
     {
         AI::AIStateBase::Dependencies const stateDependencies{
             .owner = owner,
@@ -23,6 +23,7 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
         addState.operator()<AI::WanderHorizontally>();
         addState.operator()<AI::WanderVertically>();
         addState.operator()<AI::Chase>();
+        addState.operator()<AI::Caught>();
         return std::pair{std::move(states), states.at(SelectInitialState()).get()};
     }() }
 {}
@@ -31,7 +32,12 @@ void Game::AIComponent::Update() noexcept
 {
     PawnComponent::Update();
 
-    m_pookaFSM.Update();
+    m_fsm.Update();
+}
+
+void Game::AIComponent::OnCaught() noexcept
+{
+    m_fsm.ProcessGameAction(GameAction::Caught);
 }
 
 std::type_index Game::AIComponent::SelectInitialState() const noexcept

@@ -4,6 +4,7 @@
 // Third-party
 #include "glm/vec2.hpp"
 #include <glm/ext/scalar_constants.hpp>
+#include <SDL3/SDL_rect.h>
 // Standard
 #include <memory>
 #include <ranges>
@@ -75,6 +76,14 @@ namespace Engine::Utils {
     };
 
 #pragma endregion Comparors
+
+    [[nodiscard]] bool constexpr Intersect(SDL_FRect const& a, SDL_FRect const& b) noexcept
+    {
+        return !(a.x + a.w <= b.x ||  // a is left of b
+                 b.x + b.w <= a.x ||  // b is left of a
+                 a.y + a.h <= b.y ||  // a is above b
+                 b.y + b.h <= a.y);   // b is above a
+    }
 }
 
 #pragma region SDBM

@@ -24,17 +24,18 @@ namespace Game::AI
         };
 
         explicit AIStateBase(Dependencies const& dependencies);
-        [[nodiscard]] Path TryFindingPathToPlayer() noexcept;
+        [[nodiscard]] Path TryFindingPathToPlayer() const noexcept;
 
     protected:
         Dependencies m_dependencies;
         Engine::MovementComponent& m_movementComponent;
         Engine::AnimationComponent& m_animationComponent;
 
-    private:
-        [[nodiscard]] Path ReconstructPath(CellMap const& parents, Cell startCell, Cell endCell) noexcept;
-        [[nodiscard]] std::vector<Cell> GetNeighbors(Cell) const noexcept;
+        StateType ProcessGameAction(GameAction) noexcept override;
 
+    private:
+        [[nodiscard]] static Path ReconstructPath(CellMap const& parents, Cell startCell, Cell endCell) noexcept;
+        [[nodiscard]] std::vector<Cell> GetNeighbors(Cell) const noexcept;
     };
 
 #pragma region Wander
@@ -85,6 +86,13 @@ namespace Game::AI
                 DebugRender();
             }
         };
+    };
+
+    class Caught final : public AIStateBase
+    {
+    public:
+        explicit Caught(Dependencies const& dependencies)
+            : AIStateBase{dependencies} {}
     };
 
 }

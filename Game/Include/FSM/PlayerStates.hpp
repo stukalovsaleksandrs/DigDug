@@ -64,29 +64,29 @@ namespace Game::Player::State
 
     };
 
-    class Walking final : public PlayerStateBase
+    class Walk final : public PlayerStateBase
     {
     public:
-        explicit Walking(Dependencies const&) noexcept;
+        explicit Walk(Dependencies const&) noexcept;
         void OnEnter() noexcept override;
         void OnExit() noexcept override{}
         StateType Update() noexcept override;
     };
 
-    class Digging final : public PlayerStateBase
+    class Dig final : public PlayerStateBase
     {
     public:
-        explicit Digging(Dependencies const&) noexcept;
+        explicit Dig(Dependencies const&) noexcept;
 
         void OnEnter() noexcept override;
         StateType Update() noexcept override;
         void OnExit() noexcept override{};
     };
 
-    class Attacking final : public PlayerStateBase
+    class Throw final : public PlayerStateBase
     {
     public:
-        explicit Attacking(Dependencies const& dependencies, PumpComponent& );
+        explicit Throw(Dependencies const& dependencies, PumpComponent& );
 
         [[nodiscard]] StateType Update() noexcept override;
         void OnEnter() noexcept override;
@@ -99,12 +99,20 @@ namespace Game::Player::State
 
         void BindAttackInput() const noexcept;
         void UnbindAttackInput() const noexcept;
+        [[nodiscard]] StateType ProcessCollisions() const noexcept;
     };
 
-    class Dying final : public PlayerStateBase
+    class Pump final : public PlayerStateBase
     {
     public:
-        explicit Dying(Dependencies const&) noexcept;
+        explicit Pump(Dependencies const& dependencies)
+            : PlayerStateBase{dependencies}{}
+    };
+
+    class Die final : public PlayerStateBase
+    {
+    public:
+        explicit Die(Dependencies const&) noexcept;
         [[nodiscard]] StateType Update() noexcept override{return std::nullopt;};
         void OnEnter() noexcept override{};
         void OnExit() noexcept override;

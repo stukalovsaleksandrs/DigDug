@@ -5,6 +5,7 @@
 #include "Levels/LevelManager.hpp"
 #include "Components/PumpComponent.hpp"
 // Engine
+#include "Components/AIComponent.hpp"
 #include "Engine/Components/AnimationComponent.hpp"
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Scene/GameObject.hpp"
@@ -76,7 +77,7 @@ namespace Game
         switch (action)
         {
         case GameAction::Attack:
-            return typeid(Attacking);
+            return typeid(Throw);
         default: ;
         }
         return StateBase::ProcessGameAction(action);
@@ -104,16 +105,16 @@ namespace Game
 
     StateType Player::State::Idle::Update() noexcept
     {
-        if (m_movementComponent.IsMoving()) return typeid(Walking);
+        if (m_movementComponent.IsMoving()) return typeid(Walk);
         return std::nullopt;
     }
 #pragma endregion Idle
 
 #pragma region Walking
-    Player::State::Walking::Walking(Dependencies const& dependencies) noexcept
+    Player::State::Walk::Walk(Dependencies const& dependencies) noexcept
         : PlayerStateBase{dependencies} {}
 
-    void Player::State::Walking::OnEnter() noexcept
+    void Player::State::Walk::OnEnter() noexcept
     {
         m_animationComponent.ChangeAnimation(
             SDL_FRect{0.f, 0.f,
@@ -123,7 +124,7 @@ namespace Game
         );
     }
 
-    StateType Player::State::Walking::Update() noexcept
+    StateType Player::State::Walk::Update() noexcept
     {
         // Not moving -> idle
         if (auto const& movementComponent{ m_movementComponent };
@@ -131,7 +132,7 @@ namespace Game
             return typeid(Idle);
 
         // Digging -> switching state
-        if (TryDigging()) return typeid(Digging);
+        if (TryDigging()) return typeid(Dig);
 
         return std::nullopt;
     }
@@ -139,16 +140,16 @@ namespace Game
 #pragma endregion Walking
 
 #pragma region Digging
-    Player::State::Digging::Digging(Dependencies const& dependencies) noexcept
+    Player::State::Dig::Dig(Dependencies const& dependencies) noexcept
         : PlayerStateBase{dependencies}
     {}
 
-    void Player::State::Digging::OnEnter() noexcept
+    void Player::State::Dig::OnEnter() noexcept
     {
         // TODO: Change sprite sheet view
     }
 
-    StateType Player::State::Digging::Update() noexcept
+    StateType Player::State::Dig::Update() noexcept
     {
         if (!(TryDigging() and m_movementComponent.IsMoving())) return typeid(Idle);
         return std::nullopt;
@@ -157,7 +158,7 @@ namespace Game
 #pragma endregion Digging
 
 #pragma region Attacking
-    Player::State::Attacking::Attacking(Dependencies const& dependencies, PumpComponent& pumpComponent)
+    Player::State::Throw::Throw(Dependencies const& dependencies, PumpComponent& pumpComponent)
         : PlayerStateBase{ dependencies }
         , m_pumpComponent{ pumpComponent }
     {
@@ -165,16 +166,17 @@ namespace Game
         m_pumpComponent.SetActive(false);
     }
 
-    StateType Player::State::Attacking::Update() noexcept
+    StateType Player::State::Throw::Update() noexcept
     {
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
 
-        if (m_currentSec > m_durationSec) return typeid(Idle);
+        ProcessCollisions();
 
+        if (m_currentSec > m_durationSec) return typeid(Idle);
         return std::nullopt;
     }
 
-    void Player::State::Attacking::OnEnter() noexcept
+    void Player::State::Throw::OnEnter() noexcept
     {
         m_pumpComponent.SetActive(true);
         UnbindAttackInput();
@@ -182,35 +184,62 @@ namespace Game
         m_currentSec = 0.f;
     }
 
-    void Player::State::Attacking::OnExit() noexcept
+    void Player::State::Throw::OnExit() noexcept
     {
         BindAttackInput();
         m_movementComponent.SetActive(true);
         m_pumpComponent.SetActive(false);
     }
 
-    void Player::State::Attacking::BindAttackInput() const noexcept
+    void Player::State::Throw::BindAttackInput() const noexcept
     {
         auto& inputManager{ Engine::InputManager::GetInstance() };
         inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
         inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
     }
 
-    void Player::State::Attacking::UnbindAttackInput() const noexcept
+    void Player::State::Throw::UnbindAttackInput() const noexcept
     {
         auto& inputManager{ Engine::InputManager::GetInstance() };
         inputManager.Unbind(m_keyboardAttackAction);
         inputManager.Unbind(m_gamepadAttackAction);
     }
 
+    StateType Player::State::Throw::ProcessCollisions() const noexcept
+    {
+        SDL_FRect const pumpDstRect{ m_pumpComponent.GetDstRect() };
+        for (Engine::RenderComponent const * const pEnemyRenderComponent : m_dependencies.level.GetEnemyRenderComponents())
+        {
+            assert(pEnemyRenderComponent);
+            glm::vec2 const enemyTopLeft{ pEnemyRenderComponent->GetOwner().GetWorldLocation() };
+            SDL_FRect const enemyDstRect{
+                enemyTopLeft.x, enemyTopLeft.y,
+                pEnemyRenderComponent->dstDims.x, pEnemyRenderComponent->dstDims.y
+            };
+
+            if (Engine::Utils::Intersect(pumpDstRect, enemyDstRect))
+            {
+                // 1. Getting enemy game object, getting AIComponent
+                AIComponent& enemyAIComponent{
+                    *pEnemyRenderComponent->GetOwner().GetComponent<AIComponent>()
+                };
+                // 2. Setting the state for the enemy to get pumped up
+                enemyAIComponent.OnCaught();
+                // 3. Setting pumping state for the player character
+                return typeid(Pump);
+            }
+        }
+        return std::nullopt;
+    }
+
 #pragma endregion Attacking
 
 #pragma region Dying
-    Player::State::Dying::Dying(Dependencies const& dependencies) noexcept
+    Player::State::Die::Die(Dependencies const& dependencies) noexcept
         : PlayerStateBase{dependencies}
     {}
 
-    void Player::State::Dying::OnExit() noexcept
+    void Player::State::Die::OnExit() noexcept
     {
         UnbindAllInput();
     }

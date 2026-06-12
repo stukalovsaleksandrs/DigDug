@@ -22,7 +22,7 @@ Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
     , m_animationComponent{ *dependencies.owner.GetComponent<Engine::AnimationComponent>() }
 {}
 
-Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() noexcept// BFS
+Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() const noexcept// BFS
 {
     Cell startCell{  m_dependencies.level.GetGrid().GetCellFromPoint(m_dependencies.owner.GetWorldLocation())  };
     Cell const targetCell{ m_dependencies.level.GetPlayerCell()};
@@ -50,6 +50,18 @@ Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() noex
     }
 
     return {};
+}
+
+Game::StateType Game::AI::AIStateBase::ProcessGameAction(GameAction const gameAction) noexcept
+{
+    switch (gameAction)
+    {
+    case GameAction::Caught:
+        return typeid(Caught);
+    default:
+        break;
+    }
+    return StateBase::ProcessGameAction(gameAction);
 }
 
 Game::AI::AIStateBase::Path Game::AI::AIStateBase::ReconstructPath(CellMap const& parents, Cell const startCell, Cell const endCell) noexcept

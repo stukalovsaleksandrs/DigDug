@@ -40,7 +40,7 @@ namespace Game
 
     enum class GameAction : uint8_t
     {
-        Attack
+        Attack, Caught
     };
 
     enum class SoundName
