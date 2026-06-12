@@ -56,7 +56,7 @@ namespace Game
         Engine::Event m_gridChangedEvent{ std::to_underlying(EventType::OnGridChanged) };
 
         glm::i32vec2 m_dimsInPx{ windowData.logicalDims  };
-        glm::i32vec2 m_dimsInCells{ m_dimsInPx.x / tileSideLength, m_dimsInPx.y / tileSideLength };
+        glm::i32vec2 m_dimsInCells{ m_dimsInPx.x / i32tileSideLength, m_dimsInPx.y / i32tileSideLength };
         Engine::Renderer& m_renderer;
         std::function<void()> m_debugRenderFunction{ [this]{ DebugRender(); } };
 

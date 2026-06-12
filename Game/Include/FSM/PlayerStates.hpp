@@ -50,6 +50,8 @@ namespace Game::Player::State
 
         void BindAllInput(FSM&) const noexcept;
         void UnbindAllInput() const noexcept;
+        void BindAttackInput() const noexcept;
+        void UnbindAttackInput() const noexcept;
 
         [[nodiscard]] StateType ProcessGameAction(GameAction) noexcept override;
     };
@@ -86,7 +88,7 @@ namespace Game::Player::State
     class Throw final : public PlayerStateBase
     {
     public:
-        explicit Throw(Dependencies const& dependencies, PumpComponent& );
+        explicit Throw(Dependencies const& dependencies, PumpComponent&);
 
         [[nodiscard]] StateType Update() noexcept override;
         void OnEnter() noexcept override;
@@ -97,16 +99,21 @@ namespace Game::Player::State
         float const m_durationSec{ 0.35f };// How long does attacking state last
         float m_currentSec{};
 
-        void BindAttackInput() const noexcept;
-        void UnbindAttackInput() const noexcept;
         [[nodiscard]] StateType ProcessCollisions() const noexcept;
     };
 
     class Pump final : public PlayerStateBase
     {
     public:
-        explicit Pump(Dependencies const& dependencies)
-            : PlayerStateBase{dependencies}{}
+        explicit Pump(Dependencies const& dependencies, PumpComponent&);
+
+        [[nodiscard]] StateType Update() noexcept override;
+        void OnEnter() noexcept override;
+        void OnExit() noexcept override;
+
+    private:
+        PumpComponent& m_pumpComponent;
+
     };
 
     class Die final : public PlayerStateBase

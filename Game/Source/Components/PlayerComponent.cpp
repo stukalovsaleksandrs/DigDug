@@ -21,7 +21,7 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
             addState.operator()<Player::State::Walk>();
             addState.operator()<Player::State::Dig>();
             states.emplace(typeid(Player::State::Throw), std::make_unique<Player::State::Throw>(stateDependencies, dependencies.level.GetPumpComponent()));
-            addState.operator()<Player::State::Pump>();
+            states.emplace(typeid(Player::State::Pump), std::make_unique<Player::State::Pump>(stateDependencies, dependencies.level.GetPumpComponent()));
             addState.operator()<Player::State::Die>();
             // Returning the states and setting the idle state as the default one
             return std::make_pair(std::move(states), states.at(typeid(Player::State::Idle)).get());

@@ -145,9 +145,9 @@ void Game::AI::Wander<Direction>::OnEnter() noexcept
     // Changing animation
     m_animationComponent.ChangeAnimation(
         SDL_FRect{0.f, 0.f,
-            static_cast<float>(tileSideLength),
-            static_cast<float>(tileSideLength)},
-        2
+            static_cast<float>(i32tileSideLength),
+            static_cast<float>(i32tileSideLength)},
+        2, 0.2f
     );
 
     // Subscribing to the grid changing event
@@ -252,7 +252,7 @@ void Game::AI::Chase::DebugRender() const noexcept
     if (m_path.empty()) return;
     Engine::Renderer::GetInstance().RenderSquare(
         Engine::Utils::Square{m_dependencies.level.GetGrid().GetCellTopLeft(m_path.at(m_currentTargetIdx)),
-        tileSideLength},
+        i32tileSideLength},
         SDL_FColor{0, 255, 0, 255}
     );
 #endif// ENABLE_DEBUG_RENDERING

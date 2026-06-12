@@ -84,7 +84,7 @@ Game::Level::~Level() noexcept
 
 void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
 {
-    static float constexpr radius{ 0.5f * tileSideLength };
+    static float constexpr radius{ 0.5f * i32tileSideLength };
     m_maskTexture.MaskCircle({centerPx, radius});
 }
 
@@ -131,7 +131,7 @@ void Game::Level::Update() noexcept
 void Game::Level::SpawnPump() noexcept
 {
     if (m_pPump) return;
-    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * tileSideLength, 0.f});
+    m_pPump = &m_scene.CreateGameObject(*m_pPlayer, glm::vec2{0.5f * i32tileSideLength, 0.f});
 
     m_pPump->AddComponent<Engine::RenderComponent>(
         Engine::Sprite::View{ m_sharedResources.pPumpSprite.get() }
@@ -150,7 +150,7 @@ Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexc
     return [this](glm::vec2 const topLeft)
     {
         auto const topLeftPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{1.f, 1.f}) },
-            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{tileSideLength - 1.f, tileSideLength - 1.f}) };
+            bottomRightPointCell{ m_grid.GetCellFromPoint(topLeft + glm::vec2{i32tileSideLength - 1.f, i32tileSideLength - 1.f}) };
         return not (m_grid.IsGround(topLeftPointCell) || m_grid.IsGround(bottomRightPointCell));
     };
 }
@@ -204,7 +204,7 @@ void Game::Level::DigSquare(glm::vec2 const topLeftPx, EU::Square::Corners const
 {
     m_maskTexture.MaskSquare({
         topLeftPx,
-        static_cast<float>(tileSideLength),
+        static_cast<float>(i32tileSideLength),
         corners
     });
 }
@@ -212,8 +212,8 @@ void Game::Level::DigSquare(glm::vec2 const topLeftPx, EU::Square::Corners const
 void Game::Level::MaskInitialTunnels() const noexcept
 {
     glm::i32vec2 const dims{
-        static_cast<int32_t>(windowData.logicalDims.x) / tileSideLength,
-        static_cast<int32_t>(windowData.logicalDims.y) / tileSideLength
+        static_cast<int32_t>(windowData.logicalDims.x) / i32tileSideLength,
+        static_cast<int32_t>(windowData.logicalDims.y) / i32tileSideLength
     };
 
     for (int32_t row{}; row < dims.y; ++row)
@@ -246,24 +246,24 @@ void Game::Level::MaskInitialTunnels() const noexcept
 
 void Game::Level::SpawnPlayer() noexcept
 {
-    m_pPlayer = &m_scene.CreateGameObject({1.f, tileSideLength + 1});
+    m_pPlayer = &m_scene.CreateGameObject({1.f, ftileSideLength + 1.f});
 
     // Movement component
     m_pPlayer->AddComponent<Engine::MovementComponent>(
-        Engine::MovementComponent::Dependencies{windowData, tileSideLength},
-        tileSideLength,
+        Engine::MovementComponent::Dependencies{windowData, i32tileSideLength},
+        i32tileSideLength,
         45.f
     );
 
     // Animation component
     m_pPlayer->AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
-        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get(),
+        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pTaizoHoriDefaultSprite.get(),
             SDL_FRect{0.f, 0.f,
-            static_cast<float>(tileSideLength),
-            static_cast<float>(tileSideLength)}
+            static_cast<float>(i32tileSideLength),
+            static_cast<float>(i32tileSideLength)}
             },
         .frameCount = 2,
-        .secPerFrame = 0.2f
+        .secPerFrame = 0.1f
     });
 
     // Player component(must be added after animation component)
@@ -271,10 +271,10 @@ void Game::Level::SpawnPlayer() noexcept
 
     // Render component
     auto& characterRenderComponent{m_pPlayer->AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{m_sharedResources.pTaizoHoriSprite.get()}
+        Engine::Sprite::View{m_sharedResources.pTaizoHoriDefaultSprite.get()}
     )};
-    characterRenderComponent.SetSpriteView({m_sharedResources.pTaizoHoriSprite.get(), SDL_FRect{0.f, 0.f,
-        static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
+    characterRenderComponent.SetSpriteView({m_sharedResources.pTaizoHoriDefaultSprite.get(), SDL_FRect{0.f, 0.f,
+        static_cast<float>(i32tileSideLength), static_cast<float>(i32tileSideLength)}});
 
     // Lives component
     auto& livesComponent{m_pPlayer->AddComponent<LivesComponent>(2)};
@@ -311,18 +311,18 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
 
     // Movement component
     pooka.AddComponent<Engine::MovementComponent>(
-        Engine::MovementComponent::Dependencies{windowData, tileSideLength},
-        tileSideLength,
+        Engine::MovementComponent::Dependencies{windowData, i32tileSideLength},
+        i32tileSideLength,
         55.f,
         GetCanMovePred()
     );
 
     // Animation component
     pooka.AddComponent<Engine::AnimationComponent>(Engine::AnimationComponent::Data{
-        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pPookaSprite.get(),
+        .firstSpriteView = Engine::Sprite::View{m_sharedResources.pPookaDefaultSprite.get(),
             SDL_FRect{0.f, 0.f,
-            static_cast<float>(tileSideLength),
-            static_cast<float>(tileSideLength)}
+            static_cast<float>(i32tileSideLength),
+            static_cast<float>(i32tileSideLength)}
             },
         .frameCount = 2,
         .secPerFrame = 0.3f
@@ -330,10 +330,10 @@ void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
 
     // Render component
     auto& renderComponent{pooka.AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{m_sharedResources.pPookaSprite.get()}
+        Engine::Sprite::View{m_sharedResources.pPookaDefaultSprite.get()}
     )};
-    renderComponent.SetSpriteView({m_sharedResources.pPookaSprite.get(), SDL_FRect{0.f, 0.f,
-        static_cast<float>(tileSideLength), static_cast<float>(tileSideLength)}});
+    renderComponent.SetSpriteView({m_sharedResources.pPookaDefaultSprite.get(), SDL_FRect{0.f, 0.f,
+        static_cast<float>(i32tileSideLength), static_cast<float>(i32tileSideLength)}});
 
     // AI component
     pooka.AddComponent<AIComponent>(PawnComponent::Dependencies{*this});

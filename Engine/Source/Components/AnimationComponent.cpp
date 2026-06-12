@@ -41,7 +41,7 @@ void Engine::AnimationComponent::Update() noexcept
     m_currentSec += Timer::GetInstance().GetDeltaSec();
 }
 
-void Engine::AnimationComponent::ChangeAnimation(SDL_FRect const srcRect, uint32_t const frameCount) noexcept
+void Engine::AnimationComponent::ChangeAnimation(SDL_FRect const srcRect, uint32_t const frameCount, float const secPerFrame) noexcept
 {
     m_data.firstSpriteView.srcRect = srcRect;
     m_data.frameCount = frameCount;
@@ -49,6 +49,7 @@ void Engine::AnimationComponent::ChangeAnimation(SDL_FRect const srcRect, uint32
     m_ownerRenderComponent.SetSpriteView(m_data.firstSpriteView);
     m_currentFrameIdx = 0;
     m_currentSec = 0.f;
+    m_data.secPerFrame = secPerFrame;
 }
 
 void Engine::AnimationComponent::SetFrameSpriteViews()

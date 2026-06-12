@@ -10,10 +10,13 @@ Game::LevelManager::LevelManager(std::vector<std::string_view> const& paths)
     // Resources get reused in levels, so they are preloaded at startup
     , m_resources{
         .pFont = std::make_unique<Engine::Font>("Lingua.otf", 36),
-        .pTaizoHoriSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Default.png"),
-        .pPookaSprite = std::make_unique<Engine::Sprite>("Sprites/Pooka/Default.png"),
+        .pTaizoHoriDefaultSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Default.png"),
+        .pTaizoHoriPumpingSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Pumping.png"),
+        .pPookaDefaultSprite = std::make_unique<Engine::Sprite>("Sprites/Pooka/Default.png"),
+        .pPookaPumpedSprite = std::make_unique<Engine::Sprite>("Sprites/Pooka/Pumped.png"),
         .pGroundSprite = std::make_unique<Engine::Sprite>("Sprites/Background/Ground.png"),
         .pSkySprite =  std::make_unique<Engine::Sprite>("Sprites/Background/Sky.png"),
         .pPumpSprite = std::make_unique<Engine::Sprite>("Sprites/TaizoHori/Pump.png"),
+
     }
 {}

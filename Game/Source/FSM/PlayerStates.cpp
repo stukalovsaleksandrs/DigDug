@@ -10,6 +10,8 @@
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Scene/GameObject.hpp"
 #include "Engine/Utils/Timer.hpp"
+// Standard
+#include <print>
 
 namespace Game
 {
@@ -72,6 +74,20 @@ namespace Game
         inputManager.Unbind(m_gamepadRight);
     }
 
+    void Player::State::PlayerStateBase::BindAttackInput() const noexcept
+    {
+        auto& inputManager{ Engine::InputManager::GetInstance() };
+        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
+        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
+    }
+
+    void Player::State::PlayerStateBase::UnbindAttackInput() const noexcept
+    {
+        auto& inputManager{ Engine::InputManager::GetInstance() };
+        inputManager.Unbind(m_keyboardAttackAction);
+        inputManager.Unbind(m_gamepadAttackAction);
+    }
+
     StateType Player::State::PlayerStateBase::ProcessGameAction(GameAction const action) noexcept
     {
         switch (action)
@@ -97,9 +113,9 @@ namespace Game
         // Just using the first frame statically
         m_animationComponent.ChangeAnimation(
             SDL_FRect{0.f, 0.f,
-                static_cast<float>(tileSideLength),
-                static_cast<float>(tileSideLength)},
-            1
+                static_cast<float>(i32tileSideLength),
+                static_cast<float>(i32tileSideLength)},
+            1, 0.f
         );
     }
 
@@ -118,9 +134,9 @@ namespace Game
     {
         m_animationComponent.ChangeAnimation(
             SDL_FRect{0.f, 0.f,
-                static_cast<float>(tileSideLength),
-                static_cast<float>(tileSideLength)},
-            2
+                static_cast<float>(i32tileSideLength),
+                static_cast<float>(i32tileSideLength)},
+            2, 0.1f
         );
     }
 
@@ -157,7 +173,7 @@ namespace Game
 
 #pragma endregion Digging
 
-#pragma region Attacking
+#pragma region Throw
     Player::State::Throw::Throw(Dependencies const& dependencies, PumpComponent& pumpComponent)
         : PlayerStateBase{ dependencies }
         , m_pumpComponent{ pumpComponent }
@@ -170,9 +186,22 @@ namespace Game
     {
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
 
-        ProcessCollisions();
+        if (auto const result{ ProcessCollisions()}; result != std::nullopt)
+        {
+            std::println("Current time: {}/{}", m_currentSec, m_durationSec);
 
-        if (m_currentSec > m_durationSec) return typeid(Idle);
+            m_pumpComponent.Pause();
+
+             return result;
+        }
+
+        if (m_currentSec > m_durationSec)
+        {
+            BindAttackInput();
+            m_movementComponent.SetActive(true);
+            m_pumpComponent.SetActive(false);
+            return typeid(Idle);
+        }
         return std::nullopt;
     }
 
@@ -185,25 +214,7 @@ namespace Game
     }
 
     void Player::State::Throw::OnExit() noexcept
-    {
-        BindAttackInput();
-        m_movementComponent.SetActive(true);
-        m_pumpComponent.SetActive(false);
-    }
-
-    void Player::State::Throw::BindAttackInput() const noexcept
-    {
-        auto& inputManager{ Engine::InputManager::GetInstance() };
-        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
-        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
-    }
-
-    void Player::State::Throw::UnbindAttackInput() const noexcept
-    {
-        auto& inputManager{ Engine::InputManager::GetInstance() };
-        inputManager.Unbind(m_keyboardAttackAction);
-        inputManager.Unbind(m_gamepadAttackAction);
-    }
+    {}
 
     StateType Player::State::Throw::ProcessCollisions() const noexcept
     {
@@ -231,8 +242,39 @@ namespace Game
         }
         return std::nullopt;
     }
+#pragma endregion Throw
 
-#pragma endregion Attacking
+#pragma region Pump
+    Player::State::Pump::Pump(Dependencies const& dependencies, PumpComponent& pumpComponent)
+        : PlayerStateBase{ dependencies }
+        , m_pumpComponent{ pumpComponent }
+    {}
+
+    StateType Player::State::Pump::Update() noexcept
+    {
+        return PlayerStateBase::Update();
+    }
+
+    void Player::State::Pump::OnEnter() noexcept
+    {
+        PlayerStateBase::OnEnter();
+        // Playing pumping animation
+        m_animationComponent.ChangeAnimation(
+            SDL_FRect{2 * ftileSideLength, 0.f,
+                ftileSideLength,
+                ftileSideLength},
+            2, 0.3f
+        );
+    }
+
+    void Player::State::Pump::OnExit() noexcept
+    {
+        PlayerStateBase::OnExit();
+        BindAttackInput();
+        m_movementComponent.SetActive(true);
+        m_pumpComponent.SetActive(false);
+    }
+#pragma endregion Pump
 
 #pragma region Dying
     Player::State::Die::Die(Dependencies const& dependencies) noexcept

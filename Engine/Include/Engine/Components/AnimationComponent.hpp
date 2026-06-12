@@ -24,7 +24,7 @@ namespace Engine
         };
         explicit AnimationComponent(GameObject& owner, Data const&) noexcept;
         void Update() noexcept override;
-        void ChangeAnimation(SDL_FRect srcRect, uint32_t frameCount) noexcept;
+        void ChangeAnimation(SDL_FRect srcRect, uint32_t frameCount, float secPerFrame) noexcept;
 
     private:
         Data m_data;

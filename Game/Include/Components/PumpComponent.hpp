@@ -45,12 +45,15 @@ namespace Game
             };
         }
 
+        void Pause() noexcept{ m_paused = true; };
+
     private:
         Engine::RenderComponent& m_renderComponent;
         Engine::RenderComponent const& m_playerRenderComponent;
         Level& m_level;
         float const m_maxWidthPx{};
         float m_pxPerSec{}, m_currentWidthPx{};
+        bool m_paused{};
 
         std::vector<Engine::RenderComponent*> m_enemyRenderComponents{};
 

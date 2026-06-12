@@ -18,7 +18,9 @@ namespace Game
         struct Resources final
         {
             std::unique_ptr<Engine::Font> pFont;
-            std::unique_ptr<Engine::Sprite> pTaizoHoriSprite, pPookaSprite,
+            std::unique_ptr<Engine::Sprite>
+                pTaizoHoriDefaultSprite, pTaizoHoriPumpingSprite,
+                pPookaDefaultSprite, pPookaPumpedSprite,
                 pGroundSprite, pSkySprite,
                 pPumpSprite;
         };

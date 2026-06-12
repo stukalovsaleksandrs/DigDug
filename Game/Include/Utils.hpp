@@ -11,11 +11,12 @@
 
 namespace Game
 {
-    uint32_t constexpr tileSideLength{ 16 };// in px
+    uint32_t constexpr i32tileSideLength{ 16 };// in px
+    float constexpr ftileSideLength{ static_cast<float>(i32tileSideLength) };
 
     Engine::Window::Data const windowData( { 224, 288 }, 3.f );
 
-    glm::vec2 constexpr topLeftToCenterOffset{ 0.5f * glm::vec2{ tileSideLength, tileSideLength } };
+    glm::vec2 constexpr topLeftToCenterOffset{ 0.5f * glm::vec2{ ftileSideLength, ftileSideLength } };
 
     namespace EU = Engine::Utils;
 
