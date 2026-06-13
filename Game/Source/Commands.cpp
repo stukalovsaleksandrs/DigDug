@@ -35,14 +35,14 @@ void Game::PointCommand::Execute() noexcept
     m_playerComponent.AddPoints(1);
 }
 
-#pragma region AttackCommand
+#pragma region AttackStartCommand
 
-Game::AttackCommand::AttackCommand(FSM& fsm)
+Game::AttackStartCommand::AttackStartCommand(FSM& fsm)
     : m_fsm{ fsm }{}
 
-void Game::AttackCommand::Execute() noexcept
+void Game::AttackStartCommand::Execute() noexcept
 {
     m_fsm.ProcessGameAction(EventType::OnThrow);
 }
 
-#pragma endregion AttackCommand
+#pragma endregion AttackStartCommand

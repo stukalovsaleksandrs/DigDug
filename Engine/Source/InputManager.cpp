@@ -52,7 +52,7 @@ void Engine::InputManager::Unbind(InputAction const& action)
 void Engine::InputManager::ProcessPressing()
 {
     auto const keyboardState{ SDL_GetKeyboardState(nullptr) };
-    for (const auto& action : m_actionToCommand | std::views::keys)
+    for (auto const& action : m_actionToCommand | std::views::keys)
     {
         // Returning early if the action is not bound to the held type
         if (action.type != InputType::held) continue;

@@ -38,18 +38,29 @@ namespace Game
 
     };
 
-#pragma region AttackCommand
-    class AttackCommand final : public Engine::Command
+#pragma region AttackStartCommand
+    class AttackStartCommand final : public Engine::Command
     {
     public:
-        explicit AttackCommand(FSM&);
-        auto Execute() noexcept -> void override;
+        explicit AttackStartCommand(FSM&);
+        void Execute() noexcept override;
 
     private:
         FSM& m_fsm;
 
     };
-#pragma endregion AttackCommand
+#pragma endregion AttackStartCommand
+
+
+#pragma region AttackStopCommand
+    class AttackStopCommand final : public Engine::Command
+    {
+    public:
+        explicit AttackStopCommand();
+        void Execute() noexcept override;
+
+    };
+#pragma endregion AttackStopCommand
 }
 
 #endif// GAME_COMMANDS

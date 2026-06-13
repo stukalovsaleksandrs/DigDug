@@ -24,7 +24,6 @@ namespace Game
 
     StateType Player::State::PlayerStateBase::Update() noexcept
     {
-        if (CollidesWithEnemy()) return typeid(Die);
         return StateBase::Update();
     }
 
@@ -54,13 +53,14 @@ namespace Game
         inputManager.Bind(m_keyboardLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
         inputManager.Bind(m_keyboardDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
         inputManager.Bind(m_keyboardRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
-        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(fsm));
+        inputManager.Bind(m_keyboardAttackStartAction, std::make_unique<AttackStartCommand>(fsm));
+        inputManager.Bind(m_keyboardAttackStopAction, std::make_unique<AttackStopCommand>());
         // Gamepad
         inputManager.Bind(m_gamepadUp, makeMoveCommand(glm::vec2{ 0.f, -1.f }));
         inputManager.Bind(m_gamepadLeft, makeMoveCommand(glm::vec2{ -1.f, 0.f }));
         inputManager.Bind(m_gamepadDown, makeMoveCommand(glm::vec2{ 0.f, 1.f }));
         inputManager.Bind(m_gamepadRight, makeMoveCommand(glm::vec2{ 1.f, 0.f }));
-        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(fsm));
+        inputManager.Bind(m_gamepadAttackStartAction, std::make_unique<AttackStartCommand>(fsm));
     }
 
     void Player::State::PlayerStateBase::UnbindAllInput() const noexcept
@@ -83,15 +83,15 @@ namespace Game
     void Player::State::PlayerStateBase::BindAttackInput() const noexcept
     {
         auto& inputManager{ Engine::InputManager::GetInstance() };
-        inputManager.Bind(m_keyboardAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
-        inputManager.Bind(m_gamepadAttackAction, std::make_unique<AttackCommand>(m_dependencies.fsm));
+        inputManager.Bind(m_keyboardAttackStartAction, std::make_unique<AttackStartCommand>(m_dependencies.fsm));
+        inputManager.Bind(m_gamepadAttackStartAction, std::make_unique<AttackStartCommand>(m_dependencies.fsm));
     }
 
     void Player::State::PlayerStateBase::UnbindAttackInput() const noexcept
     {
         auto& inputManager{ Engine::InputManager::GetInstance() };
-        inputManager.Unbind(m_keyboardAttackAction);
-        inputManager.Unbind(m_gamepadAttackAction);
+        inputManager.Unbind(m_keyboardAttackStartAction);
+        inputManager.Unbind(m_gamepadAttackStartAction);
     }
 
     bool Player::State::PlayerStateBase::CollidesWithEnemy() const noexcept
@@ -151,8 +151,7 @@ namespace Game
 
     StateType Player::State::Idle::Update() noexcept
     {
-        if (auto const result{ PlayerStateBase::Update() };
-            result != std::nullopt) return result;
+        if (CollidesWithEnemy()) return typeid(Die);
 
         if (m_movementComponent.IsMoving()) return typeid(Walk);
         return std::nullopt;
@@ -175,8 +174,7 @@ namespace Game
 
     StateType Player::State::Walk::Update() noexcept
     {
-        if (auto const result{ PlayerStateBase::Update() };
-            result != std::nullopt) return result;
+        if (CollidesWithEnemy()) return typeid(Die);
 
         // Not moving -> idle
         if (auto const& movementComponent{ m_movementComponent };
@@ -203,8 +201,7 @@ namespace Game
 
     StateType Player::State::Dig::Update() noexcept
     {
-        if (auto const result{ PlayerStateBase::Update() };
-            result != std::nullopt) return result;
+        if (CollidesWithEnemy()) return typeid(Die);
 
         if (!(TryDigging() and m_movementComponent.IsMoving())) return typeid(Idle);
         return std::nullopt;
@@ -223,12 +220,7 @@ namespace Game
 
     StateType Player::State::Throw::Update() noexcept
     {
-        if (auto const result{ PlayerStateBase::Update() };
-            result != std::nullopt)
-        {
-            m_pumpComponent.SetActive(false);
-            return result;
-        }
+        if (CollidesWithEnemy()) return typeid(Die);
 
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
 
@@ -243,7 +235,7 @@ namespace Game
 
         if (m_currentSec > m_durationSec)
         {
-            BindAttackInput();
+            // BindAttackInput();
             m_movementComponent.SetActive(true);
             m_pumpComponent.SetActive(false);
             return typeid(Idle);
@@ -255,24 +247,23 @@ namespace Game
     {
         m_pumpComponent.SetActive(true);
         m_pumpComponent.SetPaused(false);
-        UnbindAttackInput();
+        // UnbindAttackInput();
         m_movementComponent.SetActive(false);
         m_currentSec = 0.f;
     }
 
     void Player::State::Throw::OnExit() noexcept
     {
-
+        m_pumpComponent.SetPaused(false);
+        m_pumpComponent.SetActive(false);
+        m_movementComponent.SetActive(true);
     }
 
     StateType Player::State::Throw::ProcessCollisions() const noexcept
     {
         if (IsCollidingWithGround())
         {
-            m_pumpComponent.SetPaused(false);
-            m_pumpComponent.SetActive(false);
-            m_movementComponent.SetActive(true);
-            BindAttackInput();
+            // BindAttackInput();
             return typeid(Walk);
         }
         return ProcessPumpEnemyCollisions();
@@ -327,12 +318,16 @@ namespace Game
 
     StateType Player::State::Pump::Update() noexcept
     {
+        if (CollidesWithEnemy()) return typeid(Die);
         return PlayerStateBase::Update();
     }
 
     void Player::State::Pump::OnEnter() noexcept
     {
         PlayerStateBase::OnEnter();
+        m_pumpComponent.SetPaused(true);
+        m_pumpComponent.SetActive(false);
+        m_movementComponent.SetActive(false);
         // Playing pumping animation
         m_animationComponent.ChangeSource(
             SDL_FRect{2 * ftileSideLengthPx, 0.f,
@@ -345,7 +340,7 @@ namespace Game
     void Player::State::Pump::OnExit() noexcept
     {
         PlayerStateBase::OnExit();
-        BindAttackInput();
+        // BindAttackInput();
         m_movementComponent.SetActive(true);
         m_pumpComponent.SetPaused(false);
         m_pumpComponent.SetActive(false);

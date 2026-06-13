@@ -39,13 +39,15 @@ namespace Game::Player::State
         Engine::InputAction m_keyboardDown{SDL_SCANCODE_S, Engine::InputType::held};
         Engine::InputAction m_keyboardRight{SDL_SCANCODE_D, Engine::InputType::held};
         Engine::InputAction m_keyboardPointAction{SDL_SCANCODE_P, Engine::InputType::released};
-        Engine::InputAction m_keyboardAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
+        Engine::InputAction m_keyboardAttackStartAction{SDL_SCANCODE_SPACE, Engine::InputType::held};
+        Engine::InputAction m_keyboardAttackStopAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
 
         Engine::InputAction m_gamepadUp{SDL_GAMEPAD_BUTTON_DPAD_UP, Engine::InputType::held};
         Engine::InputAction m_gamepadLeft{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Engine::InputType::held};
         Engine::InputAction m_gamepadDown{SDL_GAMEPAD_BUTTON_DPAD_DOWN, Engine::InputType::held};
         Engine::InputAction m_gamepadRight{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Engine::InputType::held};
-        Engine::InputAction m_gamepadAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
+        Engine::InputAction m_gamepadAttackStartAction{SDL_SCANCODE_SPACE, Engine::InputType::held};
+        Engine::InputAction m_gamepadAttackStopAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
 
         StateType Update() noexcept override;
 
