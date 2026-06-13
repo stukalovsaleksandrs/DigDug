@@ -97,8 +97,10 @@ namespace Game
     bool Player::State::PlayerStateBase::CollidesWithEnemy() const noexcept
     {
         glm::vec2 const playerTopLeft{ m_dependencies.owner.GetWorldTopLeft() };
+        float constexpr padding{ 8 };
         SDL_FRect const playerDstRect{
-            playerTopLeft.x, playerTopLeft.y, ftileSideLengthPx, ftileSideLengthPx
+            playerTopLeft.x + padding, playerTopLeft.y + padding,
+            ftileSideLengthPx - padding, ftileSideLengthPx - padding
         };
 
         for (Engine::RenderComponent const * const pEnemyRenderComponent : m_dependencies.level.GetEnemyRenderComponents())
@@ -222,7 +224,11 @@ namespace Game
     StateType Player::State::Throw::Update() noexcept
     {
         if (auto const result{ PlayerStateBase::Update() };
-            result != std::nullopt) return result;
+            result != std::nullopt)
+        {
+            m_pumpComponent.SetActive(false);
+            return result;
+        }
 
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
 
@@ -255,7 +261,9 @@ namespace Game
     }
 
     void Player::State::Throw::OnExit() noexcept
-    {}
+    {
+
+    }
 
     StateType Player::State::Throw::ProcessCollisions() const noexcept
     {

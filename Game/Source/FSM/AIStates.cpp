@@ -282,7 +282,7 @@ void Game::AI::Pumped::OnEnter() noexcept
     renderComponent.dstDims = glm::vec2{32.f, 32.f};
     renderComponent.SetSpriteView(view);
     auto const ownerWorldLocation{ owner.GetWorldTopLeft() };
-    owner.SetLocalTopLeft(glm::vec2{ownerWorldLocation.x - ftileSideLengthPx, ownerWorldLocation.y - 0.5f * ftileSideLengthPx});
+    owner.SetLocalTopLeft(glm::vec2{ownerWorldLocation.x - 0.5f * ftileSideLengthPx, ownerWorldLocation.y - 0.5f * ftileSideLengthPx});
 }
 
 Game::StateType Game::AI::Pumped::Update() noexcept
