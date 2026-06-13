@@ -11,6 +11,7 @@
 
 namespace Game
 {
+    using Cell = glm::i32vec2;
     uint32_t constexpr i32tileSideLengthPx{ 16 };// in px
     float constexpr ftileSideLengthPx{ static_cast<float>(i32tileSideLengthPx) };
 

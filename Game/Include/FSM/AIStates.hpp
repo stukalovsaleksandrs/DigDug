@@ -14,7 +14,6 @@ namespace Game::AI
     class AIStateBase : public StateBase
     {
     public:
-        using Cell = glm::i32vec2;
         using CellMap = std::unordered_map<Cell, Cell, Engine::Utils::Hash_i32vec2>;
         using Path = std::vector<glm::i32vec2>;
 

@@ -84,7 +84,7 @@ Game::AI::AIStateBase::Path Game::AI::AIStateBase::ReconstructPath(CellMap const
     return path;
 }
 
-std::vector<Game::AI::AIStateBase::Cell> Game::AI::AIStateBase::GetNeighbors(Cell const cell) const noexcept
+std::vector<Game::Cell> Game::AI::AIStateBase::GetNeighbors(Cell const cell) const noexcept
 {
     std::vector<Cell> cells;
     Grid const& grid{ m_dependencies.level.GetGrid() };

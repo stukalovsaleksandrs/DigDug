@@ -188,7 +188,7 @@ namespace Game
 
         if (auto const result{ ProcessCollisions()}; result != std::nullopt)
         {
-            std::println("Current time: {}/{}", m_currentSec, m_durationSec);
+            // std::println("Current time: {}/{}", m_currentSec, m_durationSec);
 
             m_pumpComponent.SetPaused(true);
 
@@ -208,6 +208,7 @@ namespace Game
     void Player::State::Throw::OnEnter() noexcept
     {
         m_pumpComponent.SetActive(true);
+        m_pumpComponent.SetPaused(false);
         UnbindAttackInput();
         m_movementComponent.SetActive(false);
         m_currentSec = 0.f;
@@ -217,6 +218,39 @@ namespace Game
     {}
 
     StateType Player::State::Throw::ProcessCollisions() const noexcept
+    {
+        if (IsCollidingWithGround())
+        {
+            m_pumpComponent.SetPaused(false);
+            m_pumpComponent.SetActive(false);
+            m_movementComponent.SetActive(true);
+            BindAttackInput();
+            return typeid(Walk);
+        }
+        return ProcessEnemyCollisions();
+    }
+
+    bool Player::State::Throw::IsCollidingWithGround() const noexcept
+    {
+        Grid const& grid{ m_dependencies.level.GetGrid() };
+        SDL_FRect const pumpDstRect{ m_pumpComponent.GetDstRect() };
+        if (pumpDstRect.x < 1.f || pumpDstRect.y < 1.f) return false;
+        float constexpr padding{ 8.f };
+        Cell const pumpTopLeftCell{ grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + padding, pumpDstRect.y + padding}) },
+            pumpTopRightCell{ grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + pumpDstRect.w - padding, pumpDstRect.y + padding}) },
+            pumpBottomRightCell{ grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + pumpDstRect.w - padding, pumpDstRect.y + pumpDstRect.h - padding}) },
+            pumpBottomLeftCell{  grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + padding, pumpDstRect.y + pumpDstRect.h - padding})  };
+
+        bool collides{
+            grid.IsGround(pumpTopLeftCell)
+            // || grid.IsGround(pumpTopRightCell)
+            || grid.IsGround(pumpBottomRightCell)
+            // || grid.IsGround(pumpBottomLeftCell)
+        };
+        return collides;
+    }
+
+    StateType Player::State::Throw::ProcessEnemyCollisions() const noexcept
     {
         SDL_FRect const pumpDstRect{ m_pumpComponent.GetDstRect() };
         for (Engine::RenderComponent const * const pEnemyRenderComponent : m_dependencies.level.GetEnemyRenderComponents())
@@ -242,6 +276,7 @@ namespace Game
         }
         return std::nullopt;
     }
+
 #pragma endregion Throw
 
 #pragma region Pump

@@ -99,6 +99,10 @@ namespace Game::Player::State
         float m_currentSec{};
 
         [[nodiscard]] StateType ProcessCollisions() const noexcept;
+
+        [[nodiscard]] bool IsCollidingWithGround() const noexcept;
+
+        [[nodiscard]] StateType ProcessEnemyCollisions() const noexcept;
     };
 
     class Pump final : public PlayerStateBase
