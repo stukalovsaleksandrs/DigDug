@@ -232,22 +232,14 @@ namespace Game
 
     bool Player::State::Throw::IsCollidingWithGround() const noexcept
     {
-        Grid const& grid{ m_dependencies.level.GetGrid() };
-        SDL_FRect const pumpDstRect{ m_pumpComponent.GetDstRect() };
-        if (pumpDstRect.x < 1.f || pumpDstRect.y < 1.f) return false;
-        float constexpr padding{ 8.f };
-        Cell const pumpTopLeftCell{ grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + padding, pumpDstRect.y + padding}) },
-            pumpTopRightCell{ grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + pumpDstRect.w - padding, pumpDstRect.y + padding}) },
-            pumpBottomRightCell{ grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + pumpDstRect.w - padding, pumpDstRect.y + pumpDstRect.h - padding}) },
-            pumpBottomLeftCell{  grid.GetCellFromPoint(glm::vec2{pumpDstRect.x + padding, pumpDstRect.y + pumpDstRect.h - padding})  };
+        // Don't test until the pump has actually extended out of the player tile.
+        // i32tileSideLengthPx is the minimum meaningful extension.
+        if (m_pumpComponent.GetCurrentWidthPx() < ftileSideLengthPx)
+            return false;
 
-        bool collides{
-            grid.IsGround(pumpTopLeftCell)
-            // || grid.IsGround(pumpTopRightCell)
-            || grid.IsGround(pumpBottomRightCell)
-            // || grid.IsGround(pumpBottomLeftCell)
-        };
-        return collides;
+        Grid const& grid { m_dependencies.level.GetGrid() };
+        glm::vec2 const leadingPt { m_pumpComponent.GetLeadingEdgePoint() };
+        return grid.IsGround(grid.GetCellFromPoint(leadingPt));
     }
 
     StateType Player::State::Throw::ProcessEnemyCollisions() const noexcept

@@ -59,6 +59,46 @@ void Game::PumpComponent::Update() noexcept
     }
 }
 
+glm::vec2 Game::PumpComponent::GetLeadingEdgePoint() const noexcept
+{
+    auto const [flipMode, degrees] { m_renderComponent.GetSettings() };
+    glm::vec2 const worldPos { m_owner.GetWorldLocation() };
+
+    if (Engine::Utils::NearlyZero(degrees, 1.f))
+    {
+        // Horizontal: leading edge is the far x of the dst rect.
+        // worldPos.x is always the left edge of the dst rect regardless of flip,
+        // because SetLocalPosition already moved the GO so the rect starts there.
+        float const leadingX {
+            flipMode == SDL_FLIP_HORIZONTAL
+                ? worldPos.x                               // growing leftward
+                : worldPos.x + m_currentWidthPx            // growing rightward
+        };
+        // y: center of the sprite vertically (avoids hitting ceiling/floor tiles
+        // adjacent to the player row that aren't actually in the pump's path)
+        float const centreY { worldPos.y + m_renderComponent.GetSpriteDims().y * 0.5f };
+        return { leadingX, centreY };
+    }
+    // Vertical: leading edge is the far y of the dst rect.
+    float const centreX { worldPos.x + m_currentWidthPx * 0.5f };
+    float const leadingY {
+        degrees < 0.f
+            ? worldPos.y                               // growing upward
+            : worldPos.y + m_renderComponent.GetSpriteDims().y  // growing downward
+    };
+    return { centreX, leadingY };
+}
+
+SDL_FRect Game::PumpComponent::GetDstRect() const noexcept
+{
+    auto const topLeft{ m_owner.GetWorldLocation() };
+    return SDL_FRect{
+        topLeft.x, topLeft.y,
+        m_renderComponent.dstDims.x,
+        m_renderComponent.dstDims.y
+    };
+}
+
 void Game::PumpComponent::OnEnable() noexcept
 {
     Component::OnEnable();

@@ -35,15 +35,11 @@ namespace Game
             m_pxPerSec = m_maxWidthPx / seconds;
         }
 
-        [[nodiscard]] SDL_FRect GetDstRect() const noexcept
-        {
-            auto const topLeft{ m_owner.GetWorldLocation() };
-            return SDL_FRect{
-                topLeft.x, topLeft.y,
-                m_renderComponent.dstDims.x,
-                m_renderComponent.dstDims.y
-            };
-        }
+        [[nodiscard]] glm::vec2 GetLeadingEdgePoint() const noexcept;
+
+        [[nodiscard]] SDL_FRect GetDstRect() const noexcept;
+
+        [[nodiscard]] float GetCurrentWidthPx() const noexcept { return m_currentWidthPx; }
 
         // Same as SetActive, but does not call callbacks
         void SetPaused(bool const paused) noexcept{ m_paused = paused; }
