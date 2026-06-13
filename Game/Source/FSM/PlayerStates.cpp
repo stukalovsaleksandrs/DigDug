@@ -22,9 +22,15 @@ namespace Game
         , m_animationComponent{ *m_dependencies.owner.GetComponent<Engine::AnimationComponent>() }
     {}
 
+    StateType Player::State::PlayerStateBase::Update() noexcept
+    {
+        if (CollidesWithEnemy()) return typeid(Die);
+        return StateBase::Update();
+    }
+
     bool Player::State::PlayerStateBase::TryDigging() const noexcept
     {
-        auto const worldPosition{m_dependencies.owner.GetWorldLocation()};
+        auto const worldPosition{m_dependencies.owner.GetWorldTopLeft()};
         return m_dependencies.level.TryDigging(
             worldPosition + topLeftToCenterOffset
         );
@@ -88,6 +94,28 @@ namespace Game
         inputManager.Unbind(m_gamepadAttackAction);
     }
 
+    bool Player::State::PlayerStateBase::CollidesWithEnemy() const noexcept
+    {
+        glm::vec2 const playerTopLeft{ m_dependencies.owner.GetWorldTopLeft() };
+        SDL_FRect const playerDstRect{
+            playerTopLeft.x, playerTopLeft.y, ftileSideLengthPx, ftileSideLengthPx
+        };
+
+        for (Engine::RenderComponent const * const pEnemyRenderComponent : m_dependencies.level.GetEnemyRenderComponents())
+        {
+            assert(pEnemyRenderComponent);
+            glm::vec2 const enemyTopLeft{ pEnemyRenderComponent->GetOwner().GetWorldTopLeft() };
+            SDL_FRect const enemyDstRect{
+                enemyTopLeft.x, enemyTopLeft.y,
+                pEnemyRenderComponent->dstDims.x, pEnemyRenderComponent->dstDims.y
+            };
+
+            if (Engine::Utils::Intersect(playerDstRect, enemyDstRect)) return true;
+        }
+
+        return false;
+    }
+
     StateType Player::State::PlayerStateBase::ProcessGameEvent(EventType const type) noexcept
     {
         switch (type)
@@ -121,6 +149,9 @@ namespace Game
 
     StateType Player::State::Idle::Update() noexcept
     {
+        if (auto const result{ PlayerStateBase::Update() };
+            result != std::nullopt) return result;
+
         if (m_movementComponent.IsMoving()) return typeid(Walk);
         return std::nullopt;
     }
@@ -142,6 +173,9 @@ namespace Game
 
     StateType Player::State::Walk::Update() noexcept
     {
+        if (auto const result{ PlayerStateBase::Update() };
+            result != std::nullopt) return result;
+
         // Not moving -> idle
         if (auto const& movementComponent{ m_movementComponent };
             !movementComponent.IsMoving())
@@ -167,6 +201,9 @@ namespace Game
 
     StateType Player::State::Dig::Update() noexcept
     {
+        if (auto const result{ PlayerStateBase::Update() };
+            result != std::nullopt) return result;
+
         if (!(TryDigging() and m_movementComponent.IsMoving())) return typeid(Idle);
         return std::nullopt;
     }
@@ -184,6 +221,9 @@ namespace Game
 
     StateType Player::State::Throw::Update() noexcept
     {
+        if (auto const result{ PlayerStateBase::Update() };
+            result != std::nullopt) return result;
+
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
 
         if (auto const result{ ProcessCollisions()}; result != std::nullopt)
@@ -227,7 +267,7 @@ namespace Game
             BindAttackInput();
             return typeid(Walk);
         }
-        return ProcessEnemyCollisions();
+        return ProcessPumpEnemyCollisions();
     }
 
     bool Player::State::Throw::IsCollidingWithGround() const noexcept
@@ -242,13 +282,13 @@ namespace Game
         return grid.IsGround(grid.GetCellFromPoint(leadingPt));
     }
 
-    StateType Player::State::Throw::ProcessEnemyCollisions() const noexcept
+    StateType Player::State::Throw::ProcessPumpEnemyCollisions() const noexcept
     {
         SDL_FRect const pumpDstRect{ m_pumpComponent.GetDstRect() };
         for (Engine::RenderComponent const * const pEnemyRenderComponent : m_dependencies.level.GetEnemyRenderComponents())
         {
             assert(pEnemyRenderComponent);
-            glm::vec2 const enemyTopLeft{ pEnemyRenderComponent->GetOwner().GetWorldLocation() };
+            glm::vec2 const enemyTopLeft{ pEnemyRenderComponent->GetOwner().GetWorldTopLeft() };
             SDL_FRect const enemyDstRect{
                 enemyTopLeft.x, enemyTopLeft.y,
                 pEnemyRenderComponent->dstDims.x, pEnemyRenderComponent->dstDims.y
@@ -321,9 +361,33 @@ namespace Game
         : PlayerStateBase{dependencies}
     {}
 
+    void Player::State::Die::OnEnter() noexcept
+    {
+        m_currentSec = 0.f;
+        PlayerStateBase::OnEnter();
+        UnbindAllInput();
+        m_animationComponent.ChangeSource(
+            SDL_FRect{
+            0.f,
+            ftileSideLengthPx,
+            ftileSideLengthPx,
+            ftileSideLengthPx
+            }, m_frameCount, m_secPerFrame
+        );
+    }
+
+    StateType Player::State::Die::Update() noexcept
+    {
+        m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
+        if (m_currentSec >= m_secPerFrame * m_frameCount)
+        {
+            m_dependencies.owner.MarkForDeletion();
+        }
+        return std::nullopt;
+    }
+
     void Player::State::Die::OnExit() noexcept
     {
-        UnbindAllInput();
     }
 #pragma endregion Dying
 

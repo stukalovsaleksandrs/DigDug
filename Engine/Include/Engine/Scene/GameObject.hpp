@@ -148,11 +148,11 @@ namespace Engine
          * Transform
          *******************************************/
 
-        void SetLocalPosition(glm::vec2 position) noexcept;
-        [[nodiscard]] glm::vec2 GetLocalLocation() const noexcept;
+        void SetLocalTopLeft(glm::vec2 position) noexcept;
+        [[nodiscard]] glm::vec2 GetLocalTopLeft() const noexcept;
 
         // NOTE: Non-const, because it can update the position
-        [[nodiscard]] glm::vec2 GetWorldLocation() noexcept;
+        [[nodiscard]] glm::vec2 GetWorldTopLeft() noexcept;
 
         // Marks as dirty the position of the current game object and all its children
         void SetPositionDirty() noexcept;

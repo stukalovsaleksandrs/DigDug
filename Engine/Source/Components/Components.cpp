@@ -34,7 +34,7 @@ Engine::RenderComponent::~RenderComponent()
 void Engine::RenderComponent::Render() const noexcept {
     if (not m_active) return;
     assert(m_spriteView.pSprite && "Texture is not set");
-    auto const& topLeft{ m_owner.GetWorldLocation() };
+    auto const& topLeft{ m_owner.GetWorldTopLeft() };
     if (m_spriteView.srcRect.w > 0.f && m_spriteView.srcRect.h > 0.f)
     {
         Renderer::GetInstance().RenderTexture(
@@ -202,7 +202,7 @@ void Engine::OrbitComponent::Update() noexcept
     Component::Update();
 
     // 1. Getting the normalized distance vector and distance
-    auto const distanceVector{ m_owner.GetWorldLocation() - m_owner.hierarchyElement.GetParentGameObject()->GetWorldLocation() };
+    auto const distanceVector{ m_owner.GetWorldTopLeft() - m_owner.hierarchyElement.GetParentGameObject()->GetWorldTopLeft() };
     // NOTE: glm::vec2::length always returns 2 for some reason
     float const distance{ glm::sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y) };
     glm::vec2 const distanceVectorNormalized{ glm::normalize(distanceVector) };
@@ -212,6 +212,6 @@ void Engine::OrbitComponent::Update() noexcept
     // 3. Adding angular velocity to the angle
     radians += m_radiansSec * Timer::GetInstance().GetDeltaSec();
     // 4. Calculating the new distance vector and adding the distance vector to the center
-    m_owner.SetLocalPosition(glm::vec2(glm::cos(radians), std::sin(radians)) * distance);
+    m_owner.SetLocalTopLeft(glm::vec2(glm::cos(radians), std::sin(radians)) * distance);
 }
 #pragma endregion OrbitComponent

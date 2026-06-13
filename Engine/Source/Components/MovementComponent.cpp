@@ -42,14 +42,14 @@ void Engine::MovementComponent::Update() noexcept
     // Limiting player only to the screen borders
     float const deltaSec{ std::min(Timer::GetInstance().GetDeltaSec(), .01f) };
     auto const deltaLocation{ glm::normalize(m_direction) * m_pxPerSec * deltaSec };
-    auto const newLocation{ m_owner.GetWorldLocation() + deltaLocation };
+    auto const newLocation{ m_owner.GetWorldTopLeft() + deltaLocation };
     if (IsWithinScreen(newLocation))
     {
-        if (m_canMovePred(m_owner.GetWorldLocation() + deltaLocation))
+        if (m_canMovePred(m_owner.GetWorldTopLeft() + deltaLocation))
         {
             // Updating location
-            m_owner.SetLocalPosition(
-                m_owner.GetLocalLocation() + deltaLocation
+            m_owner.SetLocalTopLeft(
+                m_owner.GetLocalTopLeft() + deltaLocation
             );
 
             // Firing event if direction changed

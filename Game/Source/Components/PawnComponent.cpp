@@ -55,7 +55,7 @@ void Game::PawnComponent::Update() noexcept
     if (auto const lerpedLocation{ m_locationLerpData.Update()};
         lerpedLocation != std::nullopt)
     {
-        m_owner.SetLocalPosition(lerpedLocation.value());
+        m_owner.SetLocalTopLeft(lerpedLocation.value());
     }
 }
 
@@ -75,9 +75,9 @@ void Game::PawnComponent::ProcessSpriteOrientation(glm::vec2 const direction) no
 
 void Game::PawnComponent::ConstrainMovementToGrid() noexcept
 {
-    glm::vec2 const srcTopLeft{  m_owner.GetWorldLocation()  };// in px
+    glm::vec2 const srcTopLeft{  m_owner.GetWorldTopLeft()  };// in px
     glm::vec2 const dstTopLeft{  GetCurrentCellTopLeft()  };// in px
-    float const distance{ glm::length(dstTopLeft - m_owner.GetWorldLocation()) };// in px
+    float const distance{ glm::length(dstTopLeft - m_owner.GetWorldTopLeft()) };// in px
     float const lerpSec{ distance / m_movementComponent.GetPxPerSec() };
 
     m_movementComponent.SetActive(false);
@@ -87,7 +87,7 @@ void Game::PawnComponent::ConstrainMovementToGrid() noexcept
 
 glm::vec2 Game::PawnComponent::GetCurrentCellTopLeft() const noexcept
 {
-    return m_dependencies.level.GetGrid().GetCellTopLeftFromCellCenter(m_owner.GetWorldLocation() + 0.5f * glm::vec2{i32tileSideLengthPx});
+    return m_dependencies.level.GetGrid().GetCellTopLeftFromCellCenter(m_owner.GetWorldTopLeft() + 0.5f * glm::vec2{i32tileSideLengthPx});
 }
 
  #pragma region LocationLerpData

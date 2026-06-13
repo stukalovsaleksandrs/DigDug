@@ -106,7 +106,7 @@ Game::PumpComponent& Game::Level::GetPumpComponent() noexcept
 
 glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
 {
-    return m_grid.GetCellFromPoint(m_pPlayer->GetWorldLocation() + glm::vec2{1.f, 1.f});
+    return m_grid.GetCellFromPoint(m_pPlayer->GetWorldTopLeft() + glm::vec2{1.f, 1.f});
 }
 
 Game::FSM& Game::Level::GetPlayerFSM() const noexcept

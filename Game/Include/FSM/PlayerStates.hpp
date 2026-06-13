@@ -47,12 +47,16 @@ namespace Game::Player::State
         Engine::InputAction m_gamepadRight{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Engine::InputType::held};
         Engine::InputAction m_gamepadAttackAction{SDL_SCANCODE_SPACE, Engine::InputType::released};
 
+        StateType Update() noexcept override;
+
         [[nodiscard]] bool TryDigging() const noexcept;
 
         void BindAllInput(FSM&) const noexcept;
         void UnbindAllInput() const noexcept;
         void BindAttackInput() const noexcept;
         void UnbindAttackInput() const noexcept;
+
+        [[nodiscard]] bool CollidesWithEnemy() const noexcept;
     };
 
     class Idle final : public PlayerStateBase
@@ -102,7 +106,7 @@ namespace Game::Player::State
 
         [[nodiscard]] bool IsCollidingWithGround() const noexcept;
 
-        [[nodiscard]] StateType ProcessEnemyCollisions() const noexcept;
+        [[nodiscard]] StateType ProcessPumpEnemyCollisions() const noexcept;
     };
 
     class Pump final : public PlayerStateBase
@@ -124,9 +128,14 @@ namespace Game::Player::State
     {
     public:
         explicit Die(Dependencies const&) noexcept;
-        [[nodiscard]] StateType Update() noexcept override{return std::nullopt;};
-        void OnEnter() noexcept override{};
+        [[nodiscard]] StateType Update() noexcept override;
+        void OnEnter() noexcept override;
         void OnExit() noexcept override;
+
+    private:
+        uint32_t const m_frameCount{ 4 };
+        float const m_secPerFrame{ .5f };
+        float m_currentSec{};
     };
 }
 

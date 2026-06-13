@@ -26,7 +26,7 @@ Game::AI::AIStateBase::AIStateBase(Dependencies const& dependencies)
 
 Game::AI::AIStateBase::Path Game::AI::AIStateBase::TryFindingPathToPlayer() const noexcept// BFS
 {
-    Cell startCell{  m_dependencies.level.GetGrid().GetCellFromPoint(m_dependencies.owner.GetWorldLocation())  };
+    Cell startCell{  m_dependencies.level.GetGrid().GetCellFromPoint(m_dependencies.owner.GetWorldTopLeft())  };
     Cell const targetCell{ m_dependencies.level.GetPlayerCell()};
     // Pending
     std::queue<Cell> pending;
@@ -129,7 +129,7 @@ Game::StateType Game::AI::Wander<Direction>::Update() noexcept
 {
     if (m_playerReachable) return typeid(Chase);
 
-    glm::vec2 const currentLocation{ m_dependencies.owner.GetWorldLocation() };
+    glm::vec2 const currentLocation{ m_dependencies.owner.GetWorldTopLeft() };
 
     // Flipping direction when facing dead end
     if (Engine::Utils::NearlyEqual(currentLocation, m_prevLocation))
@@ -210,7 +210,7 @@ Game::StateType Game::AI::Chase::Update() noexcept
     Grid const& grid{ m_dependencies.level.GetGrid() };
     // Switching the target cell if we've arrived
     Cell const currentTargetCell{ m_path.at(m_currentTargetIdx) };
-    if (glm::vec2 const npcToTarget{ grid.GetCellCenter(currentTargetCell) - grid.GetCellCenter(grid.GetCellFromPoint(m_dependencies.owner.GetWorldLocation() + glm::vec2{1, 1})) };
+    if (glm::vec2 const npcToTarget{ grid.GetCellCenter(currentTargetCell) - grid.GetCellCenter(grid.GetCellFromPoint(m_dependencies.owner.GetWorldTopLeft() + glm::vec2{1, 1})) };
         Engine::Utils::NearlyZero(glm::length2(npcToTarget)))
     {
         // Last cell -> generating a new path
@@ -281,14 +281,14 @@ void Game::AI::Pumped::OnEnter() noexcept
     auto& renderComponent{ *owner.GetComponent<Engine::RenderComponent>() };
     renderComponent.dstDims = glm::vec2{32.f, 32.f};
     renderComponent.SetSpriteView(view);
-    auto const ownerWorldLocation{ owner.GetWorldLocation() };
-    owner.SetLocalPosition(glm::vec2{ownerWorldLocation.x - ftileSideLengthPx, ownerWorldLocation.y - 0.5f * ftileSideLengthPx});
+    auto const ownerWorldLocation{ owner.GetWorldTopLeft() };
+    owner.SetLocalTopLeft(glm::vec2{ownerWorldLocation.x - ftileSideLengthPx, ownerWorldLocation.y - 0.5f * ftileSideLengthPx});
 }
 
 Game::StateType Game::AI::Pumped::Update() noexcept
 {
     m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
-    if (m_currentSec >= m_secPerFrame * m_frameCount)
+    if (m_currentSec >= m_secPerFrame * (m_frameCount - 1))
     {
         // Notifying the player character
         NotifyObservers(EventType::OnEnemyDied);

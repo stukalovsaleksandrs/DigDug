@@ -47,7 +47,7 @@ std::type_index Game::AIComponent::SelectInitialState() const noexcept
     Grid const& grid{ m_dependencies.level.GetGrid() };
     // Any horizontal neighboring cell is ground -> wandering vertically, else -> wandering horizontally
     // TODO: Check for screen borders
-    if (glm::i32vec2 const currentCell{ grid.GetCellFromPoint(m_owner.GetWorldLocation()) };
+    if (glm::i32vec2 const currentCell{ grid.GetCellFromPoint(m_owner.GetWorldTopLeft()) };
         grid.IsGround({currentCell.x - 1, currentCell.y}) || grid.IsGround({currentCell.x + 1, currentCell.y}))
     {
         return typeid(AI::WanderVertically);

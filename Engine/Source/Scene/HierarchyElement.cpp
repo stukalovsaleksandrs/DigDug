@@ -35,13 +35,13 @@ void Engine::HierarchyElement::SetParent(HierarchyElement& newParent, bool const
     // to calculate the correct world position
     if (&newParent == m_pSceneHierarchyElement)
     {
-        m_pOwnerGameObject->SetLocalPosition(m_pOwnerGameObject->GetWorldLocation());
+        m_pOwnerGameObject->SetLocalTopLeft(m_pOwnerGameObject->GetWorldTopLeft());
     }
     else
     {
         if (keepWorldPosition)
         {
-            m_pOwnerGameObject->SetLocalPosition(m_pOwnerGameObject->GetWorldLocation() - newParent.m_pOwnerGameObject->GetWorldLocation());
+            m_pOwnerGameObject->SetLocalTopLeft(m_pOwnerGameObject->GetWorldTopLeft() - newParent.m_pOwnerGameObject->GetWorldTopLeft());
         }
         m_pOwnerGameObject->SetPositionDirty();
     }
