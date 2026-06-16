@@ -325,8 +325,8 @@ namespace Game
     void Player::State::Pump::OnEnter() noexcept
     {
         PlayerStateBase::OnEnter();
+        m_pumpComponent.SetActive(true);
         m_pumpComponent.SetPaused(true);
-        m_pumpComponent.SetActive(false);
         m_movementComponent.SetActive(false);
         // Playing pumping animation
         m_animationComponent.ChangeSource(

@@ -46,3 +46,13 @@ void Game::AttackStartCommand::Execute() noexcept
 }
 
 #pragma endregion AttackStartCommand
+
+#pragma region AttackStartCommand
+Game::AttackStopCommand::AttackStopCommand()
+= default;
+
+void Game::AttackStopCommand::Execute() noexcept
+{
+}
+#pragma endregion AttackStartCommand
+

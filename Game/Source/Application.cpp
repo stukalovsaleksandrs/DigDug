@@ -39,7 +39,6 @@ Game::Application::Application()
     // Don't move to the header, has to be added to rendering after the ground
     // TODO: Actually move to header
     m_pLevelManager = std::make_unique<LevelManager>(std::vector<std::string_view>{"Levels/Level1.txt"});
-
 }
 
 void Game::Application::Update()

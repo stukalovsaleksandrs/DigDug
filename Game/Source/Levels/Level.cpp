@@ -70,7 +70,6 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
         sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
     }
 
-
     // Spawning
     SpawnPlayer();
     SpawnPookas();
