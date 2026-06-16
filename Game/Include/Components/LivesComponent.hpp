@@ -20,7 +20,7 @@ namespace Game
 
     private:
         uint32_t m_lives{};
-        Engine::Event m_onDiedEvent{std::to_underlying(EventType::OnDied)},
+        Engine::Event m_onGameOverEvent{std::to_underlying(EventType::OnGameOver)},
             m_onDamageTaken{std::to_underlying(EventType::OnDamageTaken)};
         Engine::RenderComponent& m_renderComponent;
 

@@ -40,7 +40,8 @@ namespace Engine
         // Calls Render() on all the registered components
         void Render() const;
 
-        void Destroy();
+        void ClearRenderFunctions() noexcept;
+        void Destroy() noexcept;
 
         void RenderTexture(Sprite const&, glm::vec2 location) const noexcept;
         void RenderTexture(Sprite const&, SDL_FRect const& srcRect, SDL_FRect const& dstRect, float degrees, SDL_FlipMode flipMode = SDL_FLIP_NONE) const noexcept;

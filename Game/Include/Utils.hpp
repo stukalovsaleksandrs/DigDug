@@ -25,7 +25,7 @@ namespace Game
     {
         OnPointsIncreased = "OnPointsIncreased"_h,
         OnCollected5Points = "OnCollected5Points"_h,
-        OnDied = "OnDied"_h,
+        OnGameOver = "OnDied"_h,
         OnDamageTaken = "OnDamageTaken"_h,
         OnGridChanged = "OnGridChanged"_h,
         OnThrow = "OnAttack"_h,

@@ -17,6 +17,8 @@ namespace Engine
 
         GameObject& CreateGameObject(GameObject& parent, glm::vec2 localTopLeft = {}, bool keepWorldLocation = false) noexcept;
 
+        void ClearGameObjects() noexcept;
+
     private:
         friend class SceneManager;
 

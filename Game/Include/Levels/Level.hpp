@@ -14,7 +14,7 @@ namespace Game
 {
     class PumpComponent;
 
-    class Level final
+    class Level final : public Engine::Observer, public Engine::Subject
     {
     public:
         struct Resources final
@@ -28,13 +28,17 @@ namespace Game
         };
         Resources const& sharedResources;
 
-        explicit Level(std::string_view path, Resources const& sharedResources) noexcept;
-        ~Level() noexcept;
+        explicit Level(
+            std::string_view path
+            , Resources const& sharedResources
+        ) noexcept;
+        ~Level() noexcept override;
         Level& operator=(Level const&) noexcept = delete;
         Level& operator=(Level&&) noexcept = delete;
         Level(Level const&) noexcept = delete;
         Level(Level&&) noexcept = delete;
 
+        void OnNotify(Engine::Event event, const Subject& caller) noexcept override;
         bool TryDigging(glm::vec2 cellCenterPx) noexcept;
 
         [[nodiscard]] LivesComponent& GetLives() const noexcept{ return *m_pLivesComponent; };
@@ -50,9 +54,10 @@ namespace Game
 
         void Update() noexcept;
 
-        void Restart() noexcept;
+        void OnPlayerCharacterDied() const noexcept;
 
     private:
+        bool m_shouldRestart{};
         glm::u32vec2 m_playerSpawnCell{};
         std::vector<glm::u32vec2> m_pookaSpawnCells{},
             m_flygarSpawnCells{}, m_rockSpawnCells{};
@@ -91,8 +96,12 @@ namespace Game
         void SpawnPookas() noexcept;
         void SpawnPooka(glm::vec2 topLeft) noexcept;
         void SpawnPump() noexcept;
+        void SpawnEverything() noexcept;
+
+        void Clear() noexcept;
 
         Engine::MovementComponent::CanMovePred GetCanMovePred() const noexcept;
+
     };
 }
 

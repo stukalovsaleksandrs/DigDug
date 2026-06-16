@@ -1,6 +1,5 @@
 // Game
 #include "Levels/Level.hpp"
-#include "Levels/LevelManager.hpp"
 #include "Components/PointDisplayComponent.hpp"
 #include "Components/AIComponent.hpp"
 #include "Components/PlayerComponent.hpp"
@@ -14,6 +13,8 @@
 #include <format>
 #include <fstream>
 #include <print>
+
+uint32_t constexpr lives{ 3 };
 
 Game::Level::Level(std::string_view const path, Resources const& sharedResources) noexcept
     : sharedResources{ sharedResources }
@@ -53,41 +54,8 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
     }
 {
     ParseFile(path);
-
-    // Ground
-    {
-        auto& ground{m_scene.CreateGameObject({})};
-        ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pGroundSprite.get()}, Engine::Renderer::Layer::background);
-    }
-
-    // Registering the tunnel digging render callback to the renderer
-    Engine::Renderer::GetInstance().RegisterFunction(m_renderTunnelsFunction, Engine::Renderer::Layer::background);
-
-    // Sky
-    {
-        auto& sky{m_scene.CreateGameObject({})};
-        sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
-    }
-
-    // Spawning
-    SpawnPlayer();
-    SpawnPookas();
-    SpawnPump();
-
-    // Lives display
-    {
-        // Lives component
-        auto& lives{m_scene.CreateGameObject(glm::vec2{0.f, windowData.logicalDims.y - ftileSideLengthPx})};
-        lives.AddComponent<Engine::RenderComponent>(
-            Engine::Sprite::View{
-                sharedResources.pTaizoHoriDefaultSprite.get()
-                , {0.f, 0.f, static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}
-            }
-            , Engine::Renderer::Layer::foreground
-        );
-        m_pLivesComponent = &lives.AddComponent<LivesComponent>(3);
-    }
-
+    MaskInitialTunnels();
+    SpawnEverything();
 }
 
 Game::Level::~Level() noexcept
@@ -99,6 +67,17 @@ void Game::Level::DigCircle(glm::vec2 const centerPx) const noexcept
 {
     static float constexpr radius{ 0.5f * i32tileSideLengthPx };
     m_maskTexture.MaskCircle({centerPx, radius});
+}
+
+void Game::Level::OnNotify(Engine::Event const event, const Engine::Subject& caller) noexcept
+{
+    switch (event.id)
+    {
+    case std::to_underlying(EventType::OnGameOver):
+        NotifyObservers(Engine::Event{std::to_underlying(EventType::OnGameOver)});
+        break;
+    default: ;
+    }
 }
 
 bool Game::Level::TryDigging(glm::vec2 const cellCenterPx) noexcept
@@ -150,9 +129,15 @@ void Game::Level::DeletePooka(Engine::GameObject const * const pPookaToDelete) n
 void Game::Level::Update() noexcept
 {
     m_scene.Update();
+    if (m_shouldRestart)
+    {
+        Clear();
+        SpawnEverything();
+        m_shouldRestart = false;
+    }
 }
 
-void Game::Level::Restart() noexcept
+void Game::Level::OnPlayerCharacterDied() const noexcept
 {
     // 1. Putting the player back
     m_pPlayer->SetLocalTopLeft(m_grid.GetCellTopLeft(m_playerSpawnCell));
@@ -186,6 +171,50 @@ void Game::Level::SpawnPump() noexcept
     );
 
     // m_pPump->SetActive(false);
+}
+
+void Game::Level::SpawnEverything() noexcept
+{
+    // Ground
+    {
+        auto& ground{m_scene.CreateGameObject({})};
+        ground.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pGroundSprite.get()}, Engine::Renderer::Layer::background);
+    }
+
+    // Registering the tunnel digging render callback to the renderer
+    Engine::Renderer::GetInstance().RegisterFunction(m_renderTunnelsFunction, Engine::Renderer::Layer::background);
+
+    // Sky
+    {
+        auto& sky{m_scene.CreateGameObject({})};
+        sky.AddComponent<Engine::RenderComponent>(Engine::Sprite::View{sharedResources.pSkySprite.get()}, Engine::Renderer::Layer::middleground);
+    }
+
+    // Spawning
+    SpawnPlayer();
+    SpawnPookas();
+    SpawnPump();
+
+    // Lives
+    {
+        auto& livesObject{m_scene.CreateGameObject(glm::vec2{0.f, windowData.logicalDims.y - ftileSideLengthPx})};
+        livesObject.AddComponent<Engine::RenderComponent>(
+            Engine::Sprite::View{
+                sharedResources.pTaizoHoriDefaultSprite.get()
+                , {0.f, 0.f, static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}
+            }
+            , Engine::Renderer::Layer::foreground
+        );
+        m_pLivesComponent = &livesObject.AddComponent<LivesComponent>(lives);
+        m_pLivesComponent->BindObserver(*this);
+    }
+}
+
+void Game::Level::Clear() noexcept
+{
+    m_grid.Reset();
+    m_scene.ClearGameObjects();
+    Engine::Renderer::GetInstance().ClearRenderFunctions();
 }
 
 Engine::MovementComponent::CanMovePred Game::Level::GetCanMovePred() const noexcept
@@ -234,7 +263,6 @@ void Game::Level::ParseFile(std::string_view const path) const
         ++row;
     }
 
-    MaskInitialTunnels();
 }
 
 void Game::Level::ParsePlayer(std::string_view const line, glm::u32vec2 const cell) const

@@ -9,7 +9,7 @@
 
 Game::LivesComponent::LivesComponent(Engine::GameObject& owner, uint32_t const lives) noexcept
     : Component(owner)
-    , m_lives(lives)
+    , m_lives{lives}
     , m_renderComponent{
         *m_owner.GetComponent<Engine::RenderComponent>(),
     }
@@ -27,7 +27,7 @@ void Game::LivesComponent::TakeDamage() noexcept
     NotifyObservers(m_onDamageTaken);
     if (!m_lives)// Just died
     {
-        NotifyObservers(m_onDiedEvent);
+        NotifyObservers(m_onGameOverEvent);
         return;
     }
     std::println("Took damage, lives: {}", m_lives);

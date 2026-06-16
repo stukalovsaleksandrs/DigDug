@@ -25,6 +25,8 @@ namespace Game
         Grid& operator=(Grid const&) noexcept = delete;
         Grid& operator=(Grid &&) noexcept = delete;
 
+        void Reset() noexcept;
+
         void DebugRender() const;
 
         // Returns the location(in cells) of the cell the input point(in pixels) is in

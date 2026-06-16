@@ -18,3 +18,11 @@ Engine::GameObject& Engine::Scene::CreateGameObject(GameObject& parent, glm::vec
     gameObject.hierarchyElement.SetParent(parent.hierarchyElement, keepWorldLocation);
     return gameObject;
 }
+
+void Engine::Scene::ClearGameObjects() noexcept
+{
+    for (auto const& child: hierarchyElement.GetChildren())
+    {
+        child->MarkForDeletion();
+    }
+}

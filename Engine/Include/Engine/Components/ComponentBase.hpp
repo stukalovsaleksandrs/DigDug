@@ -21,7 +21,7 @@ namespace Engine
         Component(Component&&) noexcept = delete;
         Component& operator=(Component&&) noexcept = delete;
 
-        void SetActive(bool const active) noexcept
+        virtual void SetActive(bool const active) noexcept
         {
             if (m_active == active) return;
             m_active = active;

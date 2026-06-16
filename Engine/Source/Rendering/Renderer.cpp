@@ -71,7 +71,15 @@ void Engine::Renderer::Render() const
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_pSDLRenderer);
 }
 
-void Engine::Renderer::Destroy()
+void Engine::Renderer::ClearRenderFunctions() noexcept
+{
+    for (auto& renderFuncs : m_layerToRenderFunctions | std::views::values)
+    {
+        renderFuncs.clear();
+    }
+}
+
+void Engine::Renderer::Destroy() noexcept
 {
     // Shutting down ImPlot
     ImPlot::DestroyContext();// Must preceed ImGui shutdown
@@ -211,8 +219,6 @@ void Engine::Renderer::UnregisterFunction(RenderFunctionType const& renderFuncti
     {
         if (std::erase(renderFunctions, &renderFunctionToRemove) != 0) return;
     }
-
-    assert(false && "Render function not found");
 }
 
 void Engine::Renderer::InitializeImGui(SDL_Window* pWindow) noexcept

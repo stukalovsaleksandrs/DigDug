@@ -20,8 +20,7 @@ Game::Grid::Grid()
         && "Window dimensions are not divisible by the cell side length"
     );
 
-    // Filling it all with ground
-    std::ranges::fill(m_isGround, true);
+    Reset();
 
     // Registering rendering callback
     m_renderer.RegisterFunction(m_debugRenderFunction);
@@ -30,6 +29,12 @@ Game::Grid::Grid()
 Game::Grid::~Grid() noexcept
 {
     m_renderer.UnregisterFunction(m_debugRenderFunction);
+}
+
+void Game::Grid::Reset() noexcept
+{
+    // Filling it all with ground
+    std::ranges::fill(m_isGround, true);
 }
 
 void Game::Grid::DebugRender() const

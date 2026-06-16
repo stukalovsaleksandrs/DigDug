@@ -390,8 +390,7 @@ namespace Game
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
         if (m_currentSec >= m_secPerFrame * m_frameCount)
         {
-            // Restarting the level
-            m_dependencies.level.Restart();
+            m_dependencies.level.OnPlayerCharacterDied();
             return typeid(Idle);
         }
         return std::nullopt;

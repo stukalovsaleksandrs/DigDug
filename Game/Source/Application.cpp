@@ -43,5 +43,5 @@ Game::Application::Application()
 
 void Game::Application::Update()
 {
-    m_pLevelManager->GetCurrentLevel().Update();
+    m_pLevelManager->Update();
 }
