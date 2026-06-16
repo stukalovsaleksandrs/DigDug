@@ -8,10 +8,7 @@ Engine::GameObject::GameObject(Scene& scene, glm::vec2 const localPosition) noex
     UpdateWorldPosition();
 }
 
-/*******************************************
- * Lifetime
- *******************************************/
-
+#pragma region Lifetime
 void Engine::GameObject::Update() {
     if (not m_active) return;
     DeleteMarkedComponents();
@@ -42,10 +39,9 @@ void Engine::GameObject::SetActive(bool const active) noexcept
         pComponent->SetActive(active);
 }
 
-/*******************************************
- * Transform
- *******************************************/
+#pragma endregion Lifetime
 
+#pragma region Transform
 void Engine::GameObject::SetLocalTopLeft(glm::vec2 const position) noexcept
 {
     m_localPosition = position;
@@ -106,3 +102,4 @@ void Engine::GameObject::DeleteMarkedComponents() noexcept
                   }
     );
 }
+#pragma endregion Transform

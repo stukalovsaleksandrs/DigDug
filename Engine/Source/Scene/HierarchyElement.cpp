@@ -130,7 +130,7 @@ void Engine::HierarchyElement::UpdateChildren() const noexcept
 {
     for (auto& pGameObject: m_pChildren)
     {
-        pGameObject->Update();
+        if (pGameObject) pGameObject->Update();
     }
 }
 

@@ -143,11 +143,7 @@ namespace Engine
             return nullptr;
         }
 
-
-        /*******************************************
-         * Transform
-         *******************************************/
-
+#pragma region Transform
         void SetLocalTopLeft(glm::vec2 position) noexcept;
         [[nodiscard]] glm::vec2 GetLocalTopLeft() const noexcept;
 
@@ -160,6 +156,7 @@ namespace Engine
         void UpdateWorldPosition() noexcept;
 
         [[nodiscard]] bool IsDirectChildOfScene() const noexcept;
+#pragma endregion Transform
 
     private:
         std::vector<DeletableComponent> m_components{};

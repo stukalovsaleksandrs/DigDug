@@ -5,6 +5,7 @@
 #include "Grid.hpp"
 #include "FSM/FSM.hpp"
 // Engine
+#include "Components/LivesComponent.hpp"
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Rendering/Sprite.hpp"
 #include "Engine/Scene/Scene.hpp"
@@ -36,6 +37,7 @@ namespace Game
 
         bool TryDigging(glm::vec2 cellCenterPx) noexcept;
 
+        [[nodiscard]] LivesComponent& GetLives() const noexcept{ return *m_pLivesComponent; };
         [[nodiscard]] Grid const& GetGrid() const noexcept { return m_grid; }
         [[nodiscard]] Grid& GetGrid() noexcept { return m_grid; }
         [[nodiscard]] PumpComponent& GetPumpComponent() noexcept;
@@ -44,7 +46,11 @@ namespace Game
 
         [[nodiscard]] std::vector<Engine::RenderComponent*> GetEnemyRenderComponents() noexcept;
 
+        void DeletePooka(Engine::GameObject const*) noexcept;
+
         void Update() noexcept;
+
+        void Restart() noexcept;
 
     private:
         glm::u32vec2 m_playerSpawnCell{};
@@ -57,8 +63,12 @@ namespace Game
 
         Engine::GameObject* m_pPlayer{};
 
+        std::vector<Engine::GameObject*> m_pPookas{};
+
         Engine::GameObject* m_pPump{};
         PumpComponent* m_pPumpComponent{};
+
+        LivesComponent* m_pLivesComponent{};
 
         std::function<void()> m_renderTunnelsFunction{ [this]
         {

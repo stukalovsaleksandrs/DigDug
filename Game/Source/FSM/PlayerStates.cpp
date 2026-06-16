@@ -140,6 +140,9 @@ namespace Game
 
     void Player::State::Idle::OnEnter() noexcept
     {
+        m_dependencies.owner.SetActive(true);
+        m_movementComponent.SetActive(true);
+        BindAllInput(m_dependencies.fsm);
         // Just using the first frame statically
         m_animationComponent.ChangeSource(
             SDL_FRect{0.f, 0.f,
@@ -359,14 +362,11 @@ namespace Game
     }
 #pragma endregion Pump
 
-#pragma region Dying
-
+#pragma region Die
     Player::State::Die::Die(
         Dependencies const& dependencies
-        , LivesComponent& livesComponent
     ) noexcept
         : PlayerStateBase{dependencies}
-        , m_livesComponent{ livesComponent }
     {}
 
     void Player::State::Die::OnEnter() noexcept
@@ -382,7 +382,7 @@ namespace Game
             ftileSideLengthPx
             }, m_frameCount, m_secPerFrame
         );
-        m_livesComponent.TakeDamage();
+        m_dependencies.level.GetLives().TakeDamage();
     }
 
     StateType Player::State::Die::Update() noexcept
@@ -390,14 +390,18 @@ namespace Game
         m_currentSec += Engine::Timer::GetInstance().GetDeltaSec();
         if (m_currentSec >= m_secPerFrame * m_frameCount)
         {
-            m_dependencies.owner.MarkForDeletion();
+            // Restarting the level
+            m_dependencies.level.Restart();
+            return typeid(Idle);
         }
         return std::nullopt;
     }
 
     void Player::State::Die::OnExit() noexcept
     {
+        BindAllInput(m_dependencies.fsm);
+        m_dependencies.owner.GetComponent<Engine::RenderComponent>()->SetRotation(0.f);
     }
-#pragma endregion Dying
+#pragma endregion Die
 
 }

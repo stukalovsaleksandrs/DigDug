@@ -3,10 +3,7 @@
 // Standard
 #include <algorithm>
 
-/*******************************************
- * Observer
- *******************************************/
-
+#pragma region Observer
 Engine::Observer::~Observer() noexcept
 {
     // Unsubscribing the observer from the subjects
@@ -21,11 +18,9 @@ void Engine::Observer::AddSubject(Subject& subject) noexcept
     if (std::ranges::binary_search(m_pSubjects, &subject)) return;
     m_pSubjects.push_back(&subject);
 }
+#pragma endregion Observer
 
-/*******************************************
- * Subject
- *******************************************/
-
+#pragma region Subject
 void Engine::Subject::BindObserver(Observer& observer) noexcept
 {
     if (std::ranges::binary_search(m_pObservers, &observer)) return;
@@ -50,3 +45,5 @@ void Engine::Subject::NotifyObservers(Event const event) const noexcept
 {
     for (auto const pObserver : m_pObservers) pObserver->OnNotify(event, *this);
 }
+
+#pragma endregion Subject

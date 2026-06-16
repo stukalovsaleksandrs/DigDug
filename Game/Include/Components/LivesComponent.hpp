@@ -16,12 +16,13 @@ namespace Game
 
         void TakeDamage() noexcept;
 
-        [[nodiscard]] uint32_t GetLives() const noexcept;
+        [[nodiscard]] uint32_t GetLives() const noexcept{ return m_lives; };
 
     private:
         uint32_t m_lives{};
         Engine::Event m_onDiedEvent{std::to_underlying(EventType::OnDied)},
             m_onDamageTaken{std::to_underlying(EventType::OnDamageTaken)};
+        Engine::RenderComponent& m_renderComponent;
 
     };
 }

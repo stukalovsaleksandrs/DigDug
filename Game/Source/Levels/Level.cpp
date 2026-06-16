@@ -1,7 +1,6 @@
 // Game
 #include "Levels/Level.hpp"
 #include "Levels/LevelManager.hpp"
-#include "Components/LivesDisplayComponent.hpp"
 #include "Components/PointDisplayComponent.hpp"
 #include "Components/AIComponent.hpp"
 #include "Components/PlayerComponent.hpp"
@@ -74,6 +73,21 @@ Game::Level::Level(std::string_view const path, Resources const& sharedResources
     SpawnPlayer();
     SpawnPookas();
     SpawnPump();
+
+    // Lives display
+    {
+        // Lives component
+        auto& lives{m_scene.CreateGameObject(glm::vec2{0.f, windowData.logicalDims.y - ftileSideLengthPx})};
+        lives.AddComponent<Engine::RenderComponent>(
+            Engine::Sprite::View{
+                sharedResources.pTaizoHoriDefaultSprite.get()
+                , {0.f, 0.f, static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}
+            }
+            , Engine::Renderer::Layer::foreground
+        );
+        m_pLivesComponent = &lives.AddComponent<LivesComponent>(3);
+    }
+
 }
 
 Game::Level::~Level() noexcept
@@ -122,9 +136,39 @@ std::vector<Engine::RenderComponent*> Game::Level::GetEnemyRenderComponents() no
     return renderComponents;
 }
 
+void Game::Level::DeletePooka(Engine::GameObject const * const pPookaToDelete) noexcept
+{
+    for (uint32_t const pookaIdx : std::ranges::views::iota(0u, m_pPookas.size()))
+    {
+        auto* pPooka{ m_pPookas.at(pookaIdx) };
+        if (pPooka != pPookaToDelete) continue;
+        pPooka->MarkForDeletion();
+        m_pPookas.at(pookaIdx) = nullptr;
+    }
+}
+
 void Game::Level::Update() noexcept
 {
     m_scene.Update();
+}
+
+void Game::Level::Restart() noexcept
+{
+    // 1. Putting the player back
+    m_pPlayer->SetLocalTopLeft(m_grid.GetCellTopLeft(m_playerSpawnCell));
+
+    // 2. Respawning the enemies
+    for (uint32_t const pookaIdx : std::ranges::views::iota(0u, m_pookaSpawnCells.size()))
+    {
+        auto* const pPooka{ m_pPookas.at(pookaIdx) };
+        if (!pPooka) continue;// Enemy is killed
+        pPooka->SetLocalTopLeft(m_grid.GetCellTopLeft(
+            m_pookaSpawnCells.at(pookaIdx)
+        ));
+    }
+
+    // TODO: 3. Respawn the rocks
+
 }
 
 void Game::Level::SpawnPump() noexcept
@@ -265,13 +309,9 @@ void Game::Level::SpawnPlayer() noexcept
         .secPerFrame = 0.1f
     });
 
-    // Lives component
-    auto& livesComponent{m_pPlayer->AddComponent<LivesComponent>(3)};
 
     // Player component(must be added after animation component)
     auto& playerComponent{m_pPlayer->AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
-
-    livesComponent.BindObserver(playerComponent);
 
     // Render component
     auto const charDefaultView{
@@ -284,18 +324,6 @@ void Game::Level::SpawnPlayer() noexcept
         charDefaultView
     );
 
-    // Lives display
-    {
-        auto& livesDisplay{m_scene.CreateGameObject(glm::vec2{0.f, windowData.logicalDims.y - ftileSideLengthPx})};
-        livesDisplay.AddComponent<Engine::RenderComponent>(
-            charDefaultView
-            , Engine::Renderer::Layer::foreground
-        );
-
-        auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
-        livesComponent.BindObserver(livesDisplayComponent);
-    }
-
     // Point display
     {
         auto& pointDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 20.f})};
@@ -307,6 +335,7 @@ void Game::Level::SpawnPlayer() noexcept
 
 void Game::Level::SpawnPookas() noexcept
 {
+    m_pPookas.reserve(m_pPookas.size());
     for (glm::i32vec2 const cell: m_pookaSpawnCells)
     {
         SpawnPooka(m_grid.GetCellTopLeft(cell));
@@ -315,7 +344,8 @@ void Game::Level::SpawnPookas() noexcept
 
 void Game::Level::SpawnPooka(glm::vec2 const topLeft) noexcept
 {
-    auto& pooka{m_scene.CreateGameObject(topLeft)};
+    m_pPookas.push_back(&m_scene.CreateGameObject(topLeft));
+    Engine::GameObject& pooka{ *m_pPookas.back() };
 
     // Movement component
     pooka.AddComponent<Engine::MovementComponent>(

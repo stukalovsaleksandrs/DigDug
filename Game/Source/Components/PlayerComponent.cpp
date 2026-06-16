@@ -25,10 +25,7 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
             states.emplace(typeid(Player::State::Pump), std::make_unique<Player::State::Pump>(stateDependencies, dependencies.level.GetPumpComponent()));
             states.emplace(
                 typeid(Player::State::Die),
-                std::make_unique<Player::State::Die>(
-                    stateDependencies,
-                    *dependencies.level.GetPlayerCharacter().GetComponent<LivesComponent>()
-                )
+                std::make_unique<Player::State::Die>(stateDependencies)
             );
             // Returning the states and setting the idle state as the default one
             return std::make_pair(std::move(states), states.at(typeid(Player::State::Idle)).get());

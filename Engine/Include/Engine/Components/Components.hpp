@@ -105,8 +105,10 @@ namespace Engine
 #pragma region FPSComponent
     class FPSComponent final : public Component {
     public:
-        explicit FPSComponent(GameObject &owner, Font* pFont,
-                               SDL_Color const& color = {255, 255, 255, 255}) noexcept;
+        explicit FPSComponent(
+            GameObject &owner, Font* pFont,
+            SDL_Color const& color = {255, 255, 255, 255}
+        ) noexcept;
         void Update() noexcept override;
     };
 #pragma endregion FPSComponent

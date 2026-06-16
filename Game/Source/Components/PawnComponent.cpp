@@ -29,11 +29,6 @@ void Game::PawnComponent::OnNotify(Engine::Event const event, Engine::Subject co
     // TODO: Find a proper way to bind functions to the events directly
     switch (event.id)
     {
-    case std::to_underlying(EventType::OnDied):
-        {
-            m_owner.MarkForDeletion();
-            break;
-        }
     case std::to_underlying(Engine::EventType::OnDirectionChanged):
         {
             glm::vec2 const direction{ m_movementComponent.GetDirection() };

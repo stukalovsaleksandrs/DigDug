@@ -296,7 +296,7 @@ Game::StateType Game::AI::Pumped::Update() noexcept
         // Deleting the enemy
         m_animationComponent.SetActive(false);
         m_dependencies.owner.GetComponent<Engine::RenderComponent>()->SetActive(false);
-        m_dependencies.owner.MarkForDeletion();
+        m_dependencies.level.DeletePooka(&m_dependencies.owner);
     }
     return StateBase::Update();
 }
