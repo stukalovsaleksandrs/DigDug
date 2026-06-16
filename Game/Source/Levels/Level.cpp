@@ -108,11 +108,6 @@ glm::u32vec2 Game::Level::GetPlayerCell() const noexcept
     return m_grid.GetCellFromPoint(m_pPlayer->GetWorldTopLeft() + glm::vec2{1.f, 1.f});
 }
 
-Game::FSM& Game::Level::GetPlayerFSM() const noexcept
-{
-    return m_pPlayer->GetComponent<PlayerComponent>()->GetFSM();
-}
-
 std::vector<Engine::RenderComponent*> Game::Level::GetEnemyRenderComponents() noexcept
 {
     std::vector<Engine::RenderComponent*> renderComponents{};
@@ -270,24 +265,33 @@ void Game::Level::SpawnPlayer() noexcept
         .secPerFrame = 0.1f
     });
 
+    // Lives component
+    auto& livesComponent{m_pPlayer->AddComponent<LivesComponent>(3)};
+
     // Player component(must be added after animation component)
     auto& playerComponent{m_pPlayer->AddComponent<PlayerComponent>(PlayerComponent::Dependencies{*this})};
 
-    // Render component
-    auto& characterRenderComponent{m_pPlayer->AddComponent<Engine::RenderComponent>(
-        Engine::Sprite::View{sharedResources.pTaizoHoriDefaultSprite.get()}
-    )};
-    characterRenderComponent.SetSpriteView({sharedResources.pTaizoHoriDefaultSprite.get(), SDL_FRect{0.f, 0.f,
-        static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}});
-
-    // Lives component
-    auto& livesComponent{m_pPlayer->AddComponent<LivesComponent>(2)};
     livesComponent.BindObserver(playerComponent);
+
+    // Render component
+    auto const charDefaultView{
+        Engine::Sprite::View{
+            sharedResources.pTaizoHoriDefaultSprite.get()
+            , {0.f, 0.f, static_cast<float>(i32tileSideLengthPx), static_cast<float>(i32tileSideLengthPx)}
+        }
+    };
+    m_pPlayer->AddComponent<Engine::RenderComponent>(
+        charDefaultView
+    );
 
     // Lives display
     {
-        auto& livesDisplay{m_scene.CreateGameObject(glm::vec2{10.f, static_cast<float>(windowData.physicalDims.y) - 10.f})};
-        livesDisplay.AddComponent<Engine::TextComponent>(" ", sharedResources.pFont.get()); // NOTE: Text must not be empty
+        auto& livesDisplay{m_scene.CreateGameObject(glm::vec2{0.f, windowData.logicalDims.y - ftileSideLengthPx})};
+        livesDisplay.AddComponent<Engine::RenderComponent>(
+            charDefaultView
+            , Engine::Renderer::Layer::foreground
+        );
+
         auto& livesDisplayComponent{livesDisplay.AddComponent<LivesDisplayComponent>(livesComponent)};
         livesComponent.BindObserver(livesDisplayComponent);
     }

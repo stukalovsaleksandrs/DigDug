@@ -11,6 +11,7 @@ namespace Game
 {
     class PumpComponent;
     class PlayerComponent;
+    class LivesComponent;
     class LevelManager;
 }
 
@@ -129,7 +130,7 @@ namespace Game::Player::State
     class Die final : public PlayerStateBase
     {
     public:
-        explicit Die(Dependencies const&) noexcept;
+        explicit Die(Dependencies const&, LivesComponent&) noexcept;
         [[nodiscard]] StateType Update() noexcept override;
         void OnEnter() noexcept override;
         void OnExit() noexcept override;
@@ -138,6 +139,7 @@ namespace Game::Player::State
         uint32_t const m_frameCount{ 4 };
         float const m_secPerFrame{ .5f };
         float m_currentSec{};
+        LivesComponent& m_livesComponent;
     };
 }
 

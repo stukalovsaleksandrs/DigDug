@@ -9,6 +9,7 @@
 namespace Engine
 {
     class TextComponent;
+    class RenderComponent;
 }
 
 namespace Game
@@ -19,12 +20,13 @@ namespace Game
     class LivesDisplayComponent final : public Engine::Component, public Engine::Observer
     {
     public:
+        // NOTE: LivesComponent likely does not belong to the owner
         explicit LivesDisplayComponent(Engine::GameObject& owner, LivesComponent const&) noexcept;
         void OnNotify(Engine::Event event, Engine::Subject const& caller) noexcept override;
 
     private:
-        LivesComponent const* m_pLivesComponent;
-        Engine::TextComponent* m_pTextComponent;
+        LivesComponent const& m_livesComponent;
+        Engine::RenderComponent& m_renderComponent;
 
     };
 }

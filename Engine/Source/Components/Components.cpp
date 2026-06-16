@@ -16,12 +16,18 @@
  *******************************************/
 
 #pragma region RenderComponent
-Engine::RenderComponent::RenderComponent(GameObject &owner,
-    Sprite::View const& spriteView, Renderer::Layer const layer) noexcept
+Engine::RenderComponent::RenderComponent(
+    GameObject &owner
+    , Sprite::View const& spriteView
+    , Renderer::Layer const layer
+    , uint32_t const instanceCount
+) noexcept
     : Component{owner}
     , m_spriteView{ spriteView }
     , dstDims{ glm::vec2{spriteView.srcRect.w, spriteView.srcRect.h} }
+    , m_instanceCount{ instanceCount }
 {
+    assert(instanceCount > 0);
     Renderer::GetInstance().RegisterFunction(m_renderFunction, layer);
     SetSpriteView({spriteView});
 }
@@ -37,17 +43,20 @@ void Engine::RenderComponent::Render() const noexcept {
     auto const& topLeft{ m_owner.GetWorldTopLeft() };
     if (m_spriteView.srcRect.w > 0.f && m_spriteView.srcRect.h > 0.f)
     {
-        Renderer::GetInstance().RenderTexture(
-            *m_spriteView.pSprite,
-            m_spriteView.srcRect,
-            {
-                topLeft.x, topLeft.y,
-                dstDims.x,
-                dstDims.y
-            },
-            m_degrees,
-            m_flipMode
-        );
+        for (uint32_t const instanceIdx : std::ranges::views::iota(0u, m_instanceCount) )
+        {
+            Renderer::GetInstance().RenderTexture(
+                *m_spriteView.pSprite,
+                m_spriteView.srcRect,
+                {
+                    topLeft.x + instanceIdx * dstDims.x, topLeft.y,
+                    dstDims.x,
+                    dstDims.y
+                },
+                m_degrees,
+                m_flipMode
+            );
+        }
     }
     else
     {
@@ -85,6 +94,7 @@ glm::vec2 Engine::RenderComponent::GetSpriteViewDims() const noexcept
  *******************************************/
 
 #pragma region DebugRenderer
+
 Engine::DebugComponent::DebugComponent(GameObject& owner, Renderer& renderer) noexcept
     : Component{ owner }
     , m_renderer{ renderer }

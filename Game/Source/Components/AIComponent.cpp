@@ -4,6 +4,7 @@
 // Engine
 #include "Engine/Components/MovementComponent.hpp"
 #include "Engine/Components/AnimationComponent.hpp"
+#include "Components/PlayerComponent.hpp"
 #include "FSM/AIStates.hpp"
 
 Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& dependencies)
@@ -24,7 +25,7 @@ Game::AIComponent::AIComponent(Engine::GameObject& owner, Dependencies const& de
         addState.operator()<AI::WanderVertically>();
         addState.operator()<AI::Chase>();
         auto pPumped{ std::make_unique<AI::Pumped>(stateDependencies) };
-        pPumped->BindObserver(m_dependencies.level.GetPlayerFSM());
+        pPumped->BindObserver(m_dependencies.level.GetPlayerCharacter().GetComponent<PlayerComponent>()->GetFSM());
         states.emplace(typeid(AI::Pumped), std::move(pPumped));
         return std::pair{std::move(states), states.at(SelectInitialState()).get()};
     }() }

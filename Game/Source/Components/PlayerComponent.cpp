@@ -1,5 +1,6 @@
 // Game
 #include "Components/PlayerComponent.hpp"
+#include "Components/LivesComponent.hpp"
 #include "Levels/Level.hpp"
 
 Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies const& dependencies) noexcept
@@ -22,7 +23,13 @@ Game::PlayerComponent::PlayerComponent(Engine::GameObject& owner, Dependencies c
             addState.operator()<Player::State::Dig>();
             states.emplace(typeid(Player::State::Throw), std::make_unique<Player::State::Throw>(stateDependencies, dependencies.level.GetPumpComponent()));
             states.emplace(typeid(Player::State::Pump), std::make_unique<Player::State::Pump>(stateDependencies, dependencies.level.GetPumpComponent()));
-            addState.operator()<Player::State::Die>();
+            states.emplace(
+                typeid(Player::State::Die),
+                std::make_unique<Player::State::Die>(
+                    stateDependencies,
+                    *dependencies.level.GetPlayerCharacter().GetComponent<LivesComponent>()
+                )
+            );
             // Returning the states and setting the idle state as the default one
             return std::make_pair(std::move(states), states.at(typeid(Player::State::Idle)).get());
         }()

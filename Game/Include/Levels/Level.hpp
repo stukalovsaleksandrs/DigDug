@@ -40,7 +40,7 @@ namespace Game
         [[nodiscard]] Grid& GetGrid() noexcept { return m_grid; }
         [[nodiscard]] PumpComponent& GetPumpComponent() noexcept;
         [[nodiscard]] glm::u32vec2 GetPlayerCell() const noexcept;
-        [[nodiscard]] FSM& GetPlayerFSM() const noexcept;
+        [[nodiscard]] Engine::GameObject& GetPlayerCharacter() const noexcept{ return *m_pPlayer; };
 
         [[nodiscard]] std::vector<Engine::RenderComponent*> GetEnemyRenderComponents() noexcept;
 

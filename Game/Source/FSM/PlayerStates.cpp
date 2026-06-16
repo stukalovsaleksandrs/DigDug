@@ -360,8 +360,13 @@ namespace Game
 #pragma endregion Pump
 
 #pragma region Dying
-    Player::State::Die::Die(Dependencies const& dependencies) noexcept
+
+    Player::State::Die::Die(
+        Dependencies const& dependencies
+        , LivesComponent& livesComponent
+    ) noexcept
         : PlayerStateBase{dependencies}
+        , m_livesComponent{ livesComponent }
     {}
 
     void Player::State::Die::OnEnter() noexcept
@@ -377,6 +382,7 @@ namespace Game
             ftileSideLengthPx
             }, m_frameCount, m_secPerFrame
         );
+        m_livesComponent.TakeDamage();
     }
 
     StateType Player::State::Die::Update() noexcept

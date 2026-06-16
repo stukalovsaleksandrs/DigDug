@@ -21,17 +21,15 @@ namespace Engine
     class Sprite;
     class Font;
 
-    /*******************************************
-     * Render component
-     *******************************************/
-
+#pragma region RenderComponent
     class RenderComponent final : public Component {
         Sprite::View m_spriteView;
 
     public:
+        struct Settings final{ SDL_FlipMode flipMode; float degrees; };
         glm::vec2 dstDims{};
 
-        explicit RenderComponent(GameObject& owner, Sprite::View const&, Renderer::Layer layer = Renderer::Layer::foreground) noexcept;
+        explicit RenderComponent(GameObject& owner, Sprite::View const&, Renderer::Layer layer = Renderer::Layer::foreground, uint32_t instanceCount = 1) noexcept;
         ~RenderComponent() override;
         RenderComponent(RenderComponent const&) = delete;
         RenderComponent(RenderComponent&&) = delete;
@@ -47,19 +45,21 @@ namespace Engine
         void SetFlipMode(SDL_FlipMode const flipMode){ m_flipMode = flipMode; }
         void SetRotation(float const degrees){ m_degrees = degrees; }
 
-        struct Settings final{ SDL_FlipMode flipMode; float degrees; };
         [[nodiscard]] Settings GetSettings() const noexcept{ return {m_flipMode, m_degrees}; }
         void SetSettings(Settings const& settings) noexcept{ m_flipMode = settings.flipMode; m_degrees = settings.degrees; }
+
+        void SetInstanceCount(uint32_t const count) noexcept{ m_instanceCount = count; };
 
     private:
         std::function<void()> m_renderFunction{ [this]{this->Render();} };
         SDL_FlipMode m_flipMode{};
         float m_degrees{};
-    };
+        uint32_t m_instanceCount{ 1 };
 
-    /*******************************************
-    * Debug component
-    *******************************************/
+    };
+#pragma endregion RenderComponent
+
+#pragma region DebugComponent
     // Interface for components to provide debug rendering
     class DebugComponent : public Component
     {
@@ -77,10 +77,9 @@ namespace Engine
         std::function<void()> const m_debugRenderFunction{ [this]{this->DebugRender();} };
         Renderer& m_renderer;
     };
+#pragma endregion DebugComponent
 
-    /*******************************************
-     * Text component
-     *******************************************/
+#pragma region TextComponent
     class TextComponent final : public Component {
     public:
         explicit TextComponent(GameObject &owner,
@@ -101,20 +100,18 @@ namespace Engine
         [[nodiscard]] Sprite* GetUpdatedTexture();
         void UpdateTexture();
     };
+#pragma endregion TextComponent
 
-    /*******************************************
-     * FPS component
-     *******************************************/
+#pragma region FPSComponent
     class FPSComponent final : public Component {
     public:
         explicit FPSComponent(GameObject &owner, Font* pFont,
                                SDL_Color const& color = {255, 255, 255, 255}) noexcept;
         void Update() noexcept override;
     };
+#pragma endregion FPSComponent
 
-    /*******************************************
-     * Orbit component
-     *******************************************/
+#pragma region OrbitComponent
     class OrbitComponent final : public Component
     {
     public:
@@ -132,6 +129,7 @@ namespace Engine
     private:
         float m_radiansSec{ 0.25f * glm::pi<float>() };
     };
+#pragma endregion OrbitComponent
 
 }
 

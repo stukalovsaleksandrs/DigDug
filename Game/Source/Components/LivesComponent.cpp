@@ -1,13 +1,11 @@
 // Game
+#include "Commands.hpp"
 #include "Components/LivesComponent.hpp"
 // Engine
 #include "Engine/Scene/GameObject.hpp"
 #include "Engine/InputManager.hpp"
 // Standard
 #include <print>
-
-#include "Commands.hpp"
-
 
 Game::LivesComponent::LivesComponent(Engine::GameObject& owner, uint32_t const lives) noexcept
     : Component(owner)
